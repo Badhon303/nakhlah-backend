@@ -362,16 +362,16 @@ export interface AdminTransferTokenPermission extends Schema.CollectionType {
   };
 }
 
-export interface ApiLearingPurposeLearingPurpose extends Schema.CollectionType {
-  collectionName: 'learing_purposes';
+export interface ApiLearningPurposeLearningPurpose
+  extends Schema.CollectionType {
+  collectionName: 'learning_purposes';
   info: {
-    singularName: 'learing-purpose';
-    pluralName: 'learing-purposes';
-    displayName: 'Learing_Purpose';
-    description: '';
+    singularName: 'learning-purpose';
+    pluralName: 'learning-purposes';
+    displayName: 'Learning_Purpose';
   };
   options: {
-    draftAndPublish: false;
+    draftAndPublish: true;
   };
   attributes: {
     purpose: Attribute.String &
@@ -381,25 +381,25 @@ export interface ApiLearingPurposeLearingPurpose extends Schema.CollectionType {
         minLength: 2;
         maxLength: 20;
       }>;
-    icon: Attribute.Media & Attribute.Required;
-    purposeId: Attribute.UID<
-      'api::learing-purpose.learing-purpose',
-      'purpose'
-    > &
+    purposeId: Attribute.String &
       Attribute.Required &
+      Attribute.Unique &
       Attribute.SetMinMaxLength<{
-        maxLength: 20;
+        minLength: 4;
+        maxLength: 10;
       }>;
+    icon: Attribute.Media & Attribute.Required;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
-      'api::learing-purpose.learing-purpose',
+      'api::learning-purpose.learning-purpose',
       'oneToOne',
       'admin::user'
     > &
       Attribute.Private;
     updatedBy: Attribute.Relation<
-      'api::learing-purpose.learing-purpose',
+      'api::learning-purpose.learning-purpose',
       'oneToOne',
       'admin::user'
     > &
@@ -772,7 +772,7 @@ declare module '@strapi/types' {
       'admin::api-token-permission': AdminApiTokenPermission;
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
-      'api::learing-purpose.learing-purpose': ApiLearingPurposeLearingPurpose;
+      'api::learning-purpose.learning-purpose': ApiLearningPurposeLearningPurpose;
       'api::user-profile.user-profile': ApiUserProfileUserProfile;
       'plugin::upload.file': PluginUploadFile;
       'plugin::upload.folder': PluginUploadFolder;
