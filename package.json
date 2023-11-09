@@ -26,5 +26,8 @@
   },
   "strapi": {
     "uuid": "9d1780a3-6f36-4143-8561-caef60d21e7b"
+  },
+  "devDependencies": {
+    "@types/koa-bodyparser": "^4.3.12"
   }
 }

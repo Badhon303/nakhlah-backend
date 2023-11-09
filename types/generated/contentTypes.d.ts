@@ -369,6 +369,7 @@ export interface ApiLearningPurposeLearningPurpose
     singularName: 'learning-purpose';
     pluralName: 'learning-purposes';
     displayName: 'Learning_Purpose';
+    description: '';
   };
   options: {
     draftAndPublish: true;
@@ -416,7 +417,7 @@ export interface ApiUserProfileUserProfile extends Schema.CollectionType {
     description: '';
   };
   options: {
-    draftAndPublish: true;
+    draftAndPublish: false;
   };
   attributes: {
     first_name: Attribute.String &
@@ -428,11 +429,18 @@ export interface ApiUserProfileUserProfile extends Schema.CollectionType {
       'oneToOne',
       'plugin::users-permissions.user'
     >;
-    lerner_lession: Attribute.Enumeration<['a', 'b', 'c']>;
-    test_two: Attribute.JSON;
+    last_name: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        minLength: 2;
+        maxLength: 20;
+      }>;
+    learning_purpose: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        minLength: 4;
+        maxLength: 10;
+      }>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
-    publishedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
       'api::user-profile.user-profile',
       'oneToOne',

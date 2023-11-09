@@ -8,7 +8,7 @@
     "description": ""
   },
   "options": {
-    "draftAndPublish": true
+    "draftAndPublish": false
   },
   "pluginOptions": {},
   "attributes": {
@@ -21,16 +21,15 @@
       "relation": "oneToOne",
       "target": "plugin::users-permissions.user"
     },
-    "lerner_lession": {
-      "type": "enumeration",
-      "enum": [
-        "a",
-        "b",
-        "c"
-      ]
+    "last_name": {
+      "type": "string",
+      "maxLength": 20,
+      "minLength": 2
     },
-    "test_two": {
-      "type": "json"
+    "learning_purpose": {
+      "type": "string",
+      "maxLength": 10,
+      "minLength": 4
     }
   }
 }
