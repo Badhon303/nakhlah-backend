@@ -26,10 +26,15 @@
       "maxLength": 20,
       "minLength": 2
     },
-    "learning_purpose": {
+    "lerner_level": {
       "type": "string",
+      "required": false,
+      "unique": true,
       "maxLength": 10,
       "minLength": 4
+    },
+    "learning_purpose": {
+      "type": "integer"
     }
   }
 }

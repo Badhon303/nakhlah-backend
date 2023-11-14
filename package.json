@@ -2,10 +2,10 @@
   "name": "nakhlah-backend",
   "version": "0.1.0",
   "private": true,
-  "description": "A Strapi application",
+  "description": "Arabic Language Learning application",
   "license": "MIT",
   "author": {
-    "name": "A Strapi developer"
+    "name": "Badhon"
   },
   "scripts": {
     "build": "strapi build",
@@ -20,14 +20,14 @@
     "@strapi/strapi": "4.15.0",
     "pg": "8.8.0"
   },
+  "devDependencies": {
+    "@types/koa-bodyparser": "^4.3.12"
+  },
   "engines": {
     "node": ">=18.0.0 <=20.x.x",
     "npm": ">=6.0.0"
   },
   "strapi": {
     "uuid": "9d1780a3-6f36-4143-8561-caef60d21e7b"
-  },
-  "devDependencies": {
-    "@types/koa-bodyparser": "^4.3.12"
   }
 }

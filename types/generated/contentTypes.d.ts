@@ -382,13 +382,6 @@ export interface ApiLearningPurposeLearningPurpose
         minLength: 2;
         maxLength: 20;
       }>;
-    purposeId: Attribute.String &
-      Attribute.Required &
-      Attribute.Unique &
-      Attribute.SetMinMaxLength<{
-        minLength: 4;
-        maxLength: 10;
-      }>;
     icon: Attribute.Media & Attribute.Required;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
@@ -401,6 +394,49 @@ export interface ApiLearningPurposeLearningPurpose
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::learning-purpose.learning-purpose',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiLernerLevelLernerLevel extends Schema.CollectionType {
+  collectionName: 'lerner_levels';
+  info: {
+    singularName: 'lerner-level';
+    pluralName: 'lerner-levels';
+    displayName: 'Lerner_Level';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    level: Attribute.String &
+      Attribute.Required &
+      Attribute.Unique &
+      Attribute.SetMinMaxLength<{
+        minLength: 2;
+        maxLength: 20;
+      }>;
+    levelId: Attribute.String &
+      Attribute.Required &
+      Attribute.Unique &
+      Attribute.SetMinMaxLength<{
+        minLength: 4;
+        maxLength: 10;
+      }>;
+    icon: Attribute.Media & Attribute.Required;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::lerner-level.lerner-level',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::lerner-level.lerner-level',
       'oneToOne',
       'admin::user'
     > &
@@ -434,11 +470,13 @@ export interface ApiUserProfileUserProfile extends Schema.CollectionType {
         minLength: 2;
         maxLength: 20;
       }>;
-    learning_purpose: Attribute.String &
+    lerner_level: Attribute.String &
+      Attribute.Unique &
       Attribute.SetMinMaxLength<{
         minLength: 4;
         maxLength: 10;
       }>;
+    learning_purpose: Attribute.Integer;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -781,6 +819,7 @@ declare module '@strapi/types' {
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'api::learning-purpose.learning-purpose': ApiLearningPurposeLearningPurpose;
+      'api::lerner-level.lerner-level': ApiLernerLevelLernerLevel;
       'api::user-profile.user-profile': ApiUserProfileUserProfile;
       'plugin::upload.file': PluginUploadFile;
       'plugin::upload.folder': PluginUploadFolder;

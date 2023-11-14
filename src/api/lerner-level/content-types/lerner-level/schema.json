@@ -1,0 +1,37 @@
+{
+  "kind": "collectionType",
+  "collectionName": "lerner_levels",
+  "info": {
+    "singularName": "lerner-level",
+    "pluralName": "lerner-levels",
+    "displayName": "Lerner_Level"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "level": {
+      "type": "string",
+      "required": true,
+      "unique": true,
+      "maxLength": 20,
+      "minLength": 2
+    },
+    "levelId": {
+      "type": "string",
+      "required": true,
+      "unique": true,
+      "maxLength": 10,
+      "minLength": 4
+    },
+    "icon": {
+      "allowedTypes": [
+        "images"
+      ],
+      "type": "media",
+      "multiple": false,
+      "required": true
+    }
+  }
+}

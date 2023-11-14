@@ -12,14 +12,12 @@ module.exports = createCoreController(
     async create(ctx) {
       try {
         const user = ctx.state.user;
-        const userprofileCount = await strapi.db
+        const profileData = await strapi.db
           .query("api::user-profile.user-profile")
-          .count({
-            where: {
-              users_permissions_user: user.id,
-            },
+          .findOne({
+            where: { users_permissions_user: user.id },
           });
-        if (userprofileCount >= 1) {
+        if (profileData) {
           return ctx.badRequest("User profile already exists");
         }
         const result = await strapi.entityService.create(
