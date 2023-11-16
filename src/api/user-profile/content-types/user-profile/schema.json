@@ -35,6 +35,15 @@
     },
     "learning_purpose": {
       "type": "integer"
+    },
+    "learner_level": {
+      "type": "integer"
+    },
+    "learning_goal": {
+      "type": "integer"
+    },
+    "learner_starting_point": {
+      "type": "integer"
     }
   }
 }

@@ -712,6 +712,50 @@ export interface ApiLearnerLevelLearnerLevel extends Schema.CollectionType {
   };
 }
 
+export interface ApiLearnerStartingPointLearnerStartingPoint
+  extends Schema.CollectionType {
+  collectionName: 'learner_starting_points';
+  info: {
+    singularName: 'learner-starting-point';
+    pluralName: 'learner-starting-points';
+    displayName: 'Learner_starting_point';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    title: Attribute.String &
+      Attribute.Required &
+      Attribute.Unique &
+      Attribute.SetMinMaxLength<{
+        minLength: 2;
+        maxLength: 50;
+      }>;
+    subtitle: Attribute.String &
+      Attribute.Required &
+      Attribute.Unique &
+      Attribute.SetMinMaxLength<{
+        minLength: 2;
+        maxLength: 50;
+      }>;
+    icon: Attribute.Media & Attribute.Required;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::learner-starting-point.learner-starting-point',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::learner-starting-point.learner-starting-point',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiLearningGoalLearningGoal extends Schema.CollectionType {
   collectionName: 'learning_goals';
   info: {
@@ -824,6 +868,9 @@ export interface ApiUserProfileUserProfile extends Schema.CollectionType {
         maxLength: 10;
       }>;
     learning_purpose: Attribute.Integer;
+    learner_level: Attribute.Integer;
+    learning_goal: Attribute.Integer;
+    learner_starting_point: Attribute.Integer;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -858,6 +905,7 @@ declare module '@strapi/types' {
       'plugin::users-permissions.role': PluginUsersPermissionsRole;
       'plugin::users-permissions.user': PluginUsersPermissionsUser;
       'api::learner-level.learner-level': ApiLearnerLevelLearnerLevel;
+      'api::learner-starting-point.learner-starting-point': ApiLearnerStartingPointLearnerStartingPoint;
       'api::learning-goal.learning-goal': ApiLearningGoalLearningGoal;
       'api::learning-purpose.learning-purpose': ApiLearningPurposeLearningPurpose;
       'api::user-profile.user-profile': ApiUserProfileUserProfile;
