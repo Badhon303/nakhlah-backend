@@ -407,6 +407,7 @@ export interface ApiLernerLevelLernerLevel extends Schema.CollectionType {
     singularName: 'lerner-level';
     pluralName: 'lerner-levels';
     displayName: 'Lerner_Level';
+    description: '';
   };
   options: {
     draftAndPublish: false;
@@ -418,13 +419,6 @@ export interface ApiLernerLevelLernerLevel extends Schema.CollectionType {
       Attribute.SetMinMaxLength<{
         minLength: 2;
         maxLength: 20;
-      }>;
-    levelId: Attribute.String &
-      Attribute.Required &
-      Attribute.Unique &
-      Attribute.SetMinMaxLength<{
-        minLength: 4;
-        maxLength: 10;
       }>;
     icon: Attribute.Media & Attribute.Required;
     createdAt: Attribute.DateTime;

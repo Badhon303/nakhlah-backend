@@ -4,7 +4,8 @@
   "info": {
     "singularName": "lerner-level",
     "pluralName": "lerner-levels",
-    "displayName": "Lerner_Level"
+    "displayName": "Lerner_Level",
+    "description": ""
   },
   "options": {
     "draftAndPublish": false
@@ -18,20 +19,13 @@
       "maxLength": 20,
       "minLength": 2
     },
-    "levelId": {
-      "type": "string",
-      "required": true,
-      "unique": true,
-      "maxLength": 10,
-      "minLength": 4
-    },
     "icon": {
-      "allowedTypes": [
-        "images"
-      ],
       "type": "media",
       "multiple": false,
-      "required": true
+      "required": true,
+      "allowedTypes": [
+        "images"
+      ]
     }
   }
 }
