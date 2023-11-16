@@ -1,11 +1,10 @@
 {
   "kind": "collectionType",
-  "collectionName": "lerner_levels",
+  "collectionName": "learner_levels",
   "info": {
-    "singularName": "lerner-level",
-    "pluralName": "lerner-levels",
-    "displayName": "Lerner_Level",
-    "description": ""
+    "singularName": "learner-level",
+    "pluralName": "learner-levels",
+    "displayName": "Learner_Level"
   },
   "options": {
     "draftAndPublish": false
@@ -20,12 +19,12 @@
       "minLength": 2
     },
     "icon": {
-      "type": "media",
-      "multiple": false,
-      "required": true,
       "allowedTypes": [
         "images"
-      ]
+      ],
+      "type": "media",
+      "multiple": false,
+      "required": true
     }
   }
 }

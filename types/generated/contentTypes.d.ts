@@ -362,132 +362,6 @@ export interface AdminTransferTokenPermission extends Schema.CollectionType {
   };
 }
 
-export interface ApiLearningPurposeLearningPurpose
-  extends Schema.CollectionType {
-  collectionName: 'learning_purposes';
-  info: {
-    singularName: 'learning-purpose';
-    pluralName: 'learning-purposes';
-    displayName: 'Learning_Purpose';
-    description: '';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    purpose: Attribute.String &
-      Attribute.Required &
-      Attribute.Unique &
-      Attribute.SetMinMaxLength<{
-        minLength: 2;
-        maxLength: 20;
-      }>;
-    icon: Attribute.Media & Attribute.Required;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    publishedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'api::learning-purpose.learning-purpose',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<
-      'api::learning-purpose.learning-purpose',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-  };
-}
-
-export interface ApiLernerLevelLernerLevel extends Schema.CollectionType {
-  collectionName: 'lerner_levels';
-  info: {
-    singularName: 'lerner-level';
-    pluralName: 'lerner-levels';
-    displayName: 'Lerner_Level';
-    description: '';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    level: Attribute.String &
-      Attribute.Required &
-      Attribute.Unique &
-      Attribute.SetMinMaxLength<{
-        minLength: 2;
-        maxLength: 20;
-      }>;
-    icon: Attribute.Media & Attribute.Required;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'api::lerner-level.lerner-level',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<
-      'api::lerner-level.lerner-level',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-  };
-}
-
-export interface ApiUserProfileUserProfile extends Schema.CollectionType {
-  collectionName: 'user_profiles';
-  info: {
-    singularName: 'user-profile';
-    pluralName: 'user-profiles';
-    displayName: 'User_Profile';
-    description: '';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    first_name: Attribute.String &
-      Attribute.SetMinMaxLength<{
-        maxLength: 20;
-      }>;
-    users_permissions_user: Attribute.Relation<
-      'api::user-profile.user-profile',
-      'oneToOne',
-      'plugin::users-permissions.user'
-    >;
-    last_name: Attribute.String &
-      Attribute.SetMinMaxLength<{
-        minLength: 2;
-        maxLength: 20;
-      }>;
-    lerner_level: Attribute.String &
-      Attribute.Unique &
-      Attribute.SetMinMaxLength<{
-        minLength: 4;
-        maxLength: 10;
-      }>;
-    learning_purpose: Attribute.Integer;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'api::user-profile.user-profile',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<
-      'api::user-profile.user-profile',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-  };
-}
-
 export interface PluginUploadFile extends Schema.CollectionType {
   collectionName: 'files';
   info: {
@@ -802,6 +676,171 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
   };
 }
 
+export interface ApiLearnerLevelLearnerLevel extends Schema.CollectionType {
+  collectionName: 'learner_levels';
+  info: {
+    singularName: 'learner-level';
+    pluralName: 'learner-levels';
+    displayName: 'Learner_Level';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    level: Attribute.String &
+      Attribute.Required &
+      Attribute.Unique &
+      Attribute.SetMinMaxLength<{
+        minLength: 2;
+        maxLength: 20;
+      }>;
+    icon: Attribute.Media & Attribute.Required;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::learner-level.learner-level',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::learner-level.learner-level',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiLearningGoalLearningGoal extends Schema.CollectionType {
+  collectionName: 'learning_goals';
+  info: {
+    singularName: 'learning-goal';
+    pluralName: 'learning-goals';
+    displayName: 'Learning_Goal';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    time: Attribute.BigInteger &
+      Attribute.Required &
+      Attribute.SetMinMax<{
+        min: '5';
+        max: '60';
+      }>;
+    goal: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        minLength: 2;
+        maxLength: 20;
+      }>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::learning-goal.learning-goal',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::learning-goal.learning-goal',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiLearningPurposeLearningPurpose
+  extends Schema.CollectionType {
+  collectionName: 'learning_purposes';
+  info: {
+    singularName: 'learning-purpose';
+    pluralName: 'learning-purposes';
+    displayName: 'Learning_Purpose';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    purpose: Attribute.String &
+      Attribute.Required &
+      Attribute.Unique &
+      Attribute.SetMinMaxLength<{
+        minLength: 2;
+        maxLength: 20;
+      }>;
+    icon: Attribute.Media & Attribute.Required;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::learning-purpose.learning-purpose',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::learning-purpose.learning-purpose',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiUserProfileUserProfile extends Schema.CollectionType {
+  collectionName: 'user_profiles';
+  info: {
+    singularName: 'user-profile';
+    pluralName: 'user-profiles';
+    displayName: 'User_Profile';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    first_name: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        maxLength: 20;
+      }>;
+    users_permissions_user: Attribute.Relation<
+      'api::user-profile.user-profile',
+      'oneToOne',
+      'plugin::users-permissions.user'
+    >;
+    last_name: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        minLength: 2;
+        maxLength: 20;
+      }>;
+    lerner_level: Attribute.String &
+      Attribute.Unique &
+      Attribute.SetMinMaxLength<{
+        minLength: 4;
+        maxLength: 10;
+      }>;
+    learning_purpose: Attribute.Integer;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::user-profile.user-profile',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::user-profile.user-profile',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 declare module '@strapi/types' {
   export module Shared {
     export interface ContentTypes {
@@ -812,15 +851,16 @@ declare module '@strapi/types' {
       'admin::api-token-permission': AdminApiTokenPermission;
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
-      'api::learning-purpose.learning-purpose': ApiLearningPurposeLearningPurpose;
-      'api::lerner-level.lerner-level': ApiLernerLevelLernerLevel;
-      'api::user-profile.user-profile': ApiUserProfileUserProfile;
       'plugin::upload.file': PluginUploadFile;
       'plugin::upload.folder': PluginUploadFolder;
       'plugin::i18n.locale': PluginI18NLocale;
       'plugin::users-permissions.permission': PluginUsersPermissionsPermission;
       'plugin::users-permissions.role': PluginUsersPermissionsRole;
       'plugin::users-permissions.user': PluginUsersPermissionsUser;
+      'api::learner-level.learner-level': ApiLearnerLevelLearnerLevel;
+      'api::learning-goal.learning-goal': ApiLearningGoalLearningGoal;
+      'api::learning-purpose.learning-purpose': ApiLearningPurposeLearningPurpose;
+      'api::user-profile.user-profile': ApiUserProfileUserProfile;
     }
   }
 }

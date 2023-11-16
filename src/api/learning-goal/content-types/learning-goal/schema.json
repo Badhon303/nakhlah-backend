@@ -1,0 +1,28 @@
+{
+  "kind": "collectionType",
+  "collectionName": "learning_goals",
+  "info": {
+    "singularName": "learning-goal",
+    "pluralName": "learning-goals",
+    "displayName": "Learning_Goal"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "time": {
+      "type": "biginteger",
+      "required": true,
+      "unique": false,
+      "max": "60",
+      "min": "5"
+    },
+    "goal": {
+      "type": "string",
+      "maxLength": 20,
+      "minLength": 2,
+      "required": true
+    }
+  }
+}
