@@ -762,6 +762,7 @@ export interface ApiLearningGoalLearningGoal extends Schema.CollectionType {
     singularName: 'learning-goal';
     pluralName: 'learning-goals';
     displayName: 'Learning_Goal';
+    description: '';
   };
   options: {
     draftAndPublish: false;
@@ -769,12 +770,14 @@ export interface ApiLearningGoalLearningGoal extends Schema.CollectionType {
   attributes: {
     time: Attribute.BigInteger &
       Attribute.Required &
+      Attribute.Unique &
       Attribute.SetMinMax<{
         min: '5';
         max: '60';
       }>;
     goal: Attribute.String &
       Attribute.Required &
+      Attribute.Unique &
       Attribute.SetMinMaxLength<{
         minLength: 2;
         maxLength: 20;
@@ -789,6 +792,166 @@ export interface ApiLearningGoalLearningGoal extends Schema.CollectionType {
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::learning-goal.learning-goal',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiLearningJourneyLearningJourney
+  extends Schema.CollectionType {
+  collectionName: 'learning_journeys';
+  info: {
+    singularName: 'learning-journey';
+    pluralName: 'learning-journeys';
+    displayName: 'Learning_Journey';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    title: Attribute.String &
+      Attribute.Required &
+      Attribute.Unique &
+      Attribute.SetMinMaxLength<{
+        minLength: 2;
+        maxLength: 20;
+      }>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::learning-journey.learning-journey',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::learning-journey.learning-journey',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiLearningJourneyLessonLearningJourneyLesson
+  extends Schema.CollectionType {
+  collectionName: 'learning_journey_lessons';
+  info: {
+    singularName: 'learning-journey-lesson';
+    pluralName: 'learning-journey-lessons';
+    displayName: 'Learning_Journey_Lesson';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    title: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        minLength: 2;
+        maxLength: 20;
+      }>;
+    learning_journey_level: Attribute.Relation<
+      'api::learning-journey-lesson.learning-journey-lesson',
+      'oneToOne',
+      'api::learning-journey-level.learning-journey-level'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::learning-journey-lesson.learning-journey-lesson',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::learning-journey-lesson.learning-journey-lesson',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiLearningJourneyLevelLearningJourneyLevel
+  extends Schema.CollectionType {
+  collectionName: 'learning_journey_levels';
+  info: {
+    singularName: 'learning-journey-level';
+    pluralName: 'learning-journey-levels';
+    displayName: 'Learning_Journey_Level';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    title: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        minLength: 2;
+        maxLength: 20;
+      }>;
+    learning_journey_unit: Attribute.Relation<
+      'api::learning-journey-level.learning-journey-level',
+      'oneToOne',
+      'api::learning-journey-unit.learning-journey-unit'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::learning-journey-level.learning-journey-level',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::learning-journey-level.learning-journey-level',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiLearningJourneyUnitLearningJourneyUnit
+  extends Schema.CollectionType {
+  collectionName: 'learning_journey_units';
+  info: {
+    singularName: 'learning-journey-unit';
+    pluralName: 'learning-journey-units';
+    displayName: 'Learning_Journey_Unit';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    title: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        minLength: 2;
+        maxLength: 20;
+      }>;
+    learning_journey: Attribute.Relation<
+      'api::learning-journey-unit.learning-journey-unit',
+      'oneToOne',
+      'api::learning-journey.learning-journey'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::learning-journey-unit.learning-journey-unit',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::learning-journey-unit.learning-journey-unit',
       'oneToOne',
       'admin::user'
     > &
@@ -828,6 +991,41 @@ export interface ApiLearningPurposeLearningPurpose
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::learning-purpose.learning-purpose',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiQuestionQuestion extends Schema.CollectionType {
+  collectionName: 'questions';
+  info: {
+    singularName: 'question';
+    pluralName: 'questions';
+    displayName: 'question';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    question: Attribute.String &
+      Attribute.Required &
+      Attribute.Unique &
+      Attribute.SetMinMaxLength<{
+        minLength: 2;
+        maxLength: 100;
+      }>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::question.question',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::question.question',
       'oneToOne',
       'admin::user'
     > &
@@ -907,7 +1105,12 @@ declare module '@strapi/types' {
       'api::learner-level.learner-level': ApiLearnerLevelLearnerLevel;
       'api::learner-starting-point.learner-starting-point': ApiLearnerStartingPointLearnerStartingPoint;
       'api::learning-goal.learning-goal': ApiLearningGoalLearningGoal;
+      'api::learning-journey.learning-journey': ApiLearningJourneyLearningJourney;
+      'api::learning-journey-lesson.learning-journey-lesson': ApiLearningJourneyLessonLearningJourneyLesson;
+      'api::learning-journey-level.learning-journey-level': ApiLearningJourneyLevelLearningJourneyLevel;
+      'api::learning-journey-unit.learning-journey-unit': ApiLearningJourneyUnitLearningJourneyUnit;
       'api::learning-purpose.learning-purpose': ApiLearningPurposeLearningPurpose;
+      'api::question.question': ApiQuestionQuestion;
       'api::user-profile.user-profile': ApiUserProfileUserProfile;
     }
   }

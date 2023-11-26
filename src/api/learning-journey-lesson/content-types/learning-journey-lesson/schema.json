@@ -1,0 +1,28 @@
+{
+  "kind": "collectionType",
+  "collectionName": "learning_journey_lessons",
+  "info": {
+    "singularName": "learning-journey-lesson",
+    "pluralName": "learning-journey-lessons",
+    "displayName": "Learning_Journey_Lesson",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "unique": false,
+      "maxLength": 20,
+      "minLength": 2
+    },
+    "learning_journey_level": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::learning-journey-level.learning-journey-level"
+    }
+  }
+}

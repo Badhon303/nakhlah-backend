@@ -1,0 +1,28 @@
+{
+  "kind": "collectionType",
+  "collectionName": "learning_journey_levels",
+  "info": {
+    "singularName": "learning-journey-level",
+    "pluralName": "learning-journey-levels",
+    "displayName": "Learning_Journey_Level",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "unique": false,
+      "maxLength": 20,
+      "minLength": 2
+    },
+    "learning_journey_unit": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::learning-journey-unit.learning-journey-unit"
+    }
+  }
+}

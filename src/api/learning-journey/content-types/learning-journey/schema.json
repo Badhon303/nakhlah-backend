@@ -1,0 +1,23 @@
+{
+  "kind": "collectionType",
+  "collectionName": "learning_journeys",
+  "info": {
+    "singularName": "learning-journey",
+    "pluralName": "learning-journeys",
+    "displayName": "Learning_Journey",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "maxLength": 20,
+      "minLength": 2,
+      "required": true,
+      "unique": true
+    }
+  }
+}

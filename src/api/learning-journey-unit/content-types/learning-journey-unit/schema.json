@@ -1,0 +1,28 @@
+{
+  "kind": "collectionType",
+  "collectionName": "learning_journey_units",
+  "info": {
+    "singularName": "learning-journey-unit",
+    "pluralName": "learning-journey-units",
+    "displayName": "Learning_Journey_Unit",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "maxLength": 20,
+      "minLength": 2,
+      "unique": false,
+      "required": true
+    },
+    "learning_journey": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::learning-journey.learning-journey"
+    }
+  }
+}
