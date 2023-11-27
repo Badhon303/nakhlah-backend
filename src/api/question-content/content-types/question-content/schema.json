@@ -1,0 +1,30 @@
+{
+  "kind": "collectionType",
+  "collectionName": "question_contents",
+  "info": {
+    "singularName": "question-content",
+    "pluralName": "question-contents",
+    "displayName": "Question_Content"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "question": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::question.question"
+    },
+    "question_type": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::question-type.question-type"
+    },
+    "content": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::content.content"
+    }
+  }
+}

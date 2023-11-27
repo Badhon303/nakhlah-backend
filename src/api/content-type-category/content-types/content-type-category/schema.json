@@ -1,0 +1,22 @@
+{
+  "kind": "collectionType",
+  "collectionName": "content_type_categories",
+  "info": {
+    "singularName": "content-type-category",
+    "pluralName": "content-type-categories",
+    "displayName": "Content_Type_Category"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "unique": true,
+      "maxLength": 20,
+      "minLength": 2
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "kind": "collectionType",
+  "collectionName": "question_content_options",
+  "info": {
+    "singularName": "question-content-option",
+    "pluralName": "question-content-options",
+    "displayName": "Question_Content_Option",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "question_content": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::question-content.question-content"
+    }
+  }
+}
