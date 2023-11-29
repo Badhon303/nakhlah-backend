@@ -16,6 +16,11 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::question-content.question-content"
+    },
+    "content": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::content.content"
     }
   }
 }

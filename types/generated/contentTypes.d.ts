@@ -763,6 +763,7 @@ export interface ApiContentTypeCategoryContentTypeCategory
     singularName: 'content-type-category';
     pluralName: 'content-type-categories';
     displayName: 'Content_Type_Category';
+    description: '';
   };
   options: {
     draftAndPublish: false;
@@ -1210,6 +1211,11 @@ export interface ApiQuestionContentOptionQuestionContentOption
       'api::question-content-option.question-content-option',
       'oneToOne',
       'api::question-content.question-content'
+    >;
+    content: Attribute.Relation<
+      'api::question-content-option.question-content-option',
+      'oneToOne',
+      'api::content.content'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;

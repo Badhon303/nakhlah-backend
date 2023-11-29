@@ -4,7 +4,8 @@
   "info": {
     "singularName": "content-type-category",
     "pluralName": "content-type-categories",
-    "displayName": "Content_Type_Category"
+    "displayName": "Content_Type_Category",
+    "description": ""
   },
   "options": {
     "draftAndPublish": false
