@@ -1,0 +1,26 @@
+{
+  "kind": "collectionType",
+  "collectionName": "journey_map_question_contents",
+  "info": {
+    "singularName": "journey-map-question-content",
+    "pluralName": "journey-map-question-contents",
+    "displayName": "Journey_Map_Question_Content",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "learning_journey_lesson": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::learning-journey-lesson.learning-journey-lesson"
+    },
+    "question_content": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::question-content.question-content"
+    }
+  }
+}

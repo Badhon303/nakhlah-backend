@@ -793,6 +793,46 @@ export interface ApiContentTypeCategoryContentTypeCategory
   };
 }
 
+export interface ApiJourneyMapQuestionContentJourneyMapQuestionContent
+  extends Schema.CollectionType {
+  collectionName: 'journey_map_question_contents';
+  info: {
+    singularName: 'journey-map-question-content';
+    pluralName: 'journey-map-question-contents';
+    displayName: 'Journey_Map_Question_Content';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    learning_journey_lesson: Attribute.Relation<
+      'api::journey-map-question-content.journey-map-question-content',
+      'oneToOne',
+      'api::learning-journey-lesson.learning-journey-lesson'
+    >;
+    question_content: Attribute.Relation<
+      'api::journey-map-question-content.journey-map-question-content',
+      'oneToOne',
+      'api::question-content.question-content'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::journey-map-question-content.journey-map-question-content',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::journey-map-question-content.journey-map-question-content',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiLearnerLevelLearnerLevel extends Schema.CollectionType {
   collectionName: 'learner_levels';
   info: {
@@ -1341,6 +1381,7 @@ declare module '@strapi/types' {
       'api::content.content': ApiContentContent;
       'api::content-type.content-type': ApiContentTypeContentType;
       'api::content-type-category.content-type-category': ApiContentTypeCategoryContentTypeCategory;
+      'api::journey-map-question-content.journey-map-question-content': ApiJourneyMapQuestionContentJourneyMapQuestionContent;
       'api::learner-level.learner-level': ApiLearnerLevelLearnerLevel;
       'api::learner-starting-point.learner-starting-point': ApiLearnerStartingPointLearnerStartingPoint;
       'api::learning-goal.learning-goal': ApiLearningGoalLearningGoal;
