@@ -4,7 +4,8 @@
   "info": {
     "singularName": "content",
     "pluralName": "contents",
-    "displayName": "Content"
+    "displayName": "Content",
+    "description": ""
   },
   "options": {
     "draftAndPublish": false
@@ -27,6 +28,18 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::content-type-category.content-type-category"
+    },
+    "image": {
+      "allowedTypes": [
+        "images"
+      ],
+      "type": "media",
+      "multiple": false
+    },
+    "audio": {
+      "type": "string",
+      "maxLength": 50,
+      "minLength": 2
     }
   }
 }

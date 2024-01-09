@@ -682,6 +682,7 @@ export interface ApiContentContent extends Schema.CollectionType {
     singularName: 'content';
     pluralName: 'contents';
     displayName: 'Content';
+    description: '';
   };
   options: {
     draftAndPublish: false;
@@ -704,6 +705,12 @@ export interface ApiContentContent extends Schema.CollectionType {
       'oneToOne',
       'api::content-type-category.content-type-category'
     >;
+    image: Attribute.Media;
+    audio: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        minLength: 2;
+        maxLength: 50;
+      }>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -1173,6 +1180,11 @@ export interface ApiQuestionQuestion extends Schema.CollectionType {
         minLength: 2;
         maxLength: 100;
       }>;
+    question_content: Attribute.Relation<
+      'api::question.question',
+      'oneToOne',
+      'api::question-content.question-content'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -1197,6 +1209,7 @@ export interface ApiQuestionContentQuestionContent
     singularName: 'question-content';
     pluralName: 'question-contents';
     displayName: 'Question_Content';
+    description: '';
   };
   options: {
     draftAndPublish: false;

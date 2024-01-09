@@ -17,6 +17,12 @@
       "unique": true,
       "maxLength": 100,
       "minLength": 2
+    },
+    "question_content": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::question-content.question-content",
+      "mappedBy": "question"
     }
   }
 }
