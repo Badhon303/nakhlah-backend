@@ -14,7 +14,7 @@
   "attributes": {
     "title": {
       "type": "string",
-      "required": true,
+      "required": false,
       "unique": true,
       "maxLength": 100,
       "minLength": 2
@@ -30,11 +30,12 @@
       "target": "api::content-type-category.content-type-category"
     },
     "image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
       "allowedTypes": [
         "images"
-      ],
-      "type": "media",
-      "multiple": false
+      ]
     },
     "audio": {
       "type": "string",
