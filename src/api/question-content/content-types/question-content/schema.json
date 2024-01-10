@@ -18,15 +18,15 @@
       "target": "api::question.question",
       "inversedBy": "question_content"
     },
-    "question_type": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::question-type.question-type"
-    },
     "content": {
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::content.content"
+    },
+    "question_type": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::question-type.question-type"
     }
   }
 }

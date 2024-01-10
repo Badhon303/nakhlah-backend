@@ -1,0 +1,35 @@
+{
+  "kind": "collectionType",
+  "collectionName": "word_matchings",
+  "info": {
+    "singularName": "word-matching",
+    "pluralName": "word-matchings",
+    "displayName": "Word_Matching"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "item": {
+      "type": "string",
+      "required": true,
+      "maxLength": 50,
+      "minLength": 1
+    },
+    "partner_item": {
+      "type": "string",
+      "required": true,
+      "maxLength": 50,
+      "minLength": 1
+    },
+    "question": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::question.question"
+    },
+    "isLeft": {
+      "type": "boolean"
+    }
+  }
+}

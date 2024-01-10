@@ -4,7 +4,8 @@
   "info": {
     "singularName": "question",
     "pluralName": "questions",
-    "displayName": "question"
+    "displayName": "question",
+    "description": ""
   },
   "options": {
     "draftAndPublish": false
@@ -13,7 +14,7 @@
   "attributes": {
     "question": {
       "type": "string",
-      "required": true,
+      "required": false,
       "unique": true,
       "maxLength": 100,
       "minLength": 2
@@ -23,6 +24,28 @@
       "relation": "oneToOne",
       "target": "api::question-content.question-content",
       "mappedBy": "question"
+    },
+    "question_type_category": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::question-type-category.question-type-category"
+    },
+    "question_type": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::question-type.question-type"
+    },
+    "image": {
+      "allowedTypes": [
+        "images"
+      ],
+      "type": "media",
+      "multiple": false
+    },
+    "audio": {
+      "type": "string",
+      "maxLength": 20,
+      "minLength": 2
     }
   }
 }

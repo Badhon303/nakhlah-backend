@@ -1,0 +1,22 @@
+{
+  "kind": "collectionType",
+  "collectionName": "question_type_categories",
+  "info": {
+    "singularName": "question-type-category",
+    "pluralName": "question-type-categories",
+    "displayName": "Question_Type_Category"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "unique": true,
+      "maxLength": 20,
+      "minLength": 2
+    }
+  }
+}
