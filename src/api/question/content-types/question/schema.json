@@ -30,17 +30,13 @@
       "relation": "oneToOne",
       "target": "api::question-type-category.question-type-category"
     },
-    "question_type": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::question-type.question-type"
-    },
     "image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
       "allowedTypes": [
         "images"
-      ],
-      "type": "media",
-      "multiple": false
+      ]
     },
     "audio": {
       "type": "string",

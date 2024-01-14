@@ -4,7 +4,8 @@
   "info": {
     "singularName": "word-matching",
     "pluralName": "word-matchings",
-    "displayName": "Word_Matching"
+    "displayName": "Word_Matching",
+    "description": ""
   },
   "options": {
     "draftAndPublish": false
@@ -23,13 +24,14 @@
       "maxLength": 50,
       "minLength": 1
     },
-    "question": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::question.question"
-    },
     "isLeft": {
       "type": "boolean"
+    },
+    "question_content": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::question-content.question-content",
+      "inversedBy": "word_matchings"
     }
   }
 }

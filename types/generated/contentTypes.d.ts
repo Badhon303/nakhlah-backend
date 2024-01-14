@@ -676,52 +676,6 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
   };
 }
 
-export interface ApiClauseMatchingClauseMatching extends Schema.CollectionType {
-  collectionName: 'clause_matchings';
-  info: {
-    singularName: 'clause-matching';
-    pluralName: 'clause-matchings';
-    displayName: 'Clause_Matching';
-    description: '';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    title: Attribute.String &
-      Attribute.Required &
-      Attribute.SetMinMaxLength<{
-        minLength: 1;
-        maxLength: 50;
-      }>;
-    question: Attribute.Relation<
-      'api::clause-matching.clause-matching',
-      'oneToOne',
-      'api::question.question'
-    >;
-    sequence: Attribute.Integer &
-      Attribute.Required &
-      Attribute.SetMinMax<{
-        min: 0;
-        max: 100;
-      }>;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'api::clause-matching.clause-matching',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<
-      'api::clause-matching.clause-matching',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-  };
-}
-
 export interface ApiContentContent extends Schema.CollectionType {
   collectionName: 'contents';
   info: {
@@ -1235,11 +1189,6 @@ export interface ApiQuestionQuestion extends Schema.CollectionType {
       'oneToOne',
       'api::question-type-category.question-type-category'
     >;
-    question_type: Attribute.Relation<
-      'api::question.question',
-      'oneToOne',
-      'api::question-type.question-type'
-    >;
     image: Attribute.Media;
     audio: Attribute.String &
       Attribute.SetMinMaxLength<{
@@ -1290,6 +1239,11 @@ export interface ApiQuestionContentQuestionContent
       'api::question-content.question-content',
       'oneToOne',
       'api::question-type.question-type'
+    >;
+    word_matchings: Attribute.Relation<
+      'api::question-content.question-content',
+      'oneToMany',
+      'api::word-matching.word-matching'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
@@ -1478,6 +1432,7 @@ export interface ApiWordMatchingWordMatching extends Schema.CollectionType {
     singularName: 'word-matching';
     pluralName: 'word-matchings';
     displayName: 'Word_Matching';
+    description: '';
   };
   options: {
     draftAndPublish: false;
@@ -1495,12 +1450,12 @@ export interface ApiWordMatchingWordMatching extends Schema.CollectionType {
         minLength: 1;
         maxLength: 50;
       }>;
-    question: Attribute.Relation<
-      'api::word-matching.word-matching',
-      'oneToOne',
-      'api::question.question'
-    >;
     isLeft: Attribute.Boolean;
+    question_content: Attribute.Relation<
+      'api::word-matching.word-matching',
+      'manyToOne',
+      'api::question-content.question-content'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -1534,7 +1489,6 @@ declare module '@strapi/types' {
       'plugin::users-permissions.permission': PluginUsersPermissionsPermission;
       'plugin::users-permissions.role': PluginUsersPermissionsRole;
       'plugin::users-permissions.user': PluginUsersPermissionsUser;
-      'api::clause-matching.clause-matching': ApiClauseMatchingClauseMatching;
       'api::content.content': ApiContentContent;
       'api::content-type.content-type': ApiContentTypeContentType;
       'api::content-type-category.content-type-category': ApiContentTypeCategoryContentTypeCategory;

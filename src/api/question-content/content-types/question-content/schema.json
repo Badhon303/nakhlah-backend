@@ -27,6 +27,12 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::question-type.question-type"
+    },
+    "word_matchings": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::word-matching.word-matching",
+      "mappedBy": "question_content"
     }
   }
 }
