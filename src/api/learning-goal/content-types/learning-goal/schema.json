@@ -19,12 +19,13 @@
       "max": "60",
       "min": "5"
     },
-    "goal": {
-      "type": "string",
-      "maxLength": 20,
-      "minLength": 2,
-      "required": true,
-      "unique": true
+    "icon": {
+      "allowedTypes": [
+        "images"
+      ],
+      "type": "media",
+      "multiple": false,
+      "required": true
     }
   }
 }

@@ -733,6 +733,7 @@ export interface ApiContentTypeContentType extends Schema.CollectionType {
     singularName: 'content-type';
     pluralName: 'content-types';
     displayName: 'Content_Type';
+    description: '';
   };
   options: {
     draftAndPublish: false;
@@ -743,7 +744,7 @@ export interface ApiContentTypeContentType extends Schema.CollectionType {
       Attribute.Unique &
       Attribute.SetMinMaxLength<{
         minLength: 2;
-        maxLength: 20;
+        maxLength: 50;
       }>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
@@ -938,13 +939,7 @@ export interface ApiLearningGoalLearningGoal extends Schema.CollectionType {
         min: '5';
         max: '60';
       }>;
-    goal: Attribute.String &
-      Attribute.Required &
-      Attribute.Unique &
-      Attribute.SetMinMaxLength<{
-        minLength: 2;
-        maxLength: 20;
-      }>;
+    icon: Attribute.Media & Attribute.Required;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
