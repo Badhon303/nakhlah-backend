@@ -1406,6 +1406,42 @@ export interface ApiQuestionContentOptionQuestionContentOption
   };
 }
 
+export interface ApiQuestionContentTypeQuestionContentType
+  extends Schema.CollectionType {
+  collectionName: 'question_content_types';
+  info: {
+    singularName: 'question-content-type';
+    pluralName: 'question-content-types';
+    displayName: 'Question_Content_Type';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    title: Attribute.String &
+      Attribute.Required &
+      Attribute.Unique &
+      Attribute.SetMinMaxLength<{
+        minLength: 1;
+        maxLength: 100;
+      }>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::question-content-type.question-content-type',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::question-content-type.question-content-type',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiQuestionTypeQuestionType extends Schema.CollectionType {
   collectionName: 'question_types';
   info: {
@@ -1610,6 +1646,7 @@ declare module '@strapi/types' {
       'api::question.question': ApiQuestionQuestion;
       'api::question-content.question-content': ApiQuestionContentQuestionContent;
       'api::question-content-option.question-content-option': ApiQuestionContentOptionQuestionContentOption;
+      'api::question-content-type.question-content-type': ApiQuestionContentTypeQuestionContentType;
       'api::question-type.question-type': ApiQuestionTypeQuestionType;
       'api::question-type-category.question-type-category': ApiQuestionTypeCategoryQuestionTypeCategory;
       'api::user-profile.user-profile': ApiUserProfileUserProfile;
