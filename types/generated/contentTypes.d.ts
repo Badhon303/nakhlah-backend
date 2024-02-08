@@ -1299,6 +1299,11 @@ export interface ApiQuestionQuestion extends Schema.CollectionType {
         minLength: 2;
         maxLength: 20;
       }>;
+    question_content_type: Attribute.Relation<
+      'api::question.question',
+      'oneToOne',
+      'api::question-content-type.question-content-type'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<

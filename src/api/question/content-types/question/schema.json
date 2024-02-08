@@ -42,6 +42,11 @@
       "type": "string",
       "maxLength": 20,
       "minLength": 2
+    },
+    "question_content_type": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::question-content-type.question-content-type"
     }
   }
 }
