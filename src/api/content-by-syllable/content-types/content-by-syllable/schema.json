@@ -1,0 +1,41 @@
+{
+  "kind": "collectionType",
+  "collectionName": "content_by_syllables",
+  "info": {
+    "singularName": "content-by-syllable",
+    "pluralName": "content-by-syllables",
+    "displayName": "Content_By_Syllable",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "maxLength": 100,
+      "minLength": 1
+    },
+    "sequence": {
+      "type": "integer",
+      "max": 99,
+      "min": 0
+    },
+    "content": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::content.content"
+    },
+    "language": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::language.language"
+    },
+    "content_details_by_language": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::content-details-by-language.content-details-by-language"
+    }
+  }
+}

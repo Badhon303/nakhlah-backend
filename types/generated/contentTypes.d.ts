@@ -798,22 +798,21 @@ export interface ApiContentContent extends Schema.CollectionType {
         minLength: 2;
         maxLength: 100;
       }>;
-    content_type: Attribute.Relation<
-      'api::content.content',
-      'oneToOne',
-      'api::content-type.content-type'
-    >;
     content_type_category: Attribute.Relation<
       'api::content.content',
       'oneToOne',
       'api::content-type-category.content-type-category'
     >;
-    image: Attribute.Media;
-    audio: Attribute.String &
-      Attribute.SetMinMaxLength<{
-        minLength: 2;
-        maxLength: 50;
-      }>;
+    question_content: Attribute.Relation<
+      'api::content.content',
+      'oneToOne',
+      'api::question-content.question-content'
+    >;
+    content_type: Attribute.Relation<
+      'api::content.content',
+      'oneToOne',
+      'api::content-type.content-type'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -824,6 +823,210 @@ export interface ApiContentContent extends Schema.CollectionType {
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::content.content',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiContentByClauseContentByClause
+  extends Schema.CollectionType {
+  collectionName: 'content_by_clauses';
+  info: {
+    singularName: 'content-by-clause';
+    pluralName: 'content-by-clauses';
+    displayName: 'Content_By_Clause';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    title: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        minLength: 1;
+        maxLength: 100;
+      }>;
+    sequence: Attribute.Integer &
+      Attribute.SetMinMax<
+        {
+          min: 0;
+          max: 99;
+        },
+        number
+      >;
+    content: Attribute.Relation<
+      'api::content-by-clause.content-by-clause',
+      'oneToOne',
+      'api::content.content'
+    >;
+    content_details_by_language: Attribute.Relation<
+      'api::content-by-clause.content-by-clause',
+      'oneToOne',
+      'api::content-details-by-language.content-details-by-language'
+    >;
+    language: Attribute.Relation<
+      'api::content-by-clause.content-by-clause',
+      'oneToOne',
+      'api::language.language'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::content-by-clause.content-by-clause',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::content-by-clause.content-by-clause',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiContentBySyllableContentBySyllable
+  extends Schema.CollectionType {
+  collectionName: 'content_by_syllables';
+  info: {
+    singularName: 'content-by-syllable';
+    pluralName: 'content-by-syllables';
+    displayName: 'Content_By_Syllable';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    title: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        minLength: 1;
+        maxLength: 100;
+      }>;
+    sequence: Attribute.Integer &
+      Attribute.SetMinMax<
+        {
+          min: 0;
+          max: 99;
+        },
+        number
+      >;
+    content: Attribute.Relation<
+      'api::content-by-syllable.content-by-syllable',
+      'oneToOne',
+      'api::content.content'
+    >;
+    language: Attribute.Relation<
+      'api::content-by-syllable.content-by-syllable',
+      'oneToOne',
+      'api::language.language'
+    >;
+    content_details_by_language: Attribute.Relation<
+      'api::content-by-syllable.content-by-syllable',
+      'oneToOne',
+      'api::content-details-by-language.content-details-by-language'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::content-by-syllable.content-by-syllable',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::content-by-syllable.content-by-syllable',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiContentDetailContentDetail extends Schema.CollectionType {
+  collectionName: 'content_details';
+  info: {
+    singularName: 'content-detail';
+    pluralName: 'content-details';
+    displayName: 'Content_Detail';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    audio: Attribute.String;
+    title: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        minLength: 1;
+        maxLength: 100;
+      }>;
+    image: Attribute.Media;
+    content: Attribute.Relation<
+      'api::content-detail.content-detail',
+      'oneToOne',
+      'api::content.content'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::content-detail.content-detail',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::content-detail.content-detail',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiContentDetailsByLanguageContentDetailsByLanguage
+  extends Schema.CollectionType {
+  collectionName: 'content_details_by_languages';
+  info: {
+    singularName: 'content-details-by-language';
+    pluralName: 'content-details-by-languages';
+    displayName: 'Content_Details_By_Language';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    title: Attribute.String &
+      Attribute.Required &
+      Attribute.Unique &
+      Attribute.SetMinMaxLength<{
+        minLength: 1;
+        maxLength: 100;
+      }>;
+    content: Attribute.Relation<
+      'api::content-details-by-language.content-details-by-language',
+      'oneToOne',
+      'api::content.content'
+    >;
+    language: Attribute.Relation<
+      'api::content-details-by-language.content-details-by-language',
+      'oneToOne',
+      'api::language.language'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::content-details-by-language.content-details-by-language',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::content-details-by-language.content-details-by-language',
       'oneToOne',
       'admin::user'
     > &
@@ -904,6 +1107,52 @@ export interface ApiContentTypeCategoryContentTypeCategory
   };
 }
 
+export interface ApiDetailsContentLanguageDetailsContentLanguage
+  extends Schema.CollectionType {
+  collectionName: 'details_content_languages';
+  info: {
+    singularName: 'details-content-language';
+    pluralName: 'details-content-languages';
+    displayName: 'Details_Content_Language';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    content_details_by_language: Attribute.Relation<
+      'api::details-content-language.details-content-language',
+      'oneToOne',
+      'api::content-details-by-language.content-details-by-language'
+    >;
+    title: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        minLength: 1;
+        maxLength: 100;
+      }>;
+    audio: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        minLength: 1;
+        maxLength: 100;
+      }>;
+    image: Attribute.Media;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::details-content-language.details-content-language',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::details-content-language.details-content-language',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiJourneyMapQuestionContentJourneyMapQuestionContent
   extends Schema.CollectionType {
   collectionName: 'journey_map_question_contents';
@@ -937,6 +1186,46 @@ export interface ApiJourneyMapQuestionContentJourneyMapQuestionContent
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::journey-map-question-content.journey-map-question-content',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiLanguageLanguage extends Schema.CollectionType {
+  collectionName: 'languages';
+  info: {
+    singularName: 'language';
+    pluralName: 'languages';
+    displayName: 'Language';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    name: Attribute.String &
+      Attribute.Required &
+      Attribute.Unique &
+      Attribute.SetMinMaxLength<{
+        minLength: 1;
+        maxLength: 100;
+      }>;
+    country: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        minLength: 1;
+        maxLength: 100;
+      }>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::language.language',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::language.language',
       'oneToOne',
       'admin::user'
     > &
@@ -1288,22 +1577,6 @@ export interface ApiQuestionQuestion extends Schema.CollectionType {
       'oneToOne',
       'api::question-content.question-content'
     >;
-    question_type_category: Attribute.Relation<
-      'api::question.question',
-      'oneToOne',
-      'api::question-type-category.question-type-category'
-    >;
-    image: Attribute.Media;
-    audio: Attribute.String &
-      Attribute.SetMinMaxLength<{
-        minLength: 2;
-        maxLength: 20;
-      }>;
-    question_content_type: Attribute.Relation<
-      'api::question.question',
-      'oneToOne',
-      'api::question-content-type.question-content-type'
-    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -1348,11 +1621,6 @@ export interface ApiQuestionContentQuestionContent
       'api::question-content.question-content',
       'oneToOne',
       'api::question-type.question-type'
-    >;
-    word_matchings: Attribute.Relation<
-      'api::question-content.question-content',
-      'oneToMany',
-      'api::word-matching.word-matching'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
@@ -1411,42 +1679,6 @@ export interface ApiQuestionContentOptionQuestionContentOption
   };
 }
 
-export interface ApiQuestionContentTypeQuestionContentType
-  extends Schema.CollectionType {
-  collectionName: 'question_content_types';
-  info: {
-    singularName: 'question-content-type';
-    pluralName: 'question-content-types';
-    displayName: 'Question_Content_Type';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    title: Attribute.String &
-      Attribute.Required &
-      Attribute.Unique &
-      Attribute.SetMinMaxLength<{
-        minLength: 1;
-        maxLength: 100;
-      }>;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'api::question-content-type.question-content-type',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<
-      'api::question-content-type.question-content-type',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-  };
-}
-
 export interface ApiQuestionTypeQuestionType extends Schema.CollectionType {
   collectionName: 'question_types';
   info: {
@@ -1475,42 +1707,6 @@ export interface ApiQuestionTypeQuestionType extends Schema.CollectionType {
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::question-type.question-type',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-  };
-}
-
-export interface ApiQuestionTypeCategoryQuestionTypeCategory
-  extends Schema.CollectionType {
-  collectionName: 'question_type_categories';
-  info: {
-    singularName: 'question-type-category';
-    pluralName: 'question-type-categories';
-    displayName: 'Question_Type_Category';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    title: Attribute.String &
-      Attribute.Required &
-      Attribute.Unique &
-      Attribute.SetMinMaxLength<{
-        minLength: 2;
-        maxLength: 20;
-      }>;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'api::question-type-category.question-type-category',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<
-      'api::question-type-category.question-type-category',
       'oneToOne',
       'admin::user'
     > &
@@ -1571,53 +1767,6 @@ export interface ApiUserProfileUserProfile extends Schema.CollectionType {
   };
 }
 
-export interface ApiWordMatchingWordMatching extends Schema.CollectionType {
-  collectionName: 'word_matchings';
-  info: {
-    singularName: 'word-matching';
-    pluralName: 'word-matchings';
-    displayName: 'Word_Matching';
-    description: '';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    item: Attribute.String &
-      Attribute.Required &
-      Attribute.SetMinMaxLength<{
-        minLength: 1;
-        maxLength: 50;
-      }>;
-    partner_item: Attribute.String &
-      Attribute.Required &
-      Attribute.SetMinMaxLength<{
-        minLength: 1;
-        maxLength: 50;
-      }>;
-    isLeft: Attribute.Boolean;
-    question_content: Attribute.Relation<
-      'api::word-matching.word-matching',
-      'manyToOne',
-      'api::question-content.question-content'
-    >;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'api::word-matching.word-matching',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<
-      'api::word-matching.word-matching',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-  };
-}
-
 declare module '@strapi/types' {
   export module Shared {
     export interface ContentTypes {
@@ -1637,9 +1786,15 @@ declare module '@strapi/types' {
       'plugin::users-permissions.role': PluginUsersPermissionsRole;
       'plugin::users-permissions.user': PluginUsersPermissionsUser;
       'api::content.content': ApiContentContent;
+      'api::content-by-clause.content-by-clause': ApiContentByClauseContentByClause;
+      'api::content-by-syllable.content-by-syllable': ApiContentBySyllableContentBySyllable;
+      'api::content-detail.content-detail': ApiContentDetailContentDetail;
+      'api::content-details-by-language.content-details-by-language': ApiContentDetailsByLanguageContentDetailsByLanguage;
       'api::content-type.content-type': ApiContentTypeContentType;
       'api::content-type-category.content-type-category': ApiContentTypeCategoryContentTypeCategory;
+      'api::details-content-language.details-content-language': ApiDetailsContentLanguageDetailsContentLanguage;
       'api::journey-map-question-content.journey-map-question-content': ApiJourneyMapQuestionContentJourneyMapQuestionContent;
+      'api::language.language': ApiLanguageLanguage;
       'api::learner-level.learner-level': ApiLearnerLevelLearnerLevel;
       'api::learner-starting-point.learner-starting-point': ApiLearnerStartingPointLearnerStartingPoint;
       'api::learning-goal.learning-goal': ApiLearningGoalLearningGoal;
@@ -1651,11 +1806,8 @@ declare module '@strapi/types' {
       'api::question.question': ApiQuestionQuestion;
       'api::question-content.question-content': ApiQuestionContentQuestionContent;
       'api::question-content-option.question-content-option': ApiQuestionContentOptionQuestionContentOption;
-      'api::question-content-type.question-content-type': ApiQuestionContentTypeQuestionContentType;
       'api::question-type.question-type': ApiQuestionTypeQuestionType;
-      'api::question-type-category.question-type-category': ApiQuestionTypeCategoryQuestionTypeCategory;
       'api::user-profile.user-profile': ApiUserProfileUserProfile;
-      'api::word-matching.word-matching': ApiWordMatchingWordMatching;
     }
   }
 }

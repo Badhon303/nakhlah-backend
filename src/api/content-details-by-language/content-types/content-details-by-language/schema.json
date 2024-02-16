@@ -1,0 +1,33 @@
+{
+  "kind": "collectionType",
+  "collectionName": "content_details_by_languages",
+  "info": {
+    "singularName": "content-details-by-language",
+    "pluralName": "content-details-by-languages",
+    "displayName": "Content_Details_By_Language",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "maxLength": 100,
+      "minLength": 1,
+      "required": true,
+      "unique": true
+    },
+    "content": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::content.content"
+    },
+    "language": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::language.language"
+    }
+  }
+}

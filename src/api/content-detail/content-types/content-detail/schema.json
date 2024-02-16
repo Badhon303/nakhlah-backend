@@ -1,0 +1,37 @@
+{
+  "kind": "collectionType",
+  "collectionName": "content_details",
+  "info": {
+    "singularName": "content-detail",
+    "pluralName": "content-details",
+    "displayName": "Content_Detail",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "audio": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string",
+      "maxLength": 100,
+      "minLength": 1
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "content": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::content.content"
+    }
+  }
+}
