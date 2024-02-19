@@ -813,11 +813,6 @@ export interface ApiContentContent extends Schema.CollectionType {
       'oneToOne',
       'api::content-type.content-type'
     >;
-    question_content_option: Attribute.Relation<
-      'api::content.content',
-      'manyToOne',
-      'api::question-content-option.question-content-option'
-    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -861,9 +856,9 @@ export interface ApiContentByClauseContentByClause
         },
         number
       >;
-    content: Attribute.Relation<
+    contents: Attribute.Relation<
       'api::content-by-clause.content-by-clause',
-      'oneToOne',
+      'oneToMany',
       'api::content.content'
     >;
     content_details_by_language: Attribute.Relation<
@@ -919,9 +914,9 @@ export interface ApiContentBySyllableContentBySyllable
         },
         number
       >;
-    content: Attribute.Relation<
+    contents: Attribute.Relation<
       'api::content-by-syllable.content-by-syllable',
-      'oneToOne',
+      'oneToMany',
       'api::content.content'
     >;
     language: Attribute.Relation<
