@@ -1,0 +1,24 @@
+{
+  "kind": "collectionType",
+  "collectionName": "interactivities",
+  "info": {
+    "singularName": "interactivity",
+    "pluralName": "interactivities",
+    "displayName": "Interactivity"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "examDate": {
+      "type": "datetime"
+    },
+    "learner_journey_history": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::learner-journey-history.learner-journey-history",
+      "mappedBy": "interactivity"
+    }
+  }
+}

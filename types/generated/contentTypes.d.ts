@@ -512,6 +512,8 @@ export interface PluginContentReleasesRelease extends Schema.CollectionType {
   attributes: {
     name: Attribute.String & Attribute.Required;
     releasedAt: Attribute.DateTime;
+    scheduledAt: Attribute.DateTime;
+    timezone: Attribute.String;
     actions: Attribute.Relation<
       'plugin::content-releases.release',
       'oneToMany',
@@ -1153,6 +1155,81 @@ export interface ApiDetailsContentLanguageDetailsContentLanguage
   };
 }
 
+export interface ApiDiscountPolicyDiscountPolicy extends Schema.CollectionType {
+  collectionName: 'discount_policies';
+  info: {
+    singularName: 'discount-policy';
+    pluralName: 'discount-policies';
+    displayName: 'Discount_Policy';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    amount: Attribute.Integer &
+      Attribute.SetMinMax<
+        {
+          min: 1;
+          max: 1000;
+        },
+        number
+      >;
+    discountMotive: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        minLength: 1;
+        maxLength: 1000;
+      }>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::discount-policy.discount-policy',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::discount-policy.discount-policy',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiInteractivityInteractivity extends Schema.CollectionType {
+  collectionName: 'interactivities';
+  info: {
+    singularName: 'interactivity';
+    pluralName: 'interactivities';
+    displayName: 'Interactivity';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    examDate: Attribute.DateTime;
+    learner_journey_history: Attribute.Relation<
+      'api::interactivity.interactivity',
+      'oneToOne',
+      'api::learner-journey-history.learner-journey-history'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::interactivity.interactivity',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::interactivity.interactivity',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiJourneyMapQuestionContentJourneyMapQuestionContent
   extends Schema.CollectionType {
   collectionName: 'journey_map_question_contents';
@@ -1226,6 +1303,148 @@ export interface ApiLanguageLanguage extends Schema.CollectionType {
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::language.language',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiLearnerInfoLearnerInfo extends Schema.CollectionType {
+  collectionName: 'learner_infos';
+  info: {
+    singularName: 'learner-info';
+    pluralName: 'learner-infos';
+    displayName: 'Learner_Info';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    users_permissions_user: Attribute.Relation<
+      'api::learner-info.learner-info',
+      'oneToOne',
+      'plugin::users-permissions.user'
+    >;
+    learning_purpose: Attribute.Relation<
+      'api::learner-info.learner-info',
+      'oneToOne',
+      'api::learning-purpose.learning-purpose'
+    >;
+    learning_goal: Attribute.Relation<
+      'api::learner-info.learner-info',
+      'oneToOne',
+      'api::learning-goal.learning-goal'
+    >;
+    language: Attribute.Relation<
+      'api::learner-info.learner-info',
+      'oneToOne',
+      'api::language.language'
+    >;
+    privacy_policy: Attribute.Relation<
+      'api::learner-info.learner-info',
+      'oneToOne',
+      'api::privacy-policy.privacy-policy'
+    >;
+    registered: Attribute.Relation<
+      'api::learner-info.learner-info',
+      'oneToOne',
+      'api::registered.registered'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::learner-info.learner-info',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::learner-info.learner-info',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiLearnerJourneyLearnerJourney extends Schema.CollectionType {
+  collectionName: 'learner_journeys';
+  info: {
+    singularName: 'learner-journey';
+    pluralName: 'learner-journeys';
+    displayName: 'Learner_Journey';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdDate: Attribute.DateTime;
+    learnerAnswer: Attribute.Boolean;
+    learner_info: Attribute.Relation<
+      'api::learner-journey.learner-journey',
+      'oneToOne',
+      'api::learner-info.learner-info'
+    >;
+    journey_map_question_content: Attribute.Relation<
+      'api::learner-journey.learner-journey',
+      'oneToOne',
+      'api::journey-map-question-content.journey-map-question-content'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::learner-journey.learner-journey',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::learner-journey.learner-journey',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiLearnerJourneyHistoryLearnerJourneyHistory
+  extends Schema.CollectionType {
+  collectionName: 'learner_journey_histories';
+  info: {
+    singularName: 'learner-journey-history';
+    pluralName: 'learner-journey-histories';
+    displayName: 'Learner_Journey_History';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    fromDate: Attribute.DateTime;
+    toDate: Attribute.DateTime;
+    interactivity: Attribute.Relation<
+      'api::learner-journey-history.learner-journey-history',
+      'oneToOne',
+      'api::interactivity.interactivity'
+    >;
+    learner_journey: Attribute.Relation<
+      'api::learner-journey-history.learner-journey-history',
+      'oneToOne',
+      'api::learner-journey.learner-journey'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::learner-journey-history.learner-journey-history',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::learner-journey-history.learner-journey-history',
       'oneToOne',
       'admin::user'
     > &
@@ -1355,6 +1574,45 @@ export interface ApiLearningGoalLearningGoal extends Schema.CollectionType {
   };
 }
 
+export interface ApiLearningGuideLearningGuide extends Schema.CollectionType {
+  collectionName: 'learning_guides';
+  info: {
+    singularName: 'learning-guide';
+    pluralName: 'learning-guides';
+    displayName: 'Learning_Guide';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    details: Attribute.Text &
+      Attribute.SetMinMaxLength<{
+        minLength: 1;
+        maxLength: 5000;
+      }>;
+    name: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        minLength: 1;
+        maxLength: 100;
+      }>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::learning-guide.learning-guide',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::learning-guide.learning-guide',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiLearningJourneyLearningJourney
   extends Schema.CollectionType {
   collectionName: 'learning_journeys';
@@ -1375,6 +1633,7 @@ export interface ApiLearningJourneyLearningJourney
         minLength: 2;
         maxLength: 20;
       }>;
+    icon: Attribute.Media;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -1554,6 +1813,82 @@ export interface ApiLearningPurposeLearningPurpose
   };
 }
 
+export interface ApiLearningTipLearningTip extends Schema.CollectionType {
+  collectionName: 'learning_tips';
+  info: {
+    singularName: 'learning-tip';
+    pluralName: 'learning-tips';
+    displayName: 'Learning_Tip';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    name: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        minLength: 1;
+        maxLength: 100;
+      }>;
+    details: Attribute.Text &
+      Attribute.SetMinMaxLength<{
+        minLength: 1;
+        maxLength: 5000;
+      }>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::learning-tip.learning-tip',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::learning-tip.learning-tip',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiPrivacyPolicyPrivacyPolicy extends Schema.CollectionType {
+  collectionName: 'privacy_policies';
+  info: {
+    singularName: 'privacy-policy';
+    pluralName: 'privacy-policies';
+    displayName: 'Privacy_Policy';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    name: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        minLength: 1;
+        maxLength: 100;
+      }>;
+    details: Attribute.Text &
+      Attribute.SetMinMaxLength<{
+        minLength: 1;
+        maxLength: 5000;
+      }>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::privacy-policy.privacy-policy',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::privacy-policy.privacy-policy',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiQuestionQuestion extends Schema.CollectionType {
   collectionName: 'questions';
   info: {
@@ -1714,52 +2049,213 @@ export interface ApiQuestionTypeQuestionType extends Schema.CollectionType {
   };
 }
 
-export interface ApiUserProfileUserProfile extends Schema.CollectionType {
-  collectionName: 'user_profiles';
+export interface ApiRefundPolicyRefundPolicy extends Schema.CollectionType {
+  collectionName: 'refund_policies';
   info: {
-    singularName: 'user-profile';
-    pluralName: 'user-profiles';
-    displayName: 'User_Profile';
+    singularName: 'refund-policy';
+    pluralName: 'refund-policies';
+    displayName: 'Refund_Policy';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    condition: Attribute.Text &
+      Attribute.SetMinMaxLength<{
+        minLength: 1;
+        maxLength: 5000;
+      }>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::refund-policy.refund-policy',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::refund-policy.refund-policy',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiRegisteredRegistered extends Schema.CollectionType {
+  collectionName: 'registereds';
+  info: {
+    singularName: 'registered';
+    pluralName: 'registereds';
+    displayName: 'Registered';
     description: '';
   };
   options: {
     draftAndPublish: false;
   };
   attributes: {
-    first_name: Attribute.String &
+    firstName: Attribute.String &
       Attribute.SetMinMaxLength<{
+        minLength: 1;
+        maxLength: 100;
+      }>;
+    lastName: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        minLength: 1;
+        maxLength: 100;
+      }>;
+    address: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        minLength: 1;
+        maxLength: 100;
+      }>;
+    contactNumber: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        minLength: 1;
         maxLength: 20;
       }>;
-    users_permissions_user: Attribute.Relation<
-      'api::user-profile.user-profile',
+    age: Attribute.Integer &
+      Attribute.SetMinMax<
+        {
+          min: 0;
+          max: 120;
+        },
+        number
+      >;
+    gender: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        minLength: 1;
+        maxLength: 100;
+      }>;
+    subscription: Attribute.Relation<
+      'api::registered.registered',
       'oneToOne',
-      'plugin::users-permissions.user'
+      'api::subscription.subscription'
     >;
-    last_name: Attribute.String &
-      Attribute.SetMinMaxLength<{
-        minLength: 2;
-        maxLength: 20;
-      }>;
-    lerner_level: Attribute.String &
-      Attribute.Unique &
-      Attribute.SetMinMaxLength<{
-        minLength: 4;
-        maxLength: 10;
-      }>;
-    learning_purpose: Attribute.Integer;
-    learner_level: Attribute.Integer;
-    learning_goal: Attribute.Integer;
-    learner_starting_point: Attribute.Integer;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
-      'api::user-profile.user-profile',
+      'api::registered.registered',
       'oneToOne',
       'admin::user'
     > &
       Attribute.Private;
     updatedBy: Attribute.Relation<
-      'api::user-profile.user-profile',
+      'api::registered.registered',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiSubscriberPlanSubscriberPlan extends Schema.CollectionType {
+  collectionName: 'subscriber_plans';
+  info: {
+    singularName: 'subscriber-plan';
+    pluralName: 'subscriber-plans';
+    displayName: 'Subscriber_Plan';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    name: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        minLength: 1;
+        maxLength: 100;
+      }>;
+    price: Attribute.Integer;
+    timeDuration: Attribute.DateTime;
+    discount_policy: Attribute.Relation<
+      'api::subscriber-plan.subscriber-plan',
+      'oneToOne',
+      'api::discount-policy.discount-policy'
+    >;
+    refund_policy: Attribute.Relation<
+      'api::subscriber-plan.subscriber-plan',
+      'oneToOne',
+      'api::refund-policy.refund-policy'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::subscriber-plan.subscriber-plan',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::subscriber-plan.subscriber-plan',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiSubscriptionSubscription extends Schema.CollectionType {
+  collectionName: 'subscriptions';
+  info: {
+    singularName: 'subscription';
+    pluralName: 'subscriptions';
+    displayName: 'Subscription';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    subscriber_plan: Attribute.Relation<
+      'api::subscription.subscription',
+      'oneToOne',
+      'api::subscriber-plan.subscriber-plan'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::subscription.subscription',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::subscription.subscription',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiTermAndConditionTermAndCondition
+  extends Schema.CollectionType {
+  collectionName: 'term_and_conditions';
+  info: {
+    singularName: 'term-and-condition';
+    pluralName: 'term-and-conditions';
+    displayName: 'Term_And_Condition';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    privacy_policy: Attribute.Relation<
+      'api::term-and-condition.term-and-condition',
+      'oneToOne',
+      'api::privacy-policy.privacy-policy'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::term-and-condition.term-and-condition',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::term-and-condition.term-and-condition',
       'oneToOne',
       'admin::user'
     > &
@@ -1793,21 +2289,33 @@ declare module '@strapi/types' {
       'api::content-type.content-type': ApiContentTypeContentType;
       'api::content-type-category.content-type-category': ApiContentTypeCategoryContentTypeCategory;
       'api::details-content-language.details-content-language': ApiDetailsContentLanguageDetailsContentLanguage;
+      'api::discount-policy.discount-policy': ApiDiscountPolicyDiscountPolicy;
+      'api::interactivity.interactivity': ApiInteractivityInteractivity;
       'api::journey-map-question-content.journey-map-question-content': ApiJourneyMapQuestionContentJourneyMapQuestionContent;
       'api::language.language': ApiLanguageLanguage;
+      'api::learner-info.learner-info': ApiLearnerInfoLearnerInfo;
+      'api::learner-journey.learner-journey': ApiLearnerJourneyLearnerJourney;
+      'api::learner-journey-history.learner-journey-history': ApiLearnerJourneyHistoryLearnerJourneyHistory;
       'api::learner-level.learner-level': ApiLearnerLevelLearnerLevel;
       'api::learner-starting-point.learner-starting-point': ApiLearnerStartingPointLearnerStartingPoint;
       'api::learning-goal.learning-goal': ApiLearningGoalLearningGoal;
+      'api::learning-guide.learning-guide': ApiLearningGuideLearningGuide;
       'api::learning-journey.learning-journey': ApiLearningJourneyLearningJourney;
       'api::learning-journey-lesson.learning-journey-lesson': ApiLearningJourneyLessonLearningJourneyLesson;
       'api::learning-journey-level.learning-journey-level': ApiLearningJourneyLevelLearningJourneyLevel;
       'api::learning-journey-unit.learning-journey-unit': ApiLearningJourneyUnitLearningJourneyUnit;
       'api::learning-purpose.learning-purpose': ApiLearningPurposeLearningPurpose;
+      'api::learning-tip.learning-tip': ApiLearningTipLearningTip;
+      'api::privacy-policy.privacy-policy': ApiPrivacyPolicyPrivacyPolicy;
       'api::question.question': ApiQuestionQuestion;
       'api::question-content.question-content': ApiQuestionContentQuestionContent;
       'api::question-content-option.question-content-option': ApiQuestionContentOptionQuestionContentOption;
       'api::question-type.question-type': ApiQuestionTypeQuestionType;
-      'api::user-profile.user-profile': ApiUserProfileUserProfile;
+      'api::refund-policy.refund-policy': ApiRefundPolicyRefundPolicy;
+      'api::registered.registered': ApiRegisteredRegistered;
+      'api::subscriber-plan.subscriber-plan': ApiSubscriberPlanSubscriberPlan;
+      'api::subscription.subscription': ApiSubscriptionSubscription;
+      'api::term-and-condition.term-and-condition': ApiTermAndConditionTermAndCondition;
     }
   }
 }

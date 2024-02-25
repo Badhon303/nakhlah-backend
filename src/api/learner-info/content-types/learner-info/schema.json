@@ -1,0 +1,46 @@
+{
+  "kind": "collectionType",
+  "collectionName": "learner_infos",
+  "info": {
+    "singularName": "learner-info",
+    "pluralName": "learner-infos",
+    "displayName": "Learner_Info",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "users_permissions_user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "learning_purpose": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::learning-purpose.learning-purpose"
+    },
+    "learning_goal": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::learning-goal.learning-goal"
+    },
+    "language": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::language.language"
+    },
+    "privacy_policy": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::privacy-policy.privacy-policy"
+    },
+    "registered": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::registered.registered"
+    }
+  }
+}

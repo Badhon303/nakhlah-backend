@@ -1,0 +1,31 @@
+{
+  "kind": "collectionType",
+  "collectionName": "learner_journeys",
+  "info": {
+    "singularName": "learner-journey",
+    "pluralName": "learner-journeys",
+    "displayName": "Learner_Journey"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "createdDate": {
+      "type": "datetime"
+    },
+    "learnerAnswer": {
+      "type": "boolean"
+    },
+    "learner_info": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::learner-info.learner-info"
+    },
+    "journey_map_question_content": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::journey-map-question-content.journey-map-question-content"
+    }
+  }
+}

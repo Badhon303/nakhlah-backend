@@ -1,0 +1,20 @@
+{
+  "kind": "collectionType",
+  "collectionName": "term_and_conditions",
+  "info": {
+    "singularName": "term-and-condition",
+    "pluralName": "term-and-conditions",
+    "displayName": "Term_And_Condition"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "privacy_policy": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::privacy-policy.privacy-policy"
+    }
+  }
+}

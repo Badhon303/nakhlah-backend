@@ -1,0 +1,25 @@
+{
+  "kind": "collectionType",
+  "collectionName": "discount_policies",
+  "info": {
+    "singularName": "discount-policy",
+    "pluralName": "discount-policies",
+    "displayName": "Discount_Policy"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "amount": {
+      "type": "integer",
+      "max": 1000,
+      "min": 1
+    },
+    "discountMotive": {
+      "type": "string",
+      "maxLength": 1000,
+      "minLength": 1
+    }
+  }
+}

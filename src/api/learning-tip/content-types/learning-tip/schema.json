@@ -1,0 +1,25 @@
+{
+  "kind": "collectionType",
+  "collectionName": "learning_tips",
+  "info": {
+    "singularName": "learning-tip",
+    "pluralName": "learning-tips",
+    "displayName": "Learning_Tip"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "maxLength": 100,
+      "minLength": 1
+    },
+    "details": {
+      "type": "text",
+      "maxLength": 5000,
+      "minLength": 1
+    }
+  }
+}

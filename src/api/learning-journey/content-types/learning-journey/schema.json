@@ -18,6 +18,14 @@
       "minLength": 2,
       "required": true,
       "unique": true
+    },
+    "icon": {
+      "allowedTypes": [
+        "images"
+      ],
+      "type": "media",
+      "multiple": false,
+      "required": false
     }
   }
 }

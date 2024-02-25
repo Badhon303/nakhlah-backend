@@ -1,0 +1,20 @@
+{
+  "kind": "collectionType",
+  "collectionName": "refund_policies",
+  "info": {
+    "singularName": "refund-policy",
+    "pluralName": "refund-policies",
+    "displayName": "Refund_Policy"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "condition": {
+      "type": "text",
+      "maxLength": 5000,
+      "minLength": 1
+    }
+  }
+}

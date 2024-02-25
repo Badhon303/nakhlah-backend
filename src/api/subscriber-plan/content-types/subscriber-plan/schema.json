@@ -1,0 +1,37 @@
+{
+  "kind": "collectionType",
+  "collectionName": "subscriber_plans",
+  "info": {
+    "singularName": "subscriber-plan",
+    "pluralName": "subscriber-plans",
+    "displayName": "Subscriber_Plan",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "maxLength": 100,
+      "minLength": 1
+    },
+    "price": {
+      "type": "integer"
+    },
+    "timeDuration": {
+      "type": "datetime"
+    },
+    "discount_policy": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::discount-policy.discount-policy"
+    },
+    "refund_policy": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::refund-policy.refund-policy"
+    }
+  }
+}

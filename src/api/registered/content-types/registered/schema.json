@@ -1,0 +1,51 @@
+{
+  "kind": "collectionType",
+  "collectionName": "registereds",
+  "info": {
+    "singularName": "registered",
+    "pluralName": "registereds",
+    "displayName": "Registered",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "firstName": {
+      "type": "string",
+      "maxLength": 100,
+      "minLength": 1
+    },
+    "lastName": {
+      "type": "string",
+      "maxLength": 100,
+      "minLength": 1
+    },
+    "address": {
+      "type": "string",
+      "maxLength": 100,
+      "minLength": 1
+    },
+    "contactNumber": {
+      "type": "string",
+      "maxLength": 20,
+      "minLength": 1
+    },
+    "age": {
+      "type": "integer",
+      "max": 120,
+      "min": 0
+    },
+    "gender": {
+      "type": "string",
+      "maxLength": 100,
+      "minLength": 1
+    },
+    "subscription": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::subscription.subscription"
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "kind": "collectionType",
+  "collectionName": "learning_guides",
+  "info": {
+    "singularName": "learning-guide",
+    "pluralName": "learning-guides",
+    "displayName": "Learning_Guide",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "details": {
+      "type": "text",
+      "maxLength": 5000,
+      "minLength": 1
+    },
+    "name": {
+      "type": "string",
+      "maxLength": 100,
+      "minLength": 1
+    }
+  }
+}
