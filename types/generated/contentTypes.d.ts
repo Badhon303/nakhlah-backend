@@ -1347,6 +1347,11 @@ export interface ApiLearnerInfoLearnerInfo extends Schema.CollectionType {
       'oneToOne',
       'api::privacy-policy.privacy-policy'
     >;
+    learning_journey: Attribute.Relation<
+      'api::learner-info.learner-info',
+      'oneToOne',
+      'api::learning-journey.learning-journey'
+    >;
     registered: Attribute.Relation<
       'api::learner-info.learner-info',
       'oneToOne',
@@ -2127,6 +2132,11 @@ export interface ApiRegisteredRegistered extends Schema.CollectionType {
         minLength: 1;
         maxLength: 100;
       }>;
+    learner_info: Attribute.Relation<
+      'api::registered.registered',
+      'oneToOne',
+      'api::learner-info.learner-info'
+    >;
     subscription: Attribute.Relation<
       'api::registered.registered',
       'oneToOne',

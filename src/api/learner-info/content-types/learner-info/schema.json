@@ -37,10 +37,16 @@
       "relation": "oneToOne",
       "target": "api::privacy-policy.privacy-policy"
     },
+    "learning_journey": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::learning-journey.learning-journey"
+    },
     "registered": {
       "type": "relation",
       "relation": "oneToOne",
-      "target": "api::registered.registered"
+      "target": "api::registered.registered",
+      "mappedBy": "learner_info"
     }
   }
 }

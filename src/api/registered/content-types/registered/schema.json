@@ -42,6 +42,12 @@
       "maxLength": 100,
       "minLength": 1
     },
+    "learner_info": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::learner-info.learner-info",
+      "inversedBy": "registered"
+    },
     "subscription": {
       "type": "relation",
       "relation": "oneToOne",
