@@ -858,9 +858,9 @@ export interface ApiContentByClauseContentByClause
         },
         number
       >;
-    contents: Attribute.Relation<
+    content: Attribute.Relation<
       'api::content-by-clause.content-by-clause',
-      'oneToMany',
+      'oneToOne',
       'api::content.content'
     >;
     content_details_by_language: Attribute.Relation<
@@ -916,9 +916,9 @@ export interface ApiContentBySyllableContentBySyllable
         },
         number
       >;
-    contents: Attribute.Relation<
+    content: Attribute.Relation<
       'api::content-by-syllable.content-by-syllable',
-      'oneToMany',
+      'oneToOne',
       'api::content.content'
     >;
     language: Attribute.Relation<
@@ -1450,43 +1450,6 @@ export interface ApiLearnerJourneyHistoryLearnerJourneyHistory
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::learner-journey-history.learner-journey-history',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-  };
-}
-
-export interface ApiLearnerLevelLearnerLevel extends Schema.CollectionType {
-  collectionName: 'learner_levels';
-  info: {
-    singularName: 'learner-level';
-    pluralName: 'learner-levels';
-    displayName: 'Learner_Level';
-    description: '';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    level: Attribute.String &
-      Attribute.Required &
-      Attribute.Unique &
-      Attribute.SetMinMaxLength<{
-        minLength: 1;
-        maxLength: 100;
-      }>;
-    icon: Attribute.Media & Attribute.Required;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'api::learner-level.learner-level',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<
-      'api::learner-level.learner-level',
       'oneToOne',
       'admin::user'
     > &
@@ -2306,7 +2269,6 @@ declare module '@strapi/types' {
       'api::learner-info.learner-info': ApiLearnerInfoLearnerInfo;
       'api::learner-journey.learner-journey': ApiLearnerJourneyLearnerJourney;
       'api::learner-journey-history.learner-journey-history': ApiLearnerJourneyHistoryLearnerJourneyHistory;
-      'api::learner-level.learner-level': ApiLearnerLevelLearnerLevel;
       'api::learner-starting-point.learner-starting-point': ApiLearnerStartingPointLearnerStartingPoint;
       'api::learning-goal.learning-goal': ApiLearningGoalLearningGoal;
       'api::learning-guide.learning-guide': ApiLearningGuideLearningGuide;
