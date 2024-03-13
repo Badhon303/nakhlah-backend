@@ -805,15 +805,15 @@ export interface ApiContentContent extends Schema.CollectionType {
       'oneToOne',
       'api::content-type-category.content-type-category'
     >;
-    question_content: Attribute.Relation<
-      'api::content.content',
-      'oneToOne',
-      'api::question-content.question-content'
-    >;
     content_type: Attribute.Relation<
       'api::content.content',
       'oneToOne',
       'api::content-type.content-type'
+    >;
+    question_contents: Attribute.Relation<
+      'api::content.content',
+      'oneToMany',
+      'api::question-content.question-content'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
@@ -1602,6 +1602,14 @@ export interface ApiLearningJourneyLearningJourney
         maxLength: 20;
       }>;
     icon: Attribute.Media;
+    sequence: Attribute.Integer &
+      Attribute.SetMinMax<
+        {
+          min: 0;
+          max: 99;
+        },
+        number
+      >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -1636,13 +1644,21 @@ export interface ApiLearningJourneyLessonLearningJourneyLesson
       Attribute.Required &
       Attribute.SetMinMaxLength<{
         minLength: 2;
-        maxLength: 20;
+        maxLength: 100;
       }>;
     learning_journey_level: Attribute.Relation<
       'api::learning-journey-lesson.learning-journey-lesson',
       'oneToOne',
       'api::learning-journey-level.learning-journey-level'
     >;
+    sequence: Attribute.Integer &
+      Attribute.SetMinMax<
+        {
+          min: 0;
+          max: 99;
+        },
+        number
+      >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -1677,13 +1693,21 @@ export interface ApiLearningJourneyLevelLearningJourneyLevel
       Attribute.Required &
       Attribute.SetMinMaxLength<{
         minLength: 2;
-        maxLength: 20;
+        maxLength: 100;
       }>;
     learning_journey_unit: Attribute.Relation<
       'api::learning-journey-level.learning-journey-level',
       'oneToOne',
       'api::learning-journey-unit.learning-journey-unit'
     >;
+    sequence: Attribute.Integer &
+      Attribute.SetMinMax<
+        {
+          min: 0;
+          max: 99;
+        },
+        number
+      >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -1725,6 +1749,14 @@ export interface ApiLearningJourneyUnitLearningJourneyUnit
       'oneToOne',
       'api::learning-journey.learning-journey'
     >;
+    sequence: Attribute.Integer &
+      Attribute.SetMinMax<
+        {
+          min: 0;
+          max: 99;
+        },
+        number
+      >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -1875,9 +1907,9 @@ export interface ApiQuestionQuestion extends Schema.CollectionType {
         minLength: 2;
         maxLength: 100;
       }>;
-    question_content: Attribute.Relation<
+    question_contents: Attribute.Relation<
       'api::question.question',
-      'oneToOne',
+      'oneToMany',
       'api::question-content.question-content'
     >;
     createdAt: Attribute.DateTime;
@@ -1912,12 +1944,12 @@ export interface ApiQuestionContentQuestionContent
   attributes: {
     question: Attribute.Relation<
       'api::question-content.question-content',
-      'oneToOne',
+      'manyToOne',
       'api::question.question'
     >;
     content: Attribute.Relation<
       'api::question-content.question-content',
-      'oneToOne',
+      'manyToOne',
       'api::content.content'
     >;
     question_type: Attribute.Relation<

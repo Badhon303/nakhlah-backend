@@ -14,15 +14,15 @@
   "attributes": {
     "question": {
       "type": "relation",
-      "relation": "oneToOne",
+      "relation": "manyToOne",
       "target": "api::question.question",
-      "inversedBy": "question_content"
+      "inversedBy": "question_contents"
     },
     "content": {
       "type": "relation",
-      "relation": "oneToOne",
+      "relation": "manyToOne",
       "target": "api::content.content",
-      "mappedBy": "question_content"
+      "inversedBy": "question_contents"
     },
     "question_type": {
       "type": "relation",

@@ -24,16 +24,16 @@
       "relation": "oneToOne",
       "target": "api::content-type-category.content-type-category"
     },
-    "question_content": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::question-content.question-content",
-      "inversedBy": "content"
-    },
     "content_type": {
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::content-type.content-type"
+    },
+    "question_contents": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::question-content.question-content",
+      "mappedBy": "content"
     }
   }
 }

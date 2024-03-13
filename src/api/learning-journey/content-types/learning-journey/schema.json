@@ -20,12 +20,17 @@
       "unique": true
     },
     "icon": {
-      "allowedTypes": [
-        "images"
-      ],
       "type": "media",
       "multiple": false,
-      "required": false
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "sequence": {
+      "type": "integer",
+      "max": 99,
+      "min": 0
     }
   }
 }

@@ -23,6 +23,11 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::learning-journey.learning-journey"
+    },
+    "sequence": {
+      "type": "integer",
+      "max": 99,
+      "min": 0
     }
   }
 }

@@ -67,6 +67,11 @@ module.exports = createCoreController(
             }
           );
         }
+
+        if (!results || results.length === 0) {
+          return ctx.notFound("No learner information found.");
+        }
+
         return await sanitize.contentAPI.output(
           results,
           strapi.contentType("api::learner-info.learner-info"),

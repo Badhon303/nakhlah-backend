@@ -16,13 +16,18 @@
       "type": "string",
       "required": true,
       "unique": false,
-      "maxLength": 20,
+      "maxLength": 100,
       "minLength": 2
     },
     "learning_journey_unit": {
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::learning-journey-unit.learning-journey-unit"
+    },
+    "sequence": {
+      "type": "integer",
+      "max": 99,
+      "min": 0
     }
   }
 }
