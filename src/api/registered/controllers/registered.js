@@ -4,6 +4,15 @@
  * registered controller
  */
 
+// import * as Koa from "koa";
+
+// declare module "koa" {
+//     interface Request {
+//         body?: unknown;
+//         rawBody: string;
+//     }
+// }
+
 const { createCoreController } = require("@strapi/strapi").factories;
 const { sanitize } = require("@strapi/utils");
 
