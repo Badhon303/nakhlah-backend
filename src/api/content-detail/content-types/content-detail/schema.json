@@ -31,8 +31,7 @@
     "content": {
       "type": "relation",
       "relation": "oneToOne",
-      "target": "api::content.content",
-      "inversedBy": "content_detail"
+      "target": "api::content.content"
     },
     "language": {
       "type": "relation",
