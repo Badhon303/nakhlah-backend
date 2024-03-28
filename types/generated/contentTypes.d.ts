@@ -2030,6 +2030,7 @@ export interface ApiQuestionTypeQuestionType extends Schema.CollectionType {
     singularName: 'question-type';
     pluralName: 'question-types';
     displayName: 'Question_Type';
+    description: '';
   };
   options: {
     draftAndPublish: false;
@@ -2039,8 +2040,8 @@ export interface ApiQuestionTypeQuestionType extends Schema.CollectionType {
       Attribute.Required &
       Attribute.Unique &
       Attribute.SetMinMaxLength<{
-        minLength: 2;
-        maxLength: 20;
+        minLength: 1;
+        maxLength: 100;
       }>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
