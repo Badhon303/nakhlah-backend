@@ -820,6 +820,11 @@ export interface ApiContentContent extends Schema.CollectionType {
       'oneToMany',
       'api::question-content.question-content'
     >;
+    content_detail: Attribute.Relation<
+      'api::content.content',
+      'oneToOne',
+      'api::content-detail.content-detail'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<

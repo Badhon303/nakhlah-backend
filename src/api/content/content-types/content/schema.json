@@ -34,6 +34,12 @@
       "relation": "oneToMany",
       "target": "api::question-content.question-content",
       "mappedBy": "content"
+    },
+    "content_detail": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::content-detail.content-detail",
+      "inversedBy": "content"
     }
   }
 }
