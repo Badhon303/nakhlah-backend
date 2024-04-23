@@ -24,13 +24,15 @@
       "type": "media",
       "multiple": false,
       "required": false,
-      "allowedTypes": ["images"]
+      "allowedTypes": [
+        "images"
+      ]
     },
     "content": {
       "type": "relation",
-      "relation": "oneToOne",
+      "relation": "manyToOne",
       "target": "api::content.content",
-      "mappedBy": "content_detail"
+      "inversedBy": "content_details"
     },
     "language": {
       "type": "relation",

@@ -820,9 +820,9 @@ export interface ApiContentContent extends Schema.CollectionType {
       'oneToMany',
       'api::question-content.question-content'
     >;
-    content_detail: Attribute.Relation<
+    content_details: Attribute.Relation<
       'api::content.content',
-      'oneToOne',
+      'oneToMany',
       'api::content-detail.content-detail'
     >;
     createdAt: Attribute.DateTime;
@@ -979,7 +979,7 @@ export interface ApiContentDetailContentDetail extends Schema.CollectionType {
     image: Attribute.Media;
     content: Attribute.Relation<
       'api::content-detail.content-detail',
-      'oneToOne',
+      'manyToOne',
       'api::content.content'
     >;
     language: Attribute.Relation<
