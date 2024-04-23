@@ -1666,7 +1666,7 @@ export interface ApiLearningJourneyLessonLearningJourneyLesson
       'oneToOne',
       'api::learning-journey-level.learning-journey-level'
     >;
-    sequence: Attribute.Integer &
+    lessonSequence: Attribute.Integer &
       Attribute.SetMinMax<
         {
           min: 0;
@@ -1715,7 +1715,7 @@ export interface ApiLearningJourneyLevelLearningJourneyLevel
       'oneToOne',
       'api::learning-journey-unit.learning-journey-unit'
     >;
-    sequence: Attribute.Integer &
+    taskSequence: Attribute.Integer &
       Attribute.SetMinMax<
         {
           min: 0;
@@ -1764,7 +1764,7 @@ export interface ApiLearningJourneyUnitLearningJourneyUnit
       'oneToOne',
       'api::learning-journey.learning-journey'
     >;
-    sequence: Attribute.Integer &
+    unitSequence: Attribute.Integer &
       Attribute.SetMinMax<
         {
           min: 0;

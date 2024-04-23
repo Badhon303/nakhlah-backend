@@ -24,7 +24,7 @@
       "relation": "oneToOne",
       "target": "api::learning-journey.learning-journey"
     },
-    "sequence": {
+    "unitSequence": {
       "type": "integer",
       "max": 99,
       "min": 0

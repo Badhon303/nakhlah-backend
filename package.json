@@ -14,15 +14,18 @@
     "strapi": "strapi"
   },
   "dependencies": {
-    "@strapi/plugin-i18n": "^4.20.5",
-    "@strapi/plugin-users-permissions": "^4.20.5",
-    "@strapi/provider-email-nodemailer": "4.20.5",
-    "@strapi/strapi": "4.20.5",
+    "@strapi/plugin-i18n": "^4.23.1",
+    "@strapi/plugin-users-permissions": "^4.23.1",
+    "@strapi/provider-email-nodemailer": "4.23.1",
+    "@strapi/strapi": "4.23.1",
     "pg": "8.8.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-router-dom": "^5.3.4",
     "styled-components": "^5.3.11"
+  },
+  "devDependencies": {
+    "@types/koa-bodyparser": "^4.3.12"
   },
   "engines": {
     "node": ">=18.0.0 <=20.x.x",
@@ -30,8 +33,5 @@
   },
   "strapi": {
     "uuid": "9d1780a3-6f36-4143-8561-caef60d21e7b"
-  },
-  "devDependencies": {
-    "@types/koa-bodyparser": "^4.3.12"
   }
 }
