@@ -1,0 +1,48 @@
+{
+  "kind": "collectionType",
+  "collectionName": "gamification_txes",
+  "info": {
+    "singularName": "gamification-tx",
+    "pluralName": "gamification-txes",
+    "displayName": "Gamification_TX"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "gamification_tx_type": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::gamification-tx-type.gamification-tx-type"
+    },
+    "gamification_type": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::gamification-type.gamification-type"
+    },
+    "transactionName": {
+      "type": "string",
+      "required": true,
+      "maxLength": 100,
+      "unique": true,
+      "minLength": 1
+    },
+    "transactionDetails": {
+      "type": "string",
+      "maxLength": 5000,
+      "minLength": 1
+    },
+    "amount": {
+      "type": "integer",
+      "max": 9999999,
+      "required": true,
+      "min": 1
+    },
+    "remarks": {
+      "type": "string",
+      "maxLength": 5000,
+      "minLength": 1
+    }
+  }
+}

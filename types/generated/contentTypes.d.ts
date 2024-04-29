@@ -1211,33 +1211,186 @@ export interface ApiDiscountPolicyDiscountPolicy extends Schema.CollectionType {
   };
 }
 
-export interface ApiInteractivityInteractivity extends Schema.CollectionType {
-  collectionName: 'interactivities';
+export interface ApiExamExam extends Schema.CollectionType {
+  collectionName: 'exams';
   info: {
-    singularName: 'interactivity';
-    pluralName: 'interactivities';
-    displayName: 'Interactivity';
+    singularName: 'exam';
+    pluralName: 'exams';
+    displayName: 'Exam';
+    description: '';
   };
   options: {
     draftAndPublish: false;
   };
   attributes: {
-    examDate: Attribute.DateTime;
-    learner_journey_history: Attribute.Relation<
-      'api::interactivity.interactivity',
+    examDetails: Attribute.String;
+    learning_journey_level: Attribute.Relation<
+      'api::exam.exam',
       'oneToOne',
-      'api::learner-journey-history.learner-journey-history'
+      'api::learning-journey-level.learning-journey-level'
     >;
+    numberOfQuestions: Attribute.Integer &
+      Attribute.Required &
+      Attribute.SetMinMax<
+        {
+          min: 1;
+          max: 999;
+        },
+        number
+      >;
+    correctAnswer: Attribute.Integer &
+      Attribute.Required &
+      Attribute.SetMinMax<
+        {
+          min: 0;
+          max: 999;
+        },
+        number
+      >;
+    users_permissions_user: Attribute.Relation<
+      'api::exam.exam',
+      'oneToOne',
+      'plugin::users-permissions.user'
+    > &
+      Attribute.Private;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<'api::exam.exam', 'oneToOne', 'admin::user'> &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<'api::exam.exam', 'oneToOne', 'admin::user'> &
+      Attribute.Private;
+  };
+}
+
+export interface ApiGamificationTxGamificationTx extends Schema.CollectionType {
+  collectionName: 'gamification_txes';
+  info: {
+    singularName: 'gamification-tx';
+    pluralName: 'gamification-txes';
+    displayName: 'Gamification_TX';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    gamification_tx_type: Attribute.Relation<
+      'api::gamification-tx.gamification-tx',
+      'oneToOne',
+      'api::gamification-tx-type.gamification-tx-type'
+    >;
+    gamification_type: Attribute.Relation<
+      'api::gamification-tx.gamification-tx',
+      'oneToOne',
+      'api::gamification-type.gamification-type'
+    >;
+    transactionName: Attribute.String &
+      Attribute.Required &
+      Attribute.Unique &
+      Attribute.SetMinMaxLength<{
+        minLength: 1;
+        maxLength: 100;
+      }>;
+    transactionDetails: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        minLength: 1;
+        maxLength: 5000;
+      }>;
+    amount: Attribute.Integer &
+      Attribute.Required &
+      Attribute.SetMinMax<
+        {
+          min: 1;
+          max: 9999999;
+        },
+        number
+      >;
+    remarks: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        minLength: 1;
+        maxLength: 5000;
+      }>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
-      'api::interactivity.interactivity',
+      'api::gamification-tx.gamification-tx',
       'oneToOne',
       'admin::user'
     > &
       Attribute.Private;
     updatedBy: Attribute.Relation<
-      'api::interactivity.interactivity',
+      'api::gamification-tx.gamification-tx',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiGamificationTxTypeGamificationTxType
+  extends Schema.CollectionType {
+  collectionName: 'gamification_tx_types';
+  info: {
+    singularName: 'gamification-tx-type';
+    pluralName: 'gamification-tx-types';
+    displayName: 'Gamification_TX_Type';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    typeName: Attribute.String &
+      Attribute.Required &
+      Attribute.Unique &
+      Attribute.SetMinMaxLength<{
+        minLength: 1;
+        maxLength: 100;
+      }>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::gamification-tx-type.gamification-tx-type',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::gamification-tx-type.gamification-tx-type',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiGamificationTypeGamificationType
+  extends Schema.CollectionType {
+  collectionName: 'gamification_types';
+  info: {
+    singularName: 'gamification-type';
+    pluralName: 'gamification-types';
+    displayName: 'Gamification_Type';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    typeName: Attribute.String &
+      Attribute.Required &
+      Attribute.Unique &
+      Attribute.SetMinMaxLength<{
+        minLength: 1;
+        maxLength: 50;
+      }>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::gamification-type.gamification-type',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::gamification-type.gamification-type',
       'oneToOne',
       'admin::user'
     > &
@@ -1325,6 +1478,97 @@ export interface ApiLanguageLanguage extends Schema.CollectionType {
   };
 }
 
+export interface ApiLearnerGamificationLearnerGamification
+  extends Schema.CollectionType {
+  collectionName: 'learner_gamifications';
+  info: {
+    singularName: 'learner-gamification';
+    pluralName: 'learner-gamifications';
+    displayName: 'Learner_Gamification';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    users_permissions_user: Attribute.Relation<
+      'api::learner-gamification.learner-gamification',
+      'oneToOne',
+      'plugin::users-permissions.user'
+    >;
+    validDate: Attribute.DateTime;
+    gamification_tx: Attribute.Relation<
+      'api::learner-gamification.learner-gamification',
+      'oneToOne',
+      'api::gamification-tx.gamification-tx'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::learner-gamification.learner-gamification',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::learner-gamification.learner-gamification',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiLearnerGamificationStockLearnerGamificationStock
+  extends Schema.CollectionType {
+  collectionName: 'learner_gamification_stocks';
+  info: {
+    singularName: 'learner-gamification-stock';
+    pluralName: 'learner-gamification-stocks';
+    displayName: 'Learner_Gamification_Stock';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    users_permissions_user: Attribute.Relation<
+      'api::learner-gamification-stock.learner-gamification-stock',
+      'oneToOne',
+      'plugin::users-permissions.user'
+    >;
+    gamification_type: Attribute.Relation<
+      'api::learner-gamification-stock.learner-gamification-stock',
+      'oneToOne',
+      'api::gamification-type.gamification-type'
+    >;
+    stock: Attribute.Integer &
+      Attribute.Required &
+      Attribute.SetMinMax<
+        {
+          min: 0;
+          max: 9999999;
+        },
+        number
+      > &
+      Attribute.DefaultTo<0>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::learner-gamification-stock.learner-gamification-stock',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::learner-gamification-stock.learner-gamification-stock',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiLearnerInfoLearnerInfo extends Schema.CollectionType {
   collectionName: 'learner_infos';
   info: {
@@ -1395,26 +1639,25 @@ export interface ApiLearnerJourneyLearnerJourney extends Schema.CollectionType {
     singularName: 'learner-journey';
     pluralName: 'learner-journeys';
     displayName: 'Learner_Journey';
+    description: '';
   };
   options: {
-    draftAndPublish: true;
+    draftAndPublish: false;
   };
   attributes: {
-    createdDate: Attribute.DateTime;
-    learnerAnswer: Attribute.Boolean;
-    learner_info: Attribute.Relation<
+    users_permissions_user: Attribute.Relation<
       'api::learner-journey.learner-journey',
       'oneToOne',
-      'api::learner-info.learner-info'
-    >;
-    journey_map_question_content: Attribute.Relation<
+      'plugin::users-permissions.user'
+    > &
+      Attribute.Private;
+    learning_journey_lesson: Attribute.Relation<
       'api::learner-journey.learner-journey',
       'oneToOne',
-      'api::journey-map-question-content.journey-map-question-content'
+      'api::learning-journey-lesson.learning-journey-lesson'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
-    publishedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
       'api::learner-journey.learner-journey',
       'oneToOne',
@@ -1430,41 +1673,43 @@ export interface ApiLearnerJourneyLearnerJourney extends Schema.CollectionType {
   };
 }
 
-export interface ApiLearnerJourneyHistoryLearnerJourneyHistory
+export interface ApiLearnerProgressLearnerProgress
   extends Schema.CollectionType {
-  collectionName: 'learner_journey_histories';
+  collectionName: 'learner_progresses';
   info: {
-    singularName: 'learner-journey-history';
-    pluralName: 'learner-journey-histories';
-    displayName: 'Learner_Journey_History';
-    description: '';
+    singularName: 'learner-progress';
+    pluralName: 'learner-progresses';
+    displayName: 'Learner_Progress';
   };
   options: {
     draftAndPublish: false;
   };
   attributes: {
-    fromDate: Attribute.DateTime;
-    toDate: Attribute.DateTime;
-    interactivity: Attribute.Relation<
-      'api::learner-journey-history.learner-journey-history',
+    progressId: Attribute.Integer &
+      Attribute.Required &
+      Attribute.SetMinMax<
+        {
+          min: 0;
+          max: 9999999;
+        },
+        number
+      >;
+    users_permissions_user: Attribute.Relation<
+      'api::learner-progress.learner-progress',
       'oneToOne',
-      'api::interactivity.interactivity'
-    >;
-    learner_journey: Attribute.Relation<
-      'api::learner-journey-history.learner-journey-history',
-      'oneToOne',
-      'api::learner-journey.learner-journey'
-    >;
+      'plugin::users-permissions.user'
+    > &
+      Attribute.Private;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
-      'api::learner-journey-history.learner-journey-history',
+      'api::learner-progress.learner-progress',
       'oneToOne',
       'admin::user'
     > &
       Attribute.Private;
     updatedBy: Attribute.Relation<
-      'api::learner-journey-history.learner-journey-history',
+      'api::learner-progress.learner-progress',
       'oneToOne',
       'admin::user'
     > &
@@ -2311,12 +2556,17 @@ declare module '@strapi/types' {
       'api::content-type-category.content-type-category': ApiContentTypeCategoryContentTypeCategory;
       'api::details-content-language.details-content-language': ApiDetailsContentLanguageDetailsContentLanguage;
       'api::discount-policy.discount-policy': ApiDiscountPolicyDiscountPolicy;
-      'api::interactivity.interactivity': ApiInteractivityInteractivity;
+      'api::exam.exam': ApiExamExam;
+      'api::gamification-tx.gamification-tx': ApiGamificationTxGamificationTx;
+      'api::gamification-tx-type.gamification-tx-type': ApiGamificationTxTypeGamificationTxType;
+      'api::gamification-type.gamification-type': ApiGamificationTypeGamificationType;
       'api::journey-map-question-content.journey-map-question-content': ApiJourneyMapQuestionContentJourneyMapQuestionContent;
       'api::language.language': ApiLanguageLanguage;
+      'api::learner-gamification.learner-gamification': ApiLearnerGamificationLearnerGamification;
+      'api::learner-gamification-stock.learner-gamification-stock': ApiLearnerGamificationStockLearnerGamificationStock;
       'api::learner-info.learner-info': ApiLearnerInfoLearnerInfo;
       'api::learner-journey.learner-journey': ApiLearnerJourneyLearnerJourney;
-      'api::learner-journey-history.learner-journey-history': ApiLearnerJourneyHistoryLearnerJourneyHistory;
+      'api::learner-progress.learner-progress': ApiLearnerProgressLearnerProgress;
       'api::learner-starting-point.learner-starting-point': ApiLearnerStartingPointLearnerStartingPoint;
       'api::learning-goal.learning-goal': ApiLearningGoalLearningGoal;
       'api::learning-guide.learning-guide': ApiLearningGuideLearningGuide;

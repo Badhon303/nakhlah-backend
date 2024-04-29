@@ -1,0 +1,33 @@
+{
+  "kind": "collectionType",
+  "collectionName": "learner_gamification_stocks",
+  "info": {
+    "singularName": "learner-gamification-stock",
+    "pluralName": "learner-gamification-stocks",
+    "displayName": "Learner_Gamification_Stock",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "users_permissions_user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "gamification_type": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::gamification-type.gamification-type"
+    },
+    "stock": {
+      "type": "integer",
+      "required": true,
+      "max": 9999999,
+      "min": 0,
+      "default": 0
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "kind": "collectionType",
+  "collectionName": "gamification_types",
+  "info": {
+    "singularName": "gamification-type",
+    "pluralName": "gamification-types",
+    "displayName": "Gamification_Type"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "typeName": {
+      "type": "string",
+      "required": true,
+      "maxLength": 50,
+      "minLength": 1,
+      "unique": true
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "kind": "collectionType",
+  "collectionName": "learner_gamifications",
+  "info": {
+    "singularName": "learner-gamification",
+    "pluralName": "learner-gamifications",
+    "displayName": "Learner_Gamification",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "users_permissions_user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "validDate": {
+      "type": "datetime"
+    },
+    "gamification_tx": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::gamification-tx.gamification-tx"
+    }
+  }
+}

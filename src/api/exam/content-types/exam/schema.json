@@ -1,0 +1,42 @@
+{
+  "kind": "collectionType",
+  "collectionName": "exams",
+  "info": {
+    "singularName": "exam",
+    "pluralName": "exams",
+    "displayName": "Exam",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "examDetails": {
+      "type": "string"
+    },
+    "learning_journey_level": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::learning-journey-level.learning-journey-level"
+    },
+    "numberOfQuestions": {
+      "required": true,
+      "max": 999,
+      "min": 1,
+      "type": "integer"
+    },
+    "correctAnswer": {
+      "type": "integer",
+      "required": true,
+      "max": 999,
+      "min": 0
+    },
+    "users_permissions_user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user",
+      "private": true
+    }
+  }
+}

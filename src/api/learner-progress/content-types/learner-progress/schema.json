@@ -1,0 +1,27 @@
+{
+  "kind": "collectionType",
+  "collectionName": "learner_progresses",
+  "info": {
+    "singularName": "learner-progress",
+    "pluralName": "learner-progresses",
+    "displayName": "Learner_Progress"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "progressId": {
+      "type": "integer",
+      "max": 9999999,
+      "min": 0,
+      "required": true
+    },
+    "users_permissions_user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user",
+      "private": true
+    }
+  }
+}

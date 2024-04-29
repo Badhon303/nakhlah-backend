@@ -4,28 +4,24 @@
   "info": {
     "singularName": "learner-journey",
     "pluralName": "learner-journeys",
-    "displayName": "Learner_Journey"
+    "displayName": "Learner_Journey",
+    "description": ""
   },
   "options": {
-    "draftAndPublish": true
+    "draftAndPublish": false
   },
   "pluginOptions": {},
   "attributes": {
-    "createdDate": {
-      "type": "datetime"
-    },
-    "learnerAnswer": {
-      "type": "boolean"
-    },
-    "learner_info": {
+    "users_permissions_user": {
       "type": "relation",
       "relation": "oneToOne",
-      "target": "api::learner-info.learner-info"
+      "target": "plugin::users-permissions.user",
+      "private": true
     },
-    "journey_map_question_content": {
+    "learning_journey_lesson": {
       "type": "relation",
       "relation": "oneToOne",
-      "target": "api::journey-map-question-content.journey-map-question-content"
+      "target": "api::learning-journey-lesson.learning-journey-lesson"
     }
   }
 }
