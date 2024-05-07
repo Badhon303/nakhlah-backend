@@ -2108,6 +2108,9 @@ export interface ApiQuestionContentQuestionContent
       'oneToMany',
       'api::question.question'
     >;
+    text: Attribute.Boolean & Attribute.DefaultTo<false>;
+    image: Attribute.Boolean & Attribute.DefaultTo<false>;
+    audio: Attribute.Boolean & Attribute.DefaultTo<false>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -2233,9 +2236,13 @@ export interface ApiQuestionTypeQuestionType extends Schema.CollectionType {
       'oneToOne',
       'api::language.language'
     >;
-    image: Attribute.Boolean & Attribute.Required & Attribute.DefaultTo<false>;
-    audio: Attribute.Boolean & Attribute.Required & Attribute.DefaultTo<false>;
-    text: Attribute.Boolean & Attribute.Required & Attribute.DefaultTo<false>;
+    title: Attribute.String &
+      Attribute.Required &
+      Attribute.Unique &
+      Attribute.SetMinMaxLength<{
+        minLength: 1;
+        maxLength: 100;
+      }>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<

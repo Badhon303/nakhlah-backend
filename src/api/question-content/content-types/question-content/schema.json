@@ -34,6 +34,19 @@
       "relation": "oneToMany",
       "target": "api::question.question",
       "mappedBy": "question_content"
+    },
+    "text": {
+      "type": "boolean",
+      "default": false
+    },
+    "image": {
+      "type": "boolean",
+      "default": false,
+      "required": false
+    },
+    "audio": {
+      "type": "boolean",
+      "default": false
     }
   }
 }

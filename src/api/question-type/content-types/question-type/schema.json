@@ -22,20 +22,12 @@
       "relation": "oneToOne",
       "target": "api::language.language"
     },
-    "image": {
-      "type": "boolean",
-      "default": false,
-      "required": true
-    },
-    "audio": {
-      "type": "boolean",
-      "default": false,
-      "required": true
-    },
-    "text": {
-      "type": "boolean",
-      "default": false,
-      "required": true
+    "title": {
+      "type": "string",
+      "maxLength": 100,
+      "minLength": 1,
+      "required": true,
+      "unique": true
     }
   }
 }
