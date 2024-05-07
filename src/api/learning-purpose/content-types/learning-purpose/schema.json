@@ -4,28 +4,25 @@
   "info": {
     "singularName": "learning-purpose",
     "pluralName": "learning-purposes",
-    "displayName": "Learning_Purpose",
-    "description": ""
+    "displayName": "Learning_Purpose"
   },
   "options": {
-    "draftAndPublish": true
+    "draftAndPublish": false
   },
   "pluginOptions": {},
   "attributes": {
-    "purpose": {
+    "title": {
       "type": "string",
-      "required": true,
       "maxLength": 100,
-      "minLength": 1,
-      "unique": true
+      "minLength": 1
     },
     "icon": {
-      "type": "media",
-      "multiple": false,
-      "required": true,
       "allowedTypes": [
         "images"
-      ]
+      ],
+      "type": "media",
+      "multiple": false,
+      "required": true
     }
   }
 }

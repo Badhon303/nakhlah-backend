@@ -12,22 +12,28 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "question": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::question.question",
-      "inversedBy": "question_contents"
-    },
-    "content": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::content.content",
-      "inversedBy": "question_contents"
-    },
     "question_type": {
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::question-type.question-type"
+    },
+    "question_content_option": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::question-content-option.question-content-option",
+      "inversedBy": "question_content"
+    },
+    "contents": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::content.content",
+      "mappedBy": "question_content"
+    },
+    "questions": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::question.question",
+      "mappedBy": "question_content"
     }
   }
 }

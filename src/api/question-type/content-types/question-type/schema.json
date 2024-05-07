@@ -12,12 +12,30 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "title": {
-      "type": "string",
-      "required": true,
-      "unique": true,
-      "maxLength": 100,
-      "minLength": 1
+    "arabic_tx_type": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::arabic-tx-type.arabic-tx-type"
+    },
+    "language": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::language.language"
+    },
+    "image": {
+      "type": "boolean",
+      "default": false,
+      "required": true
+    },
+    "audio": {
+      "type": "boolean",
+      "default": false,
+      "required": true
+    },
+    "text": {
+      "type": "boolean",
+      "default": false,
+      "required": true
     }
   }
 }

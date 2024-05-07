@@ -17,11 +17,6 @@
       "relation": "oneToOne",
       "target": "plugin::users-permissions.user"
     },
-    "learning_purpose": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::learning-purpose.learning-purpose"
-    },
     "learning_goal": {
       "type": "relation",
       "relation": "oneToOne",
@@ -47,6 +42,11 @@
       "relation": "oneToOne",
       "target": "api::registered.registered",
       "mappedBy": "learner_info"
+    },
+    "learning_purpose": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::learning-purpose.learning-purpose"
     }
   }
 }

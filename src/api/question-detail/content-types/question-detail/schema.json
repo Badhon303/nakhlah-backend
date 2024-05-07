@@ -1,0 +1,33 @@
+{
+  "kind": "collectionType",
+  "collectionName": "question_details",
+  "info": {
+    "singularName": "question-detail",
+    "pluralName": "question-details",
+    "displayName": "Question_Detail",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "language": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::language.language"
+    },
+    "audio": {
+      "type": "string",
+      "maxLength": 100,
+      "minLength": 1
+    },
+    "title": {
+      "type": "string",
+      "required": true,
+      "maxLength": 100,
+      "minLength": 1,
+      "unique": true
+    }
+  }
+}

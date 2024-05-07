@@ -26,16 +26,6 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::content.content"
-    },
-    "language": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::language.language"
-    },
-    "content_details_by_language": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::content-details-by-language.content-details-by-language"
     }
   }
 }

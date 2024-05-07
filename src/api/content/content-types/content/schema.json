@@ -12,34 +12,45 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "title": {
-      "type": "string",
-      "required": false,
-      "unique": true,
-      "maxLength": 100,
-      "minLength": 2
-    },
-    "content_type_category": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::content-type-category.content-type-category"
-    },
-    "content_type": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::content-type.content-type"
-    },
-    "question_contents": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::question-content.question-content",
-      "mappedBy": "content"
-    },
     "content_details": {
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::content-detail.content-detail",
       "mappedBy": "content"
+    },
+    "content_category": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::content-category.content-category"
+    },
+    "title": {
+      "type": "string",
+      "maxLength": 100,
+      "minLength": 1
+    },
+    "audio": {
+      "type": "string",
+      "maxLength": 100,
+      "minLength": 1
+    },
+    "image": {
+      "allowedTypes": [
+        "images"
+      ],
+      "type": "media",
+      "multiple": false
+    },
+    "question_content_option": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::question-content-option.question-content-option",
+      "inversedBy": "contents"
+    },
+    "question_content": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::question-content.question-content",
+      "inversedBy": "contents"
     }
   }
 }

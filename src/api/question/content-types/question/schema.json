@@ -4,7 +4,7 @@
   "info": {
     "singularName": "question",
     "pluralName": "questions",
-    "displayName": "question",
+    "displayName": "Question",
     "description": ""
   },
   "options": {
@@ -12,18 +12,28 @@
   },
   "pluginOptions": {},
   "attributes": {
+    "question_content": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::question-content.question-content",
+      "inversedBy": "questions"
+    },
+    "audio": {
+      "type": "string",
+      "maxLength": 100,
+      "minLength": 1
+    },
     "question": {
       "type": "string",
-      "required": false,
-      "unique": true,
       "maxLength": 100,
-      "minLength": 2
+      "minLength": 1
     },
-    "question_contents": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::question-content.question-content",
-      "mappedBy": "question"
+    "image": {
+      "allowedTypes": [
+        "images"
+      ],
+      "type": "media",
+      "multiple": false
     }
   }
 }

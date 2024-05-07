@@ -1,0 +1,20 @@
+{
+  "kind": "collectionType",
+  "collectionName": "arabic_tx_types",
+  "info": {
+    "singularName": "arabic-tx-type",
+    "pluralName": "arabic-tx-types",
+    "displayName": "Arabic_TX_Type"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "maxLength": 100,
+      "minLength": 1
+    }
+  }
+}

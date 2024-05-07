@@ -15,12 +15,14 @@
     "question_content": {
       "type": "relation",
       "relation": "oneToOne",
-      "target": "api::question-content.question-content"
+      "target": "api::question-content.question-content",
+      "mappedBy": "question_content_option"
     },
     "contents": {
       "type": "relation",
       "relation": "oneToMany",
-      "target": "api::content.content"
+      "target": "api::content.content",
+      "mappedBy": "question_content_option"
     }
   }
 }
