@@ -47,6 +47,16 @@
     "audio": {
       "type": "boolean",
       "default": false
+    },
+    "arabic_tx_type": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::arabic-tx-type.arabic-tx-type"
+    },
+    "language": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::language.language"
     }
   }
 }

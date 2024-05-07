@@ -2111,6 +2111,16 @@ export interface ApiQuestionContentQuestionContent
     text: Attribute.Boolean & Attribute.DefaultTo<false>;
     image: Attribute.Boolean & Attribute.DefaultTo<false>;
     audio: Attribute.Boolean & Attribute.DefaultTo<false>;
+    arabic_tx_type: Attribute.Relation<
+      'api::question-content.question-content',
+      'oneToOne',
+      'api::arabic-tx-type.arabic-tx-type'
+    >;
+    language: Attribute.Relation<
+      'api::question-content.question-content',
+      'oneToOne',
+      'api::language.language'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -2226,16 +2236,6 @@ export interface ApiQuestionTypeQuestionType extends Schema.CollectionType {
     draftAndPublish: false;
   };
   attributes: {
-    arabic_tx_type: Attribute.Relation<
-      'api::question-type.question-type',
-      'oneToOne',
-      'api::arabic-tx-type.arabic-tx-type'
-    >;
-    language: Attribute.Relation<
-      'api::question-type.question-type',
-      'oneToOne',
-      'api::language.language'
-    >;
     title: Attribute.String &
       Attribute.Required &
       Attribute.Unique &
