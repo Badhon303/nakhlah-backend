@@ -1,0 +1,29 @@
+{
+  "kind": "collectionType",
+  "collectionName": "gamification_tx_amounts",
+  "info": {
+    "singularName": "gamification-tx-amount",
+    "pluralName": "gamification-tx-amounts",
+    "displayName": "Gamification_TX_Amount",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "gamification_tx": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::gamification-tx.gamification-tx",
+      "private": true
+    },
+    "amount": {
+      "type": "integer",
+      "required": true,
+      "max": 99999999,
+      "min": 0,
+      "default": 0
+    }
+  }
+}

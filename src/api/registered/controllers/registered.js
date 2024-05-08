@@ -44,6 +44,7 @@ module.exports = createCoreController(
             ...ctx.query,
           }
         );
+
         return await sanitize.contentAPI.output(
           result,
           strapi.contentType("api::registered.registered"),

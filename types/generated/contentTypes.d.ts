@@ -843,6 +843,8 @@ export interface ApiContentContent extends Schema.CollectionType {
       'api::content-category.content-category'
     >;
     title: Attribute.String &
+      Attribute.Required &
+      Attribute.Unique &
       Attribute.SetMinMaxLength<{
         minLength: 1;
         maxLength: 100;
@@ -858,10 +860,10 @@ export interface ApiContentContent extends Schema.CollectionType {
       'manyToOne',
       'api::question-content-option.question-content-option'
     >;
-    question_content: Attribute.Relation<
+    content_category_types: Attribute.Relation<
       'api::content.content',
-      'manyToOne',
-      'api::question-content.question-content'
+      'oneToMany',
+      'api::content-category-type.content-category-type'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
@@ -1003,6 +1005,42 @@ export interface ApiContentCategoryContentCategory
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::content-category.content-category',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiContentCategoryTypeContentCategoryType
+  extends Schema.CollectionType {
+  collectionName: 'content_category_types';
+  info: {
+    singularName: 'content-category-type';
+    pluralName: 'content-category-types';
+    displayName: 'Content_Category_Type';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    title: Attribute.String &
+      Attribute.Required &
+      Attribute.Unique &
+      Attribute.SetMinMaxLength<{
+        minLength: 1;
+        maxLength: 100;
+      }>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::content-category-type.content-category-type',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::content-category-type.content-category-type',
       'oneToOne',
       'admin::user'
     > &
@@ -1153,6 +1191,7 @@ export interface ApiGamificationTxGamificationTx extends Schema.CollectionType {
     singularName: 'gamification-tx';
     pluralName: 'gamification-txes';
     displayName: 'Gamification_TX';
+    description: '';
   };
   options: {
     draftAndPublish: false;
@@ -1180,20 +1219,6 @@ export interface ApiGamificationTxGamificationTx extends Schema.CollectionType {
         minLength: 1;
         maxLength: 5000;
       }>;
-    amount: Attribute.Integer &
-      Attribute.Required &
-      Attribute.SetMinMax<
-        {
-          min: 1;
-          max: 9999999;
-        },
-        number
-      >;
-    remarks: Attribute.String &
-      Attribute.SetMinMaxLength<{
-        minLength: 1;
-        maxLength: 5000;
-      }>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -1204,6 +1229,52 @@ export interface ApiGamificationTxGamificationTx extends Schema.CollectionType {
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::gamification-tx.gamification-tx',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiGamificationTxAmountGamificationTxAmount
+  extends Schema.CollectionType {
+  collectionName: 'gamification_tx_amounts';
+  info: {
+    singularName: 'gamification-tx-amount';
+    pluralName: 'gamification-tx-amounts';
+    displayName: 'Gamification_TX_Amount';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    gamification_tx: Attribute.Relation<
+      'api::gamification-tx-amount.gamification-tx-amount',
+      'oneToOne',
+      'api::gamification-tx.gamification-tx'
+    > &
+      Attribute.Private;
+    amount: Attribute.Integer &
+      Attribute.Required &
+      Attribute.SetMinMax<
+        {
+          min: 0;
+          max: 99999999;
+        },
+        number
+      > &
+      Attribute.DefaultTo<0>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::gamification-tx-amount.gamification-tx-amount',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::gamification-tx-amount.gamification-tx-amount',
       'oneToOne',
       'admin::user'
     > &
@@ -2042,17 +2113,14 @@ export interface ApiQuestionQuestion extends Schema.CollectionType {
     draftAndPublish: false;
   };
   attributes: {
-    question_content: Attribute.Relation<
-      'api::question.question',
-      'manyToOne',
-      'api::question-content.question-content'
-    >;
     audio: Attribute.String &
       Attribute.SetMinMaxLength<{
         minLength: 1;
         maxLength: 100;
       }>;
     question: Attribute.String &
+      Attribute.Required &
+      Attribute.Unique &
       Attribute.SetMinMaxLength<{
         minLength: 1;
         maxLength: 100;
@@ -2502,10 +2570,12 @@ declare module '@strapi/types' {
       'api::content-by-clause.content-by-clause': ApiContentByClauseContentByClause;
       'api::content-by-syllable.content-by-syllable': ApiContentBySyllableContentBySyllable;
       'api::content-category.content-category': ApiContentCategoryContentCategory;
+      'api::content-category-type.content-category-type': ApiContentCategoryTypeContentCategoryType;
       'api::content-detail.content-detail': ApiContentDetailContentDetail;
       'api::discount-policy.discount-policy': ApiDiscountPolicyDiscountPolicy;
       'api::exam.exam': ApiExamExam;
       'api::gamification-tx.gamification-tx': ApiGamificationTxGamificationTx;
+      'api::gamification-tx-amount.gamification-tx-amount': ApiGamificationTxAmountGamificationTxAmount;
       'api::gamification-tx-type.gamification-tx-type': ApiGamificationTxTypeGamificationTxType;
       'api::gamification-type.gamification-type': ApiGamificationTypeGamificationType;
       'api::journey-map-question-content.journey-map-question-content': ApiJourneyMapQuestionContentJourneyMapQuestionContent;

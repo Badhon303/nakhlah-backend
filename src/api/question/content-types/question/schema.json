@@ -12,12 +12,6 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "question_content": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::question-content.question-content",
-      "inversedBy": "questions"
-    },
     "audio": {
       "type": "string",
       "maxLength": 100,
@@ -26,14 +20,17 @@
     "question": {
       "type": "string",
       "maxLength": 100,
-      "minLength": 1
+      "minLength": 1,
+      "required": true,
+      "unique": true
     },
     "image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
       "allowedTypes": [
         "images"
-      ],
-      "type": "media",
-      "multiple": false
+      ]
     }
   }
 }

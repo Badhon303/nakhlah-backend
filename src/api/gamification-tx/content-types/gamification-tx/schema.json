@@ -4,7 +4,8 @@
   "info": {
     "singularName": "gamification-tx",
     "pluralName": "gamification-txes",
-    "displayName": "Gamification_TX"
+    "displayName": "Gamification_TX",
+    "description": ""
   },
   "options": {
     "draftAndPublish": false
@@ -29,17 +30,6 @@
       "minLength": 1
     },
     "transactionDetails": {
-      "type": "string",
-      "maxLength": 5000,
-      "minLength": 1
-    },
-    "amount": {
-      "type": "integer",
-      "max": 9999999,
-      "required": true,
-      "min": 1
-    },
-    "remarks": {
       "type": "string",
       "maxLength": 5000,
       "minLength": 1
