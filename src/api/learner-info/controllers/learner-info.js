@@ -51,28 +51,6 @@ module.exports = createCoreController(
           );
         });
 
-        // await strapi.entityService.create(
-        //   "api::learner-gamification-stock.learner-gamification-stock",
-        //   {
-        //     // @ts-ignore
-        //     data: {
-        //       users_permissions_user: user.id,
-        //       gamification_type: 5,
-        //     },
-        //   }
-        // );
-
-        // await strapi.entityService.create(
-        //   "api::learner-gamification-stock.learner-gamification-stock",
-        //   {
-        //     // @ts-ignore
-        //     data: {
-        //       users_permissions_user: user.id,
-        //       gamification_type: 6,
-        //     },
-        //   }
-        // );
-
         return await sanitize.contentAPI.output(
           result,
           strapi.contentType("api::learner-info.learner-info"),
@@ -132,12 +110,6 @@ module.exports = createCoreController(
             where: { users_permissions_user: user.id },
           });
 
-        // Deleting all learner-gamification-stock when the user is deleted
-        // await strapi.db
-        //   .query("api::learner-gamification-stock.learner-gamification-stock")
-        //   .deleteMany({
-        //     where: { users_permissions_user: user.id },
-        //   });
         const entries = await strapi.entityService.findMany(
           "api::learner-gamification-stock.learner-gamification-stock",
           {
