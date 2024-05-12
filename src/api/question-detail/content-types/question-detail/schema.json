@@ -28,6 +28,11 @@
       "maxLength": 100,
       "minLength": 1,
       "unique": true
+    },
+    "question": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::question.question"
     }
   }
 }

@@ -1492,7 +1492,8 @@ export interface ApiLearnerGamificationStockLearnerGamificationStock
       'api::learner-gamification-stock.learner-gamification-stock',
       'oneToOne',
       'plugin::users-permissions.user'
-    >;
+    > &
+      Attribute.Private;
     gamification_type: Attribute.Relation<
       'api::learner-gamification-stock.learner-gamification-stock',
       'oneToOne',
@@ -2275,6 +2276,11 @@ export interface ApiQuestionDetailQuestionDetail extends Schema.CollectionType {
         minLength: 1;
         maxLength: 100;
       }>;
+    question: Attribute.Relation<
+      'api::question-detail.question-detail',
+      'oneToOne',
+      'api::question.question'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
