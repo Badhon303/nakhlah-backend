@@ -15,8 +15,7 @@
     "gamification_tx": {
       "type": "relation",
       "relation": "oneToOne",
-      "target": "api::gamification-tx.gamification-tx",
-      "private": true
+      "target": "api::gamification-tx.gamification-tx"
     },
     "amount": {
       "type": "integer",

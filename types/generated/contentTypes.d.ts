@@ -1253,8 +1253,7 @@ export interface ApiGamificationTxAmountGamificationTxAmount
       'api::gamification-tx-amount.gamification-tx-amount',
       'oneToOne',
       'api::gamification-tx.gamification-tx'
-    > &
-      Attribute.Private;
+    >;
     amount: Attribute.Integer &
       Attribute.Required &
       Attribute.SetMinMax<
