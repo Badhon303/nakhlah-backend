@@ -26,7 +26,7 @@ module.exports = createCoreController(
           const gamificationTxAmountDetails =
             await strapi.entityService.findOne(
               "api::gamification-tx-amount.gamification-tx-amount",
-              data.gamification_tx.connect[0],
+              data.gamification_tx.connect[0], // need to replace with data.gamification_tx_amount.connect[0], in future update
               {
                 populate: {
                   gamification_tx: {
@@ -40,7 +40,7 @@ module.exports = createCoreController(
           }
           const amount = gamificationTxAmountDetails?.amount;
           const gamificationTransactionId =
-            gamificationTxAmountDetails?.gamification_tx?.id; // Palm Gain Per Hour(1), Palm Loss By Wrong Answer(2), Palm Refill By Dates Loss(3)
+            gamificationTxAmountDetails?.gamification_tx?.id; // Palm Gain Per Hour(1), Palm Loss By Wrong Answer(2), Palm Refill By Dates Loss(5)
           // const gamificationTypeId =
           //   gamificationTxAmountDetails?.gamification_tx?.gamification_type?.id; // Palm(1), Date(5), Injaz(6)
           // const gamificationTxTypeId =
@@ -119,9 +119,11 @@ module.exports = createCoreController(
                     data: {
                       gamification_type: 1,
                       stock:
-                        LearnerGamificationStockDetailsOfPalm2.stock - 1 < 0
+                        LearnerGamificationStockDetailsOfPalm2.stock - amount <
+                        0
                           ? 0
-                          : LearnerGamificationStockDetailsOfPalm2.stock - 1,
+                          : LearnerGamificationStockDetailsOfPalm2.stock -
+                            amount,
                       users_permissions_user: user.id,
                     },
                   }
@@ -142,10 +144,150 @@ module.exports = createCoreController(
               if (!LearnerGamificationStockDetails5) {
                 return ctx.badRequest("Something went wrong");
               }
-              console.log(
-                "LearnerGamificationStockDetails3 :",
-                LearnerGamificationStockDetails5
+              const dateItem = LearnerGamificationStockDetails5.find(
+                (item) => item.gamification_type.typeName === "Date"
               );
+              const palmItem = LearnerGamificationStockDetails5.find(
+                (item) => item.gamification_type.typeName === "Palm"
+              );
+              if (!dateItem.stock || dateItem.stock < amount) {
+                return ctx.badRequest(
+                  `Don't have enough dates to purchase palm`
+                );
+              }
+              if (palmItem.stock === 5) {
+                return ctx.badRequest("You already have 5 palm trees");
+              } else {
+                try {
+                  await strapi.entityService.update(
+                    "api::learner-gamification-stock.learner-gamification-stock",
+                    palmItem.id,
+                    {
+                      data: {
+                        gamification_type: 1,
+                        stock: 5,
+                        users_permissions_user: user.id,
+                      },
+                    }
+                  );
+                  await strapi.entityService.update(
+                    "api::learner-gamification-stock.learner-gamification-stock",
+                    dateItem.id,
+                    {
+                      data: {
+                        gamification_type: 5,
+                        stock: dateItem.stock - amount,
+                        users_permissions_user: user.id,
+                      },
+                    }
+                  );
+                } catch (error) {
+                  return ctx.badRequest("Something went wrong");
+                }
+              }
+            case 6: // Palm Gain By Advertisement
+              const LearnerGamificationStockDetailsOfPalm6 = await strapi.db
+                .query(
+                  "api::learner-gamification-stock.learner-gamification-stock"
+                )
+                .findOne({
+                  where: {
+                    gamification_type: {
+                      id: 1,
+                    },
+                    users_permissions_user: user.id,
+                  },
+                });
+              if (!LearnerGamificationStockDetailsOfPalm6) {
+                return ctx.badRequest("Something went wrong");
+              }
+              try {
+                await strapi.entityService.update(
+                  "api::learner-gamification-stock.learner-gamification-stock",
+                  LearnerGamificationStockDetailsOfPalm6.id,
+                  {
+                    data: {
+                      gamification_type: 1,
+                      stock:
+                        LearnerGamificationStockDetailsOfPalm6.stock + amount >
+                        5
+                          ? 5
+                          : LearnerGamificationStockDetailsOfPalm6.stock +
+                            amount,
+                      users_permissions_user: user.id,
+                    },
+                  }
+                );
+              } catch (error) {
+                return ctx.badRequest(`Something went wrong ${error}`);
+              }
+              break;
+            case 7: // Dates Gain By Exam
+              const LearnerGamificationStockDetailsOfDate7 = await strapi.db
+                .query(
+                  "api::learner-gamification-stock.learner-gamification-stock"
+                )
+                .findOne({
+                  where: {
+                    gamification_type: {
+                      id: 5,
+                    },
+                    users_permissions_user: user.id,
+                  },
+                });
+              if (!LearnerGamificationStockDetailsOfDate7) {
+                return ctx.badRequest("Something went wrong");
+              }
+              try {
+                await strapi.entityService.update(
+                  "api::learner-gamification-stock.learner-gamification-stock",
+                  LearnerGamificationStockDetailsOfDate7.id,
+                  {
+                    data: {
+                      gamification_type: 5,
+                      stock:
+                        LearnerGamificationStockDetailsOfDate7.stock + amount,
+                      users_permissions_user: user.id,
+                    },
+                  }
+                );
+              } catch (error) {
+                return ctx.badRequest(`Something went wrong ${error}`);
+              }
+              break;
+            case 8: // Dates Gain By Exam With Full Marks
+              const LearnerGamificationStockDetailsOfDate8 = await strapi.db
+                .query(
+                  "api::learner-gamification-stock.learner-gamification-stock"
+                )
+                .findOne({
+                  where: {
+                    gamification_type: {
+                      id: 5,
+                    },
+                    users_permissions_user: user.id,
+                  },
+                });
+              if (!LearnerGamificationStockDetailsOfDate8) {
+                return ctx.badRequest("Something went wrong");
+              }
+              try {
+                await strapi.entityService.update(
+                  "api::learner-gamification-stock.learner-gamification-stock",
+                  LearnerGamificationStockDetailsOfDate8.id,
+                  {
+                    data: {
+                      gamification_type: 5,
+                      stock:
+                        LearnerGamificationStockDetailsOfDate8.stock + amount,
+                      users_permissions_user: user.id,
+                    },
+                  }
+                );
+              } catch (error) {
+                return ctx.badRequest(`Something went wrong ${error}`);
+              }
+              break;
               // try {
               //   await strapi.entityService.update(
               //     "api::learner-gamification-stock.learner-gamification-stock",
