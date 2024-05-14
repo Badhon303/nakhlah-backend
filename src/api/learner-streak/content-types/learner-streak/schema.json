@@ -1,0 +1,26 @@
+{
+  "kind": "collectionType",
+  "collectionName": "learner_streaks",
+  "info": {
+    "singularName": "learner-streak",
+    "pluralName": "learner-streaks",
+    "displayName": "Learner_Streak",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "present": {
+      "type": "boolean",
+      "default": false,
+      "required": true
+    },
+    "users_permissions_user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    }
+  }
+}

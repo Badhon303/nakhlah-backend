@@ -63,6 +63,16 @@ module.exports = createCoreController(
           }
         );
 
+        await strapi.entityService.create(
+          "api::learner-progress.learner-progress",
+          {
+            // @ts-ignore
+            data: {
+              users_permissions_user: user.id,
+            },
+          }
+        );
+
         return await sanitize.contentAPI.output(
           result,
           strapi.contentType("api::learner-info.learner-info"),

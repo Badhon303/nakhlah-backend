@@ -1214,7 +1214,7 @@ export interface ApiGamificationTxGamificationTx extends Schema.CollectionType {
         minLength: 1;
         maxLength: 100;
       }>;
-    transactionDetails: Attribute.String &
+    transactionDetails: Attribute.Text &
       Attribute.SetMinMaxLength<{
         minLength: 1;
         maxLength: 5000;
@@ -1641,6 +1641,7 @@ export interface ApiLearnerProgressLearnerProgress
     singularName: 'learner-progress';
     pluralName: 'learner-progresses';
     displayName: 'Learner_Progress';
+    description: '';
   };
   options: {
     draftAndPublish: false;
@@ -1654,7 +1655,8 @@ export interface ApiLearnerProgressLearnerProgress
           max: 9999999;
         },
         number
-      >;
+      > &
+      Attribute.DefaultTo<0>;
     users_permissions_user: Attribute.Relation<
       'api::learner-progress.learner-progress',
       'oneToOne',
@@ -1716,6 +1718,43 @@ export interface ApiLearnerStartingPointLearnerStartingPoint
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::learner-starting-point.learner-starting-point',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiLearnerStreakLearnerStreak extends Schema.CollectionType {
+  collectionName: 'learner_streaks';
+  info: {
+    singularName: 'learner-streak';
+    pluralName: 'learner-streaks';
+    displayName: 'Learner_Streak';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    present: Attribute.Boolean &
+      Attribute.Required &
+      Attribute.DefaultTo<false>;
+    users_permissions_user: Attribute.Relation<
+      'api::learner-streak.learner-streak',
+      'oneToOne',
+      'plugin::users-permissions.user'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::learner-streak.learner-streak',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::learner-streak.learner-streak',
       'oneToOne',
       'admin::user'
     > &
@@ -2596,6 +2635,7 @@ declare module '@strapi/types' {
       'api::learner-journey.learner-journey': ApiLearnerJourneyLearnerJourney;
       'api::learner-progress.learner-progress': ApiLearnerProgressLearnerProgress;
       'api::learner-starting-point.learner-starting-point': ApiLearnerStartingPointLearnerStartingPoint;
+      'api::learner-streak.learner-streak': ApiLearnerStreakLearnerStreak;
       'api::learning-goal.learning-goal': ApiLearningGoalLearningGoal;
       'api::learning-guide.learning-guide': ApiLearningGuideLearningGuide;
       'api::learning-journey.learning-journey': ApiLearningJourneyLearningJourney;

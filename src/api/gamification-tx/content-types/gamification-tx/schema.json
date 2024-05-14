@@ -30,7 +30,7 @@
       "minLength": 1
     },
     "transactionDetails": {
-      "type": "string",
+      "type": "text",
       "maxLength": 5000,
       "minLength": 1
     },

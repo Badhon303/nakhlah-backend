@@ -4,7 +4,8 @@
   "info": {
     "singularName": "learner-progress",
     "pluralName": "learner-progresses",
-    "displayName": "Learner_Progress"
+    "displayName": "Learner_Progress",
+    "description": ""
   },
   "options": {
     "draftAndPublish": false
@@ -15,7 +16,8 @@
       "type": "integer",
       "max": 9999999,
       "min": 0,
-      "required": true
+      "required": true,
+      "default": 0
     },
     "users_permissions_user": {
       "type": "relation",
