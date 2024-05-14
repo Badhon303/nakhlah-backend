@@ -33,6 +33,12 @@
       "type": "string",
       "maxLength": 5000,
       "minLength": 1
+    },
+    "gamification_tx_amount": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::gamification-tx-amount.gamification-tx-amount",
+      "inversedBy": "gamification_tx"
     }
   }
 }

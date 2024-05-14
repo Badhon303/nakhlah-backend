@@ -1219,6 +1219,11 @@ export interface ApiGamificationTxGamificationTx extends Schema.CollectionType {
         minLength: 1;
         maxLength: 5000;
       }>;
+    gamification_tx_amount: Attribute.Relation<
+      'api::gamification-tx.gamification-tx',
+      'oneToOne',
+      'api::gamification-tx-amount.gamification-tx-amount'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
