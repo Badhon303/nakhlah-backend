@@ -1863,13 +1863,15 @@ export interface ApiLearningJourneyLearningJourney
       }>;
     icon: Attribute.Media;
     sequence: Attribute.Integer &
+      Attribute.Required &
       Attribute.SetMinMax<
         {
           min: 0;
-          max: 99;
+          max: 999;
         },
         number
-      >;
+      > &
+      Attribute.DefaultTo<0>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -1912,13 +1914,15 @@ export interface ApiLearningJourneyLessonLearningJourneyLesson
       'api::learning-journey-level.learning-journey-level'
     >;
     lessonSequence: Attribute.Integer &
+      Attribute.Required &
       Attribute.SetMinMax<
         {
           min: 0;
-          max: 99;
+          max: 9999;
         },
         number
-      >;
+      > &
+      Attribute.DefaultTo<0>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -1961,13 +1965,15 @@ export interface ApiLearningJourneyLevelLearningJourneyLevel
       'api::learning-journey-unit.learning-journey-unit'
     >;
     taskSequence: Attribute.Integer &
+      Attribute.Required &
       Attribute.SetMinMax<
         {
           min: 0;
-          max: 99;
+          max: 999;
         },
         number
-      >;
+      > &
+      Attribute.DefaultTo<0>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -2010,13 +2016,15 @@ export interface ApiLearningJourneyUnitLearningJourneyUnit
       'api::learning-journey.learning-journey'
     >;
     unitSequence: Attribute.Integer &
+      Attribute.Required &
       Attribute.SetMinMax<
         {
           min: 0;
-          max: 99;
+          max: 999;
         },
         number
-      >;
+      > &
+      Attribute.DefaultTo<0>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<

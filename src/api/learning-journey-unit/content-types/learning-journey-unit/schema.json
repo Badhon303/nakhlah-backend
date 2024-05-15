@@ -26,8 +26,10 @@
     },
     "unitSequence": {
       "type": "integer",
-      "max": 99,
-      "min": 0
+      "max": 999,
+      "min": 0,
+      "required": true,
+      "default": 0
     }
   }
 }
