@@ -1870,8 +1870,7 @@ export interface ApiLearningJourneyLearningJourney
           max: 999;
         },
         number
-      > &
-      Attribute.DefaultTo<0>;
+      >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -1921,8 +1920,7 @@ export interface ApiLearningJourneyLessonLearningJourneyLesson
           max: 9999;
         },
         number
-      > &
-      Attribute.DefaultTo<0>;
+      >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -1972,8 +1970,7 @@ export interface ApiLearningJourneyLevelLearningJourneyLevel
           max: 999;
         },
         number
-      > &
-      Attribute.DefaultTo<0>;
+      >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -2023,8 +2020,7 @@ export interface ApiLearningJourneyUnitLearningJourneyUnit
           max: 999;
         },
         number
-      > &
-      Attribute.DefaultTo<0>;
+      >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<

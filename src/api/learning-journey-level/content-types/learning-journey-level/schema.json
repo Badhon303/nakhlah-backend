@@ -28,7 +28,6 @@
       "type": "integer",
       "max": 999,
       "min": 0,
-      "default": 0,
       "required": true
     }
   }

@@ -28,8 +28,7 @@
       "type": "integer",
       "max": 999,
       "min": 0,
-      "required": true,
-      "default": 0
+      "required": true
     }
   }
 }
