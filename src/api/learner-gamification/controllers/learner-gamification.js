@@ -87,7 +87,7 @@ module.exports = createCoreController(
         ) {
           const gamificationTxDetails = await strapi.entityService.findOne(
             "api::gamification-tx.gamification-tx",
-            data.gamification_tx.connect[0], // need to replace with data.gamification_tx_amount.connect[0], in future update
+            data.gamification_tx.connect[0],
             {
               populate: {
                 gamification_tx_amount: true,
@@ -105,7 +105,6 @@ module.exports = createCoreController(
           // const gamificationTxTypeId =
           //   gamificationTxAmountDetails?.gamification_tx?.gamification_tx_type
           //     ?.id; // Add(1), Deduct(2)
-          console.log("gamificationTxAmountDetails: ", gamificationTxDetails);
           switch (gamificationTransactionName) {
             case "Palm Gain Per Hour":
               const LearnerGamificationStockDetailsOfPalm1 = await strapi.db
@@ -131,7 +130,7 @@ module.exports = createCoreController(
                 // @ts-ignore
                 (currentTime - getUpdatedTime) / (1000 * 60 * 60)
               );
-              console.log("hourDifference: ", hourDifference);
+
               try {
                 await strapi.entityService.update(
                   "api::learner-gamification-stock.learner-gamification-stock",
@@ -678,7 +677,7 @@ module.exports = createCoreController(
           {
             // @ts-ignore
             data: {
-              ...ctx.request.body,
+              gamification_tx: data?.gamification_tx?.connect[0], // data.gamification_tx.connect[0]
               users_permissions_user: user.id,
             },
             ...ctx.query,
