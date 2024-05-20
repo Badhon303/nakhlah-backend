@@ -1971,6 +1971,44 @@ export interface ApiLearningJourneyLevelLearningJourneyLevel
         },
         number
       >;
+    dates: Attribute.Integer &
+      Attribute.Required &
+      Attribute.SetMinMax<
+        {
+          min: 0;
+          max: 999999;
+        },
+        number
+      > &
+      Attribute.DefaultTo<0>;
+    injaz: Attribute.Integer &
+      Attribute.Required &
+      Attribute.SetMinMax<
+        {
+          min: 0;
+          max: 999999;
+        },
+        number
+      > &
+      Attribute.DefaultTo<0>;
+    numberOfQuestions: Attribute.Integer &
+      Attribute.SetMinMax<
+        {
+          min: 5;
+          max: 20;
+        },
+        number
+      > &
+      Attribute.DefaultTo<0>;
+    passMark: Attribute.Integer &
+      Attribute.SetMinMax<
+        {
+          min: 40;
+          max: 100;
+        },
+        number
+      > &
+      Attribute.DefaultTo<0>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<

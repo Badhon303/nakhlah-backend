@@ -29,6 +29,32 @@
       "max": 999,
       "min": 0,
       "required": true
+    },
+    "dates": {
+      "required": true,
+      "max": 999999,
+      "min": 0,
+      "type": "integer",
+      "default": 0
+    },
+    "injaz": {
+      "type": "integer",
+      "required": true,
+      "default": 0,
+      "max": 999999,
+      "min": 0
+    },
+    "numberOfQuestions": {
+      "type": "integer",
+      "max": 20,
+      "min": 5,
+      "default": 0
+    },
+    "passMark": {
+      "type": "integer",
+      "default": 0,
+      "max": 100,
+      "min": 40
     }
   }
 }

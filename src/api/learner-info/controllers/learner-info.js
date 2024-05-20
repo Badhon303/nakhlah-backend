@@ -35,21 +35,30 @@ module.exports = createCoreController(
           }
         );
 
-        const gamificationTypes = [1, 6];
-
         // Creating multiple learner-gamification-stock records
-        gamificationTypes.map(async (id) => {
-          await strapi.entityService.create(
-            "api::learner-gamification-stock.learner-gamification-stock",
-            {
-              // @ts-ignore
-              data: {
-                users_permissions_user: user.id,
-                gamification_type: id,
-              },
-            }
-          );
-        });
+
+        await strapi.entityService.create(
+          "api::learner-gamification-stock.learner-gamification-stock",
+          {
+            // @ts-ignore
+            data: {
+              users_permissions_user: user.id,
+              gamification_type: 6,
+            },
+          }
+        );
+
+        await strapi.entityService.create(
+          "api::learner-gamification-stock.learner-gamification-stock",
+          {
+            // @ts-ignore
+            data: {
+              users_permissions_user: user.id,
+              stock: 5,
+              gamification_type: 1,
+            },
+          }
+        );
 
         await strapi.entityService.create(
           "api::learner-gamification-stock.learner-gamification-stock",
