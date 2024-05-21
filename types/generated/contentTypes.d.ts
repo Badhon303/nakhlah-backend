@@ -2008,7 +2008,10 @@ export interface ApiLearningJourneyLevelLearningJourneyLevel
         },
         number
       > &
-      Attribute.DefaultTo<0>;
+      Attribute.DefaultTo<40>;
+    mysteryBox: Attribute.Boolean &
+      Attribute.Required &
+      Attribute.DefaultTo<false>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -2142,6 +2145,44 @@ export interface ApiLearningTipLearningTip extends Schema.CollectionType {
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::learning-tip.learning-tip',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiLessonPracticeLessonPractice extends Schema.CollectionType {
+  collectionName: 'lesson_practices';
+  info: {
+    singularName: 'lesson-practice';
+    pluralName: 'lesson-practices';
+    displayName: 'Lesson_Practice';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    users_permissions_user: Attribute.Relation<
+      'api::lesson-practice.lesson-practice',
+      'oneToOne',
+      'plugin::users-permissions.user'
+    >;
+    learning_journey_lesson: Attribute.Relation<
+      'api::lesson-practice.lesson-practice',
+      'oneToOne',
+      'api::learning-journey-lesson.learning-journey-lesson'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::lesson-practice.lesson-practice',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::lesson-practice.lesson-practice',
       'oneToOne',
       'admin::user'
     > &
@@ -2686,6 +2727,7 @@ declare module '@strapi/types' {
       'api::learning-journey-unit.learning-journey-unit': ApiLearningJourneyUnitLearningJourneyUnit;
       'api::learning-purpose.learning-purpose': ApiLearningPurposeLearningPurpose;
       'api::learning-tip.learning-tip': ApiLearningTipLearningTip;
+      'api::lesson-practice.lesson-practice': ApiLessonPracticeLessonPractice;
       'api::privacy-policy.privacy-policy': ApiPrivacyPolicyPrivacyPolicy;
       'api::question.question': ApiQuestionQuestion;
       'api::question-content.question-content': ApiQuestionContentQuestionContent;

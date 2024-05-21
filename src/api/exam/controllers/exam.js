@@ -28,6 +28,62 @@ module.exports = createCoreController("api::exam.exam", ({ strapi }) => ({
       if (learningJourneyLevelExists) {
         return ctx.badRequest("Exam already completed");
       }
+      // Dates Gain By Exam
+      const LearnerGamificationStockDetailsOfDate = await strapi.db
+        .query("api::learner-gamification-stock.learner-gamification-stock")
+        .findOne({
+          where: {
+            gamification_type: {
+              typeName: "Date",
+            },
+            users_permissions_user: user.id,
+          },
+        });
+      const LearnerGamificationStockDetailsOfInjaz = await strapi.db
+        .query("api::learner-gamification-stock.learner-gamification-stock")
+        .findOne({
+          where: {
+            gamification_type: {
+              typeName: "Injaz",
+            },
+            users_permissions_user: user.id,
+          },
+        });
+      if (!LearnerGamificationStockDetailsOfDate) {
+        return ctx.badRequest("Something went wrong");
+      }
+      try {
+        await strapi.entityService.update(
+          "api::learner-gamification-stock.learner-gamification-stock",
+          LearnerGamificationStockDetailsOfDate.id,
+          {
+            data: {
+              gamification_type: 5,
+              stock:
+                LearnerGamificationStockDetailsOfDate.stock +
+                learning_journey_level.dates *
+                  (learning_journey_level.passMark / 100),
+              users_permissions_user: user.id,
+            },
+          }
+        );
+        await strapi.entityService.update(
+          "api::learner-gamification-stock.learner-gamification-stock",
+          LearnerGamificationStockDetailsOfInjaz.id,
+          {
+            data: {
+              gamification_type: 5,
+              stock:
+                LearnerGamificationStockDetailsOfInjaz.stock +
+                learning_journey_level.injaz,
+              users_permissions_user: user.id,
+            },
+          }
+        );
+      } catch (error) {
+        return ctx.badRequest(`Something went wrong ${error}`);
+      }
+      //Create Exam
       const result = await strapi.entityService.create("api::exam.exam", {
         // @ts-ignore
         data: {

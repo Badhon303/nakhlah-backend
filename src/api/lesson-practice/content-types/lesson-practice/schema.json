@@ -1,0 +1,25 @@
+{
+  "kind": "collectionType",
+  "collectionName": "lesson_practices",
+  "info": {
+    "singularName": "lesson-practice",
+    "pluralName": "lesson-practices",
+    "displayName": "Lesson_Practice"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "users_permissions_user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "learning_journey_lesson": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::learning-journey-lesson.learning-journey-lesson"
+    }
+  }
+}
