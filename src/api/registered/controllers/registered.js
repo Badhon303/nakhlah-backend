@@ -4,15 +4,6 @@
  * registered controller
  */
 
-// import * as Koa from "koa";
-
-// declare module "koa" {
-//     interface Request {
-//         body?: unknown;
-//         rawBody: string;
-//     }
-// }
-
 const { createCoreController } = require("@strapi/strapi").factories;
 const { sanitize } = require("@strapi/utils");
 
@@ -22,28 +13,50 @@ module.exports = createCoreController(
     async create(ctx) {
       const user = ctx.state.user;
       try {
+        if (typeof ctx.request.body !== "object" || ctx.request.body === null) {
+          return ctx.badRequest("Invalid request body");
+        }
+        const registeredData = await strapi.db
+          .query("api::registered.registered")
+          .findOne({
+            where: { users_permissions_user: user.id },
+          });
+        if (registeredData) {
+          return ctx.badRequest("User Info already exists");
+        }
         const profileData = await strapi.db
           .query("api::learner-info.learner-info")
           .findOne({
             where: { users_permissions_user: user.id },
-            populate: { registered: true },
           });
-        if (profileData.registered) {
-          return ctx.badRequest("User Info already exists");
-        }
-        if (typeof ctx.request.body !== "object" || ctx.request.body === null) {
-          return ctx.badRequest("Invalid request body");
+        if (!profileData) {
+          return ctx.badRequest("Create Your Profile First");
         }
         const result = await strapi.entityService.create(
           "api::registered.registered",
           {
+            // @ts-ignore
             data: {
               ...ctx.request.body,
-              learner_info: profileData.id,
+              users_permissions_user: user.id,
             },
             ...ctx.query,
           }
         );
+        try {
+          await strapi.entityService.update(
+            "api::learner-info.learner-info",
+            profileData.id,
+            {
+              data: {
+                registered: result.id,
+              },
+              ...ctx.query,
+            }
+          );
+        } catch (error) {
+          return ctx.badRequest(`Something went wrong`);
+        }
 
         return await sanitize.contentAPI.output(
           result,
@@ -53,12 +66,13 @@ module.exports = createCoreController(
           }
         );
       } catch (err) {
-        return ctx.badRequest(`User Profile Create Error: ${err.message}`);
+        return ctx.badRequest(`Registration create Error: ${err.message}`);
       }
     },
 
     async find(ctx) {
       let results;
+      const user = ctx.state.user;
       try {
         if (ctx.state.user.role.name === "Admin") {
           results = await strapi.entityService.findMany(
@@ -68,18 +82,17 @@ module.exports = createCoreController(
             }
           );
         } else {
-          const profileData = await strapi.db
-            .query("api::learner-info.learner-info")
+          const registeredData = await strapi.db
+            .query("api::registered.registered")
             .findOne({
-              where: { users_permissions_user: ctx.state.user.id },
-              populate: { registered: true },
+              where: { users_permissions_user: user.id },
             });
-          if (!profileData.registered) {
-            return ctx.notFound("Resource not found");
+          if (!registeredData) {
+            return ctx.badRequest("Data not found");
           }
           results = await strapi.entityService.findOne(
             "api::registered.registered",
-            profileData.registered.id,
+            registeredData.id,
             {
               ...ctx.query,
             }
@@ -98,20 +111,19 @@ module.exports = createCoreController(
     },
 
     async delete(ctx) {
+      const user = ctx.state.user;
       try {
-        const user = ctx.state.user;
-        const profileData = await strapi.db
-          .query("api::learner-info.learner-info")
+        const registeredData = await strapi.db
+          .query("api::registered.registered")
           .findOne({
             where: { users_permissions_user: user.id },
-            populate: { registered: true },
           });
-        if (!profileData.registered) {
-          return ctx.notFound("Resource not found");
+        if (!registeredData) {
+          return ctx.badRequest("Data not found");
         }
         const result = await strapi.entityService.delete(
           "api::registered.registered",
-          profileData.registered.id
+          registeredData.id
         );
         return result;
       } catch (err) {
@@ -119,40 +131,43 @@ module.exports = createCoreController(
       }
     },
 
-    // async update(ctx) {
-    //   try {
-    //     const user = ctx.state.user;
-    //     const profileData = await strapi.db
-    //       .query("api::registered.registered")
-    //       .findOne({
-    //         where: { users_permissions_user: user.id },
-    //       });
+    async update(ctx) {
+      try {
+        const user = ctx.state.user;
+        const registeredData = await strapi.db
+          .query("api::registered.registered")
+          .findOne({
+            where: { users_permissions_user: user.id },
+          });
+        if (!registeredData) {
+          return ctx.badRequest("Data not found");
+        }
 
-    //     if (typeof ctx.request.body !== "object" || ctx.request.body === null) {
-    //       return ctx.badRequest("Invalid request body");
-    //     }
+        if (typeof ctx.request.body !== "object" || ctx.request.body === null) {
+          return ctx.badRequest("Invalid request body");
+        }
 
-    //     const result = await strapi.entityService.update(
-    //       "api::registered.registered",
-    //       profileData.id,
-    //       {
-    //         data: {
-    //           ...ctx.request.body,
-    //           users_permissions_user: user.id,
-    //         },
-    //         ...ctx.query,
-    //       }
-    //     );
-    //     return await sanitize.contentAPI.output(
-    //       result,
-    //       strapi.contentType("api::registered.registered"),
-    //       {
-    //         auth: ctx.state.auth,
-    //       }
-    //     );
-    //   } catch (err) {
-    //     return ctx.badRequest(`User Profile Update Error: ${err.message}`);
-    //   }
-    // },
+        const result = await strapi.entityService.update(
+          "api::registered.registered",
+          registeredData.id,
+          {
+            data: {
+              ...ctx.request.body,
+              users_permissions_user: user.id,
+            },
+            ...ctx.query,
+          }
+        );
+        return await sanitize.contentAPI.output(
+          result,
+          strapi.contentType("api::registered.registered"),
+          {
+            auth: ctx.state.auth,
+          }
+        );
+      } catch (err) {
+        return ctx.badRequest(`User Profile Update Error: ${err.message}`);
+      }
+    },
   })
 );

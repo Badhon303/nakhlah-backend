@@ -2538,15 +2538,15 @@ export interface ApiRegisteredRegistered extends Schema.CollectionType {
         minLength: 1;
         maxLength: 100;
       }>;
-    learner_info: Attribute.Relation<
-      'api::registered.registered',
-      'oneToOne',
-      'api::learner-info.learner-info'
-    >;
     subscription: Attribute.Relation<
       'api::registered.registered',
       'oneToOne',
       'api::subscription.subscription'
+    >;
+    users_permissions_user: Attribute.Relation<
+      'api::registered.registered',
+      'oneToOne',
+      'plugin::users-permissions.user'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;

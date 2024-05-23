@@ -40,8 +40,7 @@
     "registered": {
       "type": "relation",
       "relation": "oneToOne",
-      "target": "api::registered.registered",
-      "mappedBy": "learner_info"
+      "target": "api::registered.registered"
     },
     "learning_purpose": {
       "type": "relation",
