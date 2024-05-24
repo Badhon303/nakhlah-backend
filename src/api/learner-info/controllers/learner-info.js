@@ -13,6 +13,27 @@ module.exports = createCoreController(
     async create(ctx) {
       const user = ctx.state.user;
       try {
+        if (typeof ctx.request.body !== "object" || ctx.request.body === null) {
+          return ctx.badRequest("Invalid request body");
+        }
+
+        // Getting Gemification Types
+        const gamificationTypesDetails = await strapi.entityService.findMany(
+          "api::gamification-type.gamification-type"
+        );
+        if (!gamificationTypesDetails) {
+          return ctx.badRequest("No details found");
+        }
+        const getPalmDetails = gamificationTypesDetails.find(
+          (item) => item?.typeName === "Palm"
+        );
+        const getDateDetails = gamificationTypesDetails.find(
+          (item) => item?.typeName === "Date"
+        );
+        const getInjazDetails = gamificationTypesDetails.find(
+          (item) => item?.typeName === "Injaz"
+        );
+
         const profileData = await strapi.db
           .query("api::learner-info.learner-info")
           .findOne({
@@ -21,9 +42,7 @@ module.exports = createCoreController(
         if (profileData) {
           return ctx.badRequest("User profile already exists");
         }
-        if (typeof ctx.request.body !== "object" || ctx.request.body === null) {
-          return ctx.badRequest("Invalid request body");
-        }
+
         const result = await strapi.entityService.create(
           "api::learner-info.learner-info",
           {
@@ -43,7 +62,7 @@ module.exports = createCoreController(
             // @ts-ignore
             data: {
               users_permissions_user: user.id,
-              gamification_type: 6,
+              gamification_type: getInjazDetails?.id,
             },
           }
         );
@@ -55,7 +74,7 @@ module.exports = createCoreController(
             data: {
               users_permissions_user: user.id,
               stock: 5,
-              gamification_type: 1,
+              gamification_type: getPalmDetails?.id,
             },
           }
         );
@@ -67,7 +86,7 @@ module.exports = createCoreController(
             data: {
               users_permissions_user: user.id,
               stock: 500,
-              gamification_type: 5,
+              gamification_type: getDateDetails?.id,
             },
           }
         );

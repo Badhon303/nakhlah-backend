@@ -15,6 +15,35 @@ module.exports = createCoreController("api::exam.exam", ({ strapi }) => ({
         return ctx.badRequest("Invalid request body");
       }
 
+      // Getting Gemification Types
+      const gamificationTypesDetails = await strapi.entityService.findMany(
+        "api::gamification-type.gamification-type"
+      );
+      if (!gamificationTypesDetails) {
+        return ctx.badRequest("No details found");
+      }
+      const getDateDetails = gamificationTypesDetails.find(
+        (item) => item?.typeName === "Date"
+      );
+      const getInjazDetails = gamificationTypesDetails.find(
+        (item) => item?.typeName === "Injaz"
+      );
+
+      // Getting Gemification Types
+      const gamificationTxDetails = await strapi.entityService.findMany(
+        "api::gamification-tx.gamification-tx"
+      );
+      if (!gamificationTxDetails) {
+        return ctx.badRequest("No details found");
+      }
+
+      const getDateGainByExamDetails = gamificationTxDetails.find(
+        (item) => item?.transactionName === "Dates Gain By Exam"
+      );
+      const getInjazGainByExamDetails = gamificationTxDetails.find(
+        (item) => item?.transactionName === "Injaz Gain By Exam"
+      );
+
       // @ts-ignore
       let { learning_journey_level } = ctx.request.body;
 
@@ -49,22 +78,38 @@ module.exports = createCoreController("api::exam.exam", ({ strapi }) => ({
             users_permissions_user: user.id,
           },
         });
-      if (!LearnerGamificationStockDetailsOfDate) {
-        return ctx.badRequest("Something went wrong");
-      }
       try {
+        // Getting Gemification Types
+        const levelInfo = await strapi.entityService.findOne(
+          "api::learning-journey-level.learning-journey-level",
+          learning_journey_level?.connect[0]
+        );
+        if (!levelInfo) {
+          return ctx.badRequest("No details found");
+        }
+
         await strapi.entityService.update(
           "api::learner-gamification-stock.learner-gamification-stock",
           LearnerGamificationStockDetailsOfDate.id,
           {
             data: {
-              gamification_type: 5,
+              gamification_type: getDateDetails.id,
               stock:
                 LearnerGamificationStockDetailsOfDate.stock +
-                learning_journey_level.dates *
-                  (learning_journey_level.passMark / 100),
+                levelInfo.dates * (levelInfo.passMark / 100),
               users_permissions_user: user.id,
             },
+          }
+        );
+        await strapi.entityService.create(
+          "api::learner-gamification.learner-gamification",
+          {
+            // @ts-ignore
+            data: {
+              gamification_tx: getDateGainByExamDetails.id, // data.gamification_tx.connect[0]
+              users_permissions_user: user.id,
+            },
+            ...ctx.query,
           }
         );
         await strapi.entityService.update(
@@ -72,33 +117,82 @@ module.exports = createCoreController("api::exam.exam", ({ strapi }) => ({
           LearnerGamificationStockDetailsOfInjaz.id,
           {
             data: {
-              gamification_type: 5,
+              gamification_type: getInjazDetails.id,
               stock:
-                LearnerGamificationStockDetailsOfInjaz.stock +
-                learning_journey_level.injaz,
+                LearnerGamificationStockDetailsOfInjaz.stock + levelInfo.injaz,
               users_permissions_user: user.id,
             },
+          }
+        );
+        await strapi.entityService.create(
+          "api::learner-gamification.learner-gamification",
+          {
+            // @ts-ignore
+            data: {
+              gamification_tx: getInjazGainByExamDetails.id, // data.gamification_tx.connect[0]
+              users_permissions_user: user.id,
+            },
+            ...ctx.query,
           }
         );
       } catch (error) {
         return ctx.badRequest(`Something went wrong ${error}`);
       }
-      //Create Exam
-      const result = await strapi.entityService.create("api::exam.exam", {
-        // @ts-ignore
-        data: {
-          ...ctx.request.body,
-          users_permissions_user: user.id,
-        },
-        ...ctx.query,
-      });
-      return await sanitize.contentAPI.output(
-        result,
-        strapi.contentType("api::exam.exam"),
-        {
-          auth: ctx.state.auth,
+
+      const getLessonsOfLevel = await strapi.db
+        .query("api::learning-journey-lesson.learning-journey-lesson")
+        .findMany({
+          where: {
+            learning_journey_level: learning_journey_level?.connect[0],
+          },
+        });
+
+      const lessonIds = getLessonsOfLevel.map((lesson) => lesson.id);
+      console.log("lessonIds: ", lessonIds);
+
+      try {
+        // Query the database for entries with the specified IDs
+        const existingLessons = await strapi.entityService.findMany(
+          "api::learner-journey.learner-journey",
+          {
+            filters: {
+              learning_journey_lesson: {
+                id: {
+                  $in: lessonIds,
+                },
+              },
+            },
+          }
+        );
+        if (lessonIds.length === existingLessons.length - 1) {
+          try {
+            // Create Exam
+            const result = await strapi.entityService.create("api::exam.exam", {
+              // @ts-ignore
+              data: {
+                ...ctx.request.body,
+                users_permissions_user: user.id,
+              },
+              ...ctx.query,
+            });
+            return await sanitize.contentAPI.output(
+              result,
+              strapi.contentType("api::exam.exam"),
+              {
+                auth: ctx.state.auth,
+              }
+            );
+          } catch (err) {
+            return ctx.badRequest(`Exam Create Error: ${err.message}`);
+          }
+        } else {
+          return ctx.badRequest(`Complete your lessons first`);
         }
-      );
+      } catch (err) {
+        return ctx.internalServerError(
+          "An error occurred while checking lessons"
+        );
+      }
     } catch (err) {
       return ctx.badRequest(`Exam Create Error: ${err.message}`);
     }

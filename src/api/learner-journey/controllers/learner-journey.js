@@ -12,26 +12,46 @@ module.exports = createCoreController(
   ({ strapi }) => ({
     async create(ctx) {
       const user = ctx.state.user;
-      const gamificationTxAmountDetails = await strapi.entityService.findMany(
-        "api::gamification-tx-amount.gamification-tx-amount",
-        { populate: { gamification_tx: true } }
-      );
-      if (!gamificationTxAmountDetails) {
-        return ctx.badRequest("Invalid request body");
-      }
-      const getInjazDailyStreakDetails = gamificationTxAmountDetails.find(
-        (item) =>
-          item?.gamification_tx?.transactionName ===
-          "Injaz Gain By Completing Lesson"
-      );
-      const getInjazRefillByPractice = gamificationTxAmountDetails.find(
-        (item) =>
-          item?.gamification_tx?.transactionName === "Injaz Refil By Practice"
-      );
+      // if (!lessonIds || !Array.isArray(lessonIds)) {
+      //   return ctx.badRequest('Invalid lessonIds');
+      // }
       try {
         if (typeof ctx.request.body !== "object" || ctx.request.body === null) {
           return ctx.badRequest("Invalid request body");
         }
+
+        const gamificationTxAmountDetails = await strapi.entityService.findMany(
+          "api::gamification-tx-amount.gamification-tx-amount",
+          { populate: { gamification_tx: true } }
+        );
+        if (!gamificationTxAmountDetails) {
+          return ctx.badRequest("Invalid request body");
+        }
+        const getInjazDailyStreakDetails = gamificationTxAmountDetails.find(
+          (item) =>
+            item?.gamification_tx?.transactionName ===
+            "Injaz Gain By Completing Lesson"
+        );
+        const getInjazRefillByPractice = gamificationTxAmountDetails.find(
+          (item) =>
+            item?.gamification_tx?.transactionName === "Injaz Refil By Practice"
+        );
+        const getInjazGainByCompletingLesson = gamificationTxAmountDetails.find(
+          (item) =>
+            item?.gamification_tx?.transactionName ===
+            "Injaz Gain By Completing Lesson"
+        );
+
+        // Getting Gemification Types
+        const gamificationTypesDetails = await strapi.entityService.findMany(
+          "api::gamification-type.gamification-type"
+        );
+        if (!gamificationTypesDetails) {
+          return ctx.badRequest("No details found");
+        }
+        const getInjazDetails = gamificationTypesDetails.find(
+          (item) => item?.typeName === "Injaz"
+        );
 
         // @ts-ignore
         let { learning_journey_lesson } = ctx.request.body;
@@ -87,12 +107,23 @@ module.exports = createCoreController(
                 LearnerGamificationStockDetailsOfInjaz.id,
                 {
                   data: {
-                    gamification_type: 6,
+                    gamification_type: getInjazDetails.id,
                     stock:
                       LearnerGamificationStockDetailsOfInjaz.stock +
                       getInjazRefillByPractice.amount,
                     users_permissions_user: user.id,
                   },
+                }
+              );
+              await strapi.entityService.create(
+                "api::learner-gamification.learner-gamification",
+                {
+                  // @ts-ignore
+                  data: {
+                    gamification_tx: getInjazRefillByPractice.id, // data.gamification_tx.connect[0]
+                    users_permissions_user: user.id,
+                  },
+                  ...ctx.query,
                 }
               );
             } catch (error) {
@@ -129,7 +160,7 @@ module.exports = createCoreController(
           .findOne({
             where: {
               gamification_type: {
-                id: 6,
+                typeName: "Injaz",
               },
               users_permissions_user: user.id,
             },
@@ -144,12 +175,23 @@ module.exports = createCoreController(
               LearnerGamificationStockDetailsOfInjaz.id,
               {
                 data: {
-                  gamification_type: 6,
+                  gamification_type: getInjazDetails.id,
                   stock:
                     LearnerGamificationStockDetailsOfInjaz.stock +
                     learning_journey_lesson.injaz,
                   users_permissions_user: user.id,
                 },
+              }
+            );
+            await strapi.entityService.create(
+              "api::learner-gamification.learner-gamification",
+              {
+                // @ts-ignore
+                data: {
+                  gamification_tx: getInjazGainByCompletingLesson.id, // data.gamification_tx.connect[0]
+                  users_permissions_user: user.id,
+                },
+                ...ctx.query,
               }
             );
           } catch (error) {
@@ -162,7 +204,7 @@ module.exports = createCoreController(
               LearnerGamificationStockDetailsOfInjaz.id,
               {
                 data: {
-                  gamification_type: 6,
+                  gamification_type: getInjazDetails.id,
                   stock:
                     LearnerGamificationStockDetailsOfInjaz.stock +
                     getInjazDailyStreakDetails.amount,

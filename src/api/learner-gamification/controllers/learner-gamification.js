@@ -81,6 +81,23 @@ module.exports = createCoreController(
           return ctx.badRequest("Invalid request body");
         }
 
+        // Getting Gemification Types
+        const gamificationTypesDetails = await strapi.entityService.findMany(
+          "api::gamification-type.gamification-type"
+        );
+        if (!gamificationTypesDetails) {
+          return ctx.badRequest("No details found");
+        }
+        const getPalmDetails = gamificationTypesDetails.find(
+          (item) => item?.typeName === "Palm"
+        );
+        const getDateDetails = gamificationTypesDetails.find(
+          (item) => item?.typeName === "Date"
+        );
+        const getInjazDetails = gamificationTypesDetails.find(
+          (item) => item?.typeName === "Injaz"
+        );
+
         if (
           data.gamification_tx.connect.length !== 0 &&
           data.gamification_tx.connect.length < 2
@@ -110,7 +127,7 @@ module.exports = createCoreController(
                 .findOne({
                   where: {
                     gamification_type: {
-                      id: 1,
+                      typeName: "Palm",
                     },
                     users_permissions_user: user.id,
                   },
@@ -124,7 +141,7 @@ module.exports = createCoreController(
                   LearnerGamificationStockDetailsOfPalm2.id,
                   {
                     data: {
-                      gamification_type: 1,
+                      gamification_type: getPalmDetails.id,
                       stock:
                         LearnerGamificationStockDetailsOfPalm2.stock - amount <
                         0
@@ -171,7 +188,7 @@ module.exports = createCoreController(
                     palmItem.id,
                     {
                       data: {
-                        gamification_type: 1,
+                        gamification_type: getPalmDetails.id,
                         stock: 5,
                         users_permissions_user: user.id,
                       },
@@ -182,7 +199,7 @@ module.exports = createCoreController(
                     dateItem.id,
                     {
                       data: {
-                        gamification_type: 5,
+                        gamification_type: getDateDetails.id,
                         stock: dateItem.stock - amount,
                         users_permissions_user: user.id,
                       },
@@ -201,7 +218,7 @@ module.exports = createCoreController(
                 .findOne({
                   where: {
                     gamification_type: {
-                      id: 1,
+                      typeName: "Palm",
                     },
                     users_permissions_user: user.id,
                   },
@@ -215,7 +232,7 @@ module.exports = createCoreController(
                   LearnerGamificationStockDetailsOfPalm6.id,
                   {
                     data: {
-                      gamification_type: 1,
+                      gamification_type: getPalmDetails.id,
                       stock:
                         LearnerGamificationStockDetailsOfPalm6.stock + amount >
                         5
@@ -238,7 +255,7 @@ module.exports = createCoreController(
                 .findOne({
                   where: {
                     gamification_type: {
-                      id: 5,
+                      typeName: "Date",
                     },
                     users_permissions_user: user.id,
                   },
@@ -252,7 +269,7 @@ module.exports = createCoreController(
                   LearnerGamificationStockDetailsOfDate9.id,
                   {
                     data: {
-                      gamification_type: 5,
+                      gamification_type: getDateDetails.id,
                       stock:
                         LearnerGamificationStockDetailsOfDate9.stock + amount,
                       users_permissions_user: user.id,
@@ -284,7 +301,7 @@ module.exports = createCoreController(
                   .findOne({
                     where: {
                       gamification_type: {
-                        id: 5,
+                        typeName: "Date",
                       },
                       users_permissions_user: user.id,
                     },
@@ -338,7 +355,7 @@ module.exports = createCoreController(
                       LearnerGamificationStockDetailsOfDate11.id,
                       {
                         data: {
-                          gamification_type: 5,
+                          gamification_type: getDateDetails.id,
                           stock:
                             LearnerGamificationStockDetailsOfDate11.stock -
                             amount,
@@ -360,7 +377,7 @@ module.exports = createCoreController(
                 .findOne({
                   where: {
                     gamification_type: {
-                      id: 5,
+                      typeName: "Date",
                     },
                     users_permissions_user: user.id,
                   },
@@ -374,7 +391,7 @@ module.exports = createCoreController(
                   LearnerGamificationStockDetailsOfDate16.id,
                   {
                     data: {
-                      gamification_type: 5,
+                      gamification_type: getDateDetails.id,
                       stock:
                         LearnerGamificationStockDetailsOfDate16.stock + amount,
                       users_permissions_user: user.id,
@@ -426,7 +443,7 @@ module.exports = createCoreController(
                 .findOne({
                   where: {
                     gamification_type: {
-                      id: 5,
+                      typeName: "Date",
                     },
                     users_permissions_user: user.id,
                   },
@@ -440,7 +457,7 @@ module.exports = createCoreController(
                   LearnerGamificationStockDetailsOfDate18.id,
                   {
                     data: {
-                      gamification_type: 5,
+                      gamification_type: getDateDetails.id,
                       stock:
                         LearnerGamificationStockDetailsOfDate18.stock + amount,
                       users_permissions_user: user.id,

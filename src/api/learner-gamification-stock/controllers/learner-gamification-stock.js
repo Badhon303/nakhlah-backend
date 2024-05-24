@@ -37,52 +37,6 @@ function hasLastSevenDays(streakData) {
 module.exports = createCoreController(
   "api::learner-gamification-stock.learner-gamification-stock",
   ({ strapi }) => ({
-    // async create(ctx) {
-    //   const user = ctx.state.user;
-    //   try {
-    //     if (typeof ctx.request.body !== "object" || ctx.request.body === null) {
-    //       return ctx.badRequest("Invalid request body");
-    //     }
-    //     // @ts-ignore
-    //     let { gamification_type } = ctx.request.body;
-
-    //     const learningJourneyLevelExists = await strapi.db
-    //       .query("api::learner-gamification-stock.learner-gamification-stock")
-    //       .findOne({
-    //         where: {
-    //           gamification_type: gamification_type?.connect[0],
-    //         },
-    //       });
-    //     if (learningJourneyLevelExists) {
-    //       return ctx.badRequest("Stock type already exists");
-    //     }
-    //     const result = await strapi.entityService.create(
-    //       "api::learner-gamification-stock.learner-gamification-stock",
-    //       {
-    //         // @ts-ignore
-    //         data: {
-    //           ...ctx.request.body,
-    //           users_permissions_user: user.id,
-    //         },
-    //         ...ctx.query,
-    //       }
-    //     );
-    //     return await sanitize.contentAPI.output(
-    //       result,
-    //       strapi.contentType(
-    //         "api::learner-gamification-stock.learner-gamification-stock"
-    //       ),
-    //       {
-    //         auth: ctx.state.auth,
-    //       }
-    //     );
-    //   } catch (err) {
-    //     return ctx.badRequest(
-    //       `Learner Gamification Stock Create Error: ${err.message}`
-    //     );
-    //   }
-    // },
-
     async find(ctx) {
       const user = ctx.state.user;
       let results;
@@ -95,13 +49,31 @@ module.exports = createCoreController(
             }
           );
         } else {
+          // Getting Gemification Types
+          const gamificationTypesDetails = await strapi.entityService.findMany(
+            "api::gamification-type.gamification-type"
+          );
+          if (!gamificationTypesDetails) {
+            return ctx.badRequest("No details found");
+          }
+          const getPalmDetails = gamificationTypesDetails.find(
+            (item) => item?.typeName === "Palm"
+          );
+          const getDateDetails = gamificationTypesDetails.find(
+            (item) => item?.typeName === "Date"
+          );
+          const getInjazDetails = gamificationTypesDetails.find(
+            (item) => item?.typeName === "Injaz"
+          );
+
+          // Getting Amount of Injaz and Dates
           const gamificationTxAmountDetails =
             await strapi.entityService.findMany(
               "api::gamification-tx-amount.gamification-tx-amount",
               { populate: { gamification_tx: true } }
             );
           if (!gamificationTxAmountDetails) {
-            return ctx.badRequest("Invalid request body");
+            return ctx.badRequest("No details found");
           }
           const getInjazDailyStreakDetails = gamificationTxAmountDetails.find(
             (item) =>
@@ -118,6 +90,12 @@ module.exports = createCoreController(
               item?.gamification_tx?.transactionName ===
               "Dates Gain By Full Streak"
           );
+          const getPalmGainPerHourDetails = gamificationTxAmountDetails.find(
+            (item) =>
+              item?.gamification_tx?.transactionName === "Palm Gain Per Hour"
+          );
+
+          // Getting Current Amount of Injaz, Palm and Dates
           const LearnerGamificationStockDetailsOfInjaz = await strapi.db
             .query("api::learner-gamification-stock.learner-gamification-stock")
             .findOne({
@@ -158,6 +136,7 @@ module.exports = createCoreController(
           if (!LearnerGamificationStockDetailsOfDate) {
             return ctx.badRequest("Something went wrong");
           }
+
           // Palm Gain Per Hour
           let currentTime = new Date();
           let getUpdatedTime = new Date(
@@ -174,7 +153,7 @@ module.exports = createCoreController(
                 LearnerGamificationStockDetailsOfPalm.id,
                 {
                   data: {
-                    gamification_type: 1,
+                    gamification_type: getPalmDetails.id,
                     stock:
                       LearnerGamificationStockDetailsOfPalm.stock +
                         hourDifference >
@@ -184,6 +163,17 @@ module.exports = createCoreController(
                           hourDifference,
                     users_permissions_user: user.id,
                   },
+                }
+              );
+              await strapi.entityService.create(
+                "api::learner-gamification.learner-gamification",
+                {
+                  // @ts-ignore
+                  data: {
+                    gamification_tx: getPalmGainPerHourDetails.id, // data.gamification_tx.connect[0]
+                    users_permissions_user: user.id,
+                  },
+                  ...ctx.query,
                 }
               );
             } catch (error) {
@@ -212,12 +202,23 @@ module.exports = createCoreController(
                 LearnerGamificationStockDetailsOfDate.id,
                 {
                   data: {
-                    gamification_type: 5,
+                    gamification_type: getDateDetails.id,
                     stock:
                       LearnerGamificationStockDetailsOfDate.stock +
                       dateFullStreakAmount,
                     users_permissions_user: user.id,
                   },
+                }
+              );
+              await strapi.entityService.create(
+                "api::learner-gamification.learner-gamification",
+                {
+                  // @ts-ignore
+                  data: {
+                    gamification_tx: getDateFullStreakDetails.id, // data.gamification_tx.connect[0]
+                    users_permissions_user: user.id,
+                  },
+                  ...ctx.query,
                 }
               );
             } catch (error) {
@@ -239,12 +240,23 @@ module.exports = createCoreController(
                 LearnerGamificationStockDetailsOfInjaz.id,
                 {
                   data: {
-                    gamification_type: 6,
+                    gamification_type: getInjazDetails.id,
                     stock:
                       LearnerGamificationStockDetailsOfInjaz.stock +
                       injazDailyStreakAmount,
                     users_permissions_user: user.id,
                   },
+                }
+              );
+              await strapi.entityService.create(
+                "api::learner-gamification.learner-gamification",
+                {
+                  // @ts-ignore
+                  data: {
+                    gamification_tx: getInjazDailyStreakDetails.id, // data.gamification_tx.connect[0]
+                    users_permissions_user: user.id,
+                  },
+                  ...ctx.query,
                 }
               );
             } catch (error) {
@@ -265,8 +277,8 @@ module.exports = createCoreController(
             }
           );
 
-          const hasSevelDaysDataInjaz = hasLastSevenDays(streakDataInjaz);
-          if (hasSevelDaysDataInjaz) {
+          const hasSevenDaysDataInjaz = hasLastSevenDays(streakDataInjaz);
+          if (hasSevenDaysDataInjaz) {
             const injazFullStreakAmount = getInjazFullStreakDetails.amount;
             try {
               await strapi.entityService.update(
@@ -274,12 +286,23 @@ module.exports = createCoreController(
                 LearnerGamificationStockDetailsOfInjaz.id,
                 {
                   data: {
-                    gamification_type: 6,
+                    gamification_type: getInjazDetails.id,
                     stock:
                       LearnerGamificationStockDetailsOfInjaz.stock +
                       injazFullStreakAmount,
                     users_permissions_user: user.id,
                   },
+                }
+              );
+              await strapi.entityService.create(
+                "api::learner-gamification.learner-gamification",
+                {
+                  // @ts-ignore
+                  data: {
+                    gamification_tx: getInjazFullStreakDetails.id, // data.gamification_tx.connect[0]
+                    users_permissions_user: user.id,
+                  },
+                  ...ctx.query,
                 }
               );
             } catch (error) {
@@ -317,13 +340,33 @@ module.exports = createCoreController(
       const user = ctx.state.user;
       const id = ctx.params.id;
       let findOneResults;
-      const gamificationTxAmountDetails = await strapi.entityService.findMany(
-        "api::gamification-tx-amount.gamification-tx-amount"
-      );
-      if (!gamificationTxAmountDetails) {
-        return ctx.badRequest("Invalid request body");
-      }
       try {
+        // Getting Amount of Injaz and Dates
+        const gamificationTxAmountDetails = await strapi.entityService.findMany(
+          "api::gamification-tx-amount.gamification-tx-amount",
+          { populate: { gamification_tx: true } }
+        );
+        if (!gamificationTxAmountDetails) {
+          return ctx.badRequest("No details found");
+        }
+
+        // Getting Gemification Types
+        const gamificationTypesDetails = await strapi.entityService.findMany(
+          "api::gamification-type.gamification-type"
+        );
+        if (!gamificationTypesDetails) {
+          return ctx.badRequest("No details found");
+        }
+        const getPalmDetails = gamificationTypesDetails.find(
+          (item) => item?.typeName === "Palm"
+        );
+        const getDateDetails = gamificationTypesDetails.find(
+          (item) => item?.typeName === "Date"
+        );
+        const getInjazDetails = gamificationTypesDetails.find(
+          (item) => item?.typeName === "Injaz"
+        );
+
         if (ctx.state.user.role.name === "Admin") {
           findOneResults = await strapi.entityService.findOne(
             "api::learner-gamification-stock.learner-gamification-stock",
@@ -351,7 +394,7 @@ module.exports = createCoreController(
                 ...ctx.query,
               }
             );
-            if (id === 1) {
+            if (id === getPalmDetails.id) {
               const LearnerGamificationStockDetailsOfPalm = await strapi.db
                 .query(
                   "api::learner-gamification-stock.learner-gamification-stock"
@@ -359,7 +402,7 @@ module.exports = createCoreController(
                 .findOne({
                   where: {
                     gamification_type: {
-                      id: 1,
+                      id: getPalmDetails.id,
                     },
                     users_permissions_user: user.id,
                   },
@@ -377,12 +420,18 @@ module.exports = createCoreController(
               );
               if (hourDifference >= 1) {
                 try {
+                  const getPalmGainPerHourDetails =
+                    gamificationTxAmountDetails.find(
+                      (item) =>
+                        item?.gamification_tx?.transactionName ===
+                        "Palm Gain Per Hour"
+                    );
                   await strapi.entityService.update(
                     "api::learner-gamification-stock.learner-gamification-stock",
                     LearnerGamificationStockDetailsOfPalm.id,
                     {
                       data: {
-                        gamification_type: 1,
+                        gamification_type: getPalmDetails.id,
                         stock:
                           LearnerGamificationStockDetailsOfPalm.stock +
                             hourDifference >
@@ -394,15 +443,29 @@ module.exports = createCoreController(
                       },
                     }
                   );
+                  await strapi.entityService.create(
+                    "api::learner-gamification.learner-gamification",
+                    {
+                      // @ts-ignore
+                      data: {
+                        gamification_tx: getPalmGainPerHourDetails.id, // data.gamification_tx.connect[0]
+                        users_permissions_user: user.id,
+                      },
+                      ...ctx.query,
+                    }
+                  );
                 } catch (error) {
                   return ctx.badRequest(`Something went wrong ${error}`);
                 }
               }
             }
-            if (id === 5) {
+            if (id === getDateDetails.id) {
               const getDateFullStreakDetails = gamificationTxAmountDetails.find(
-                (item) => item.id === 10
+                (item) =>
+                  item?.gamification_tx?.transactionName ===
+                  "Dates Gain By Full Streak"
               );
+
               const streakData = await strapi.entityService.findMany(
                 "api::learner-streak.learner-streak",
                 {
@@ -424,7 +487,7 @@ module.exports = createCoreController(
                   .findOne({
                     where: {
                       gamification_type: {
-                        id: 5,
+                        id: getDateDetails.id,
                       },
                       users_permissions_user: user.id,
                     },
@@ -438,7 +501,7 @@ module.exports = createCoreController(
                     LearnerGamificationStockDetailsOfDate.id,
                     {
                       data: {
-                        gamification_type: 5,
+                        gamification_type: getDateDetails.id,
                         stock:
                           LearnerGamificationStockDetailsOfDate.stock +
                           getDateFullStreakDetails.amount,
@@ -446,17 +509,35 @@ module.exports = createCoreController(
                       },
                     }
                   );
+                  await strapi.entityService.create(
+                    "api::learner-gamification.learner-gamification",
+                    {
+                      // @ts-ignore
+                      data: {
+                        gamification_tx: getDateFullStreakDetails.id, // data.gamification_tx.connect[0]
+                        users_permissions_user: user.id,
+                      },
+                      ...ctx.query,
+                    }
+                  );
                 } catch (error) {
                   return ctx.badRequest(`Something went wrong ${error}`);
                 }
               }
             }
-            if (id === 6) {
-              // Injaz Gain By Daily Streak
+            if (id === getInjazDetails.id) {
               const getInjazDailyStreakDetails =
-                gamificationTxAmountDetails.find((item) => item.id === 14);
+                gamificationTxAmountDetails.find(
+                  (item) =>
+                    item?.gamification_tx?.transactionName ===
+                    "Injaz Gain By Daily Streak"
+                );
               const getInjazFullStreakDetails =
-                gamificationTxAmountDetails.find((item) => item.id === 15);
+                gamificationTxAmountDetails.find(
+                  (item) =>
+                    item?.gamification_tx?.transactionName ===
+                    "Injaz Gain By Full Streak"
+                );
               const LearnerGamificationStockDetailsOfInjaz = await strapi.db
                 .query(
                   "api::learner-gamification-stock.learner-gamification-stock"
@@ -464,7 +545,7 @@ module.exports = createCoreController(
                 .findOne({
                   where: {
                     gamification_type: {
-                      id: 6,
+                      id: getInjazDetails.id,
                     },
                     users_permissions_user: user.id,
                   },
@@ -479,7 +560,7 @@ module.exports = createCoreController(
               )
                 .toISOString()
                 .split("T")[0];
-              const injazDailyStreakAmount = getInjazDailyStreakDetails.amount;
+
               if (latestEntryDate !== today) {
                 try {
                   await strapi.entityService.update(
@@ -487,12 +568,23 @@ module.exports = createCoreController(
                     LearnerGamificationStockDetailsOfInjaz.id,
                     {
                       data: {
-                        gamification_type: 6,
+                        gamification_type: getInjazDetails.id,
                         stock:
                           LearnerGamificationStockDetailsOfInjaz.stock +
-                          injazDailyStreakAmount,
+                          getInjazDailyStreakDetails.amount,
                         users_permissions_user: user.id,
                       },
+                    }
+                  );
+                  await strapi.entityService.create(
+                    "api::learner-gamification.learner-gamification",
+                    {
+                      // @ts-ignore
+                      data: {
+                        gamification_tx: getInjazDailyStreakDetails.id, // data.gamification_tx.connect[0]
+                        users_permissions_user: user.id,
+                      },
+                      ...ctx.query,
                     }
                   );
                 } catch (error) {
@@ -512,21 +604,31 @@ module.exports = createCoreController(
                 }
               );
 
-              const hasSevelDaysDataInjaz = hasLastSevenDays(streakDataInjaz);
-              if (hasSevelDaysDataInjaz) {
-                const injazFullStreakAmount = getInjazFullStreakDetails.amount;
+              const hasSevenDaysDataInjaz = hasLastSevenDays(streakDataInjaz);
+              if (hasSevenDaysDataInjaz) {
                 try {
                   await strapi.entityService.update(
                     "api::learner-gamification-stock.learner-gamification-stock",
                     LearnerGamificationStockDetailsOfInjaz.id,
                     {
                       data: {
-                        gamification_type: 6,
+                        gamification_type: getInjazDetails.id,
                         stock:
                           LearnerGamificationStockDetailsOfInjaz.stock +
-                          injazFullStreakAmount,
+                          getInjazFullStreakDetails.amount,
                         users_permissions_user: user.id,
                       },
+                    }
+                  );
+                  await strapi.entityService.create(
+                    "api::learner-gamification.learner-gamification",
+                    {
+                      // @ts-ignore
+                      data: {
+                        gamification_tx: getInjazFullStreakDetails.id, // data.gamification_tx.connect[0]
+                        users_permissions_user: user.id,
+                      },
+                      ...ctx.query,
                     }
                   );
                 } catch (error) {
