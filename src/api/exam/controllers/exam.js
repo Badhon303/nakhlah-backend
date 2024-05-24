@@ -164,7 +164,10 @@ module.exports = createCoreController("api::exam.exam", ({ strapi }) => ({
             },
           }
         );
-        if (lessonIds.length === existingLessons.length - 1) {
+        if (
+          lessonIds.length >= 2 &&
+          lessonIds.length === existingLessons.length - 1
+        ) {
           try {
             // Create Exam
             const result = await strapi.entityService.create("api::exam.exam", {
