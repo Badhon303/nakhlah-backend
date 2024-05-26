@@ -10,34 +10,34 @@ const { sanitize } = require("@strapi/utils");
 module.exports = createCoreController(
   "api::learner-streak.learner-streak",
   ({ strapi }) => ({
-    async create(ctx) {
-      const user = ctx.state.user;
-      try {
-        if (typeof ctx.request.body !== "object" || ctx.request.body === null) {
-          return ctx.badRequest("Invalid request body");
-        }
-        const result = await strapi.entityService.create(
-          "api::learner-streak.learner-streak",
-          {
-            // @ts-ignore
-            data: {
-              ...ctx.request.body,
-              users_permissions_user: user.id,
-            },
-            ...ctx.query,
-          }
-        );
-        return await sanitize.contentAPI.output(
-          result,
-          strapi.contentType("api::learner-streak.learner-streak"),
-          {
-            auth: ctx.state.auth,
-          }
-        );
-      } catch (err) {
-        return ctx.badRequest(`Learner Streak Create Error: ${err.message}`);
-      }
-    },
+    // async create(ctx) {
+    //   const user = ctx.state.user;
+    //   try {
+    //     if (typeof ctx.request.body !== "object" || ctx.request.body === null) {
+    //       return ctx.badRequest("Invalid request body");
+    //     }
+    //     const result = await strapi.entityService.create(
+    //       "api::learner-streak.learner-streak",
+    //       {
+    //         // @ts-ignore
+    //         data: {
+    //           ...ctx.request.body,
+    //           users_permissions_user: user.id,
+    //         },
+    //         ...ctx.query,
+    //       }
+    //     );
+    //     return await sanitize.contentAPI.output(
+    //       result,
+    //       strapi.contentType("api::learner-streak.learner-streak"),
+    //       {
+    //         auth: ctx.state.auth,
+    //       }
+    //     );
+    //   } catch (err) {
+    //     return ctx.badRequest(`Learner Streak Create Error: ${err.message}`);
+    //   }
+    // },
 
     async find(ctx) {
       const user = ctx.state.user;

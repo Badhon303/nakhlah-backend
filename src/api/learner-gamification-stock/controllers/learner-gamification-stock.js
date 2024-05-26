@@ -66,7 +66,7 @@ module.exports = createCoreController(
             (item) => item?.typeName === "Injaz"
           );
 
-          // Getting Amount of Injaz and Dates
+          // Getting Amount of Injaz and Dates from gamification transaction amount
           const gamificationTxAmountDetails =
             await strapi.entityService.findMany(
               "api::gamification-tx-amount.gamification-tx-amount",
@@ -137,8 +137,71 @@ module.exports = createCoreController(
             return ctx.badRequest("Something went wrong");
           }
 
-          // Palm Gain Per Hour
           let currentTime = new Date();
+
+          // Injaz Gain By Daily Streak
+          const today = currentTime.toISOString().split("T")[0];
+          const streakLatestData = await strapi.entityService.findMany(
+            "api::learner-streak.learner-streak",
+            {
+              limit: 1,
+              // @ts-ignore
+              sort: { updatedAt: "DESC" },
+              filters: {
+                users_permissions_user: user.id,
+              },
+            }
+          );
+          if (!streakLatestData) {
+            return ctx.badRequest("Data not found");
+          }
+
+          const latestEntryDate = new Date(streakLatestData[0]?.updatedAt)
+            .toISOString()
+            .split("T")[0];
+
+          if (latestEntryDate !== today) {
+            try {
+              await strapi.entityService.create(
+                "api::learner-streak.learner-streak",
+                {
+                  // @ts-ignore
+                  data: {
+                    present: true,
+                    users_permissions_user: user.id,
+                  },
+                }
+              );
+              await strapi.entityService.update(
+                "api::learner-gamification-stock.learner-gamification-stock",
+                LearnerGamificationStockDetailsOfInjaz.id,
+                {
+                  data: {
+                    gamification_type: getInjazDetails.id,
+                    stock:
+                      LearnerGamificationStockDetailsOfInjaz.stock +
+                      getInjazDailyStreakDetails.amount,
+                    users_permissions_user: user.id,
+                  },
+                }
+              );
+              await strapi.entityService.create(
+                "api::learner-gamification.learner-gamification",
+                {
+                  // @ts-ignore
+                  data: {
+                    gamification_tx: getInjazDailyStreakDetails.id, // data.gamification_tx.connect[0]
+                    users_permissions_user: user.id,
+                  },
+                  ...ctx.query,
+                }
+              );
+            } catch (error) {
+              return ctx.badRequest(`Something went wrong ${error}`);
+            }
+          }
+
+          // Palm Gain Per Hour
           let getUpdatedTime = new Date(
             LearnerGamificationStockDetailsOfPalm?.updatedAt
           );
@@ -180,6 +243,7 @@ module.exports = createCoreController(
               return ctx.badRequest(`Something went wrong ${error}`);
             }
           }
+
           // Dates Gain By full Streak
           const streakData = await strapi.entityService.findMany(
             "api::learner-streak.learner-streak",
@@ -189,78 +253,54 @@ module.exports = createCoreController(
               sort: { updatedAt: "DESC" },
               filters: {
                 users_permissions_user: user.id,
+                checked: false,
               },
             }
           );
-
-          const hasSevenDaysData = hasLastSevenDays(streakData);
-          if (hasSevenDaysData) {
-            const dateFullStreakAmount = getDateFullStreakDetails.amount;
-            try {
-              await strapi.entityService.update(
-                "api::learner-gamification-stock.learner-gamification-stock",
-                LearnerGamificationStockDetailsOfDate.id,
-                {
-                  data: {
-                    gamification_type: getDateDetails.id,
-                    stock:
-                      LearnerGamificationStockDetailsOfDate.stock +
-                      dateFullStreakAmount,
-                    users_permissions_user: user.id,
-                  },
+          if (streakData.length === 7) {
+            const hasSevenDaysData = hasLastSevenDays(streakData);
+            if (hasSevenDaysData) {
+              try {
+                await strapi.entityService.update(
+                  "api::learner-gamification-stock.learner-gamification-stock",
+                  LearnerGamificationStockDetailsOfDate.id,
+                  {
+                    data: {
+                      gamification_type: getDateDetails.id,
+                      stock:
+                        LearnerGamificationStockDetailsOfDate.stock +
+                        getDateFullStreakDetails.amount,
+                      users_permissions_user: user.id,
+                    },
+                  }
+                );
+                await strapi.entityService.create(
+                  "api::learner-gamification.learner-gamification",
+                  {
+                    // @ts-ignore
+                    data: {
+                      gamification_tx: getDateFullStreakDetails.id, // data.gamification_tx.connect[0]
+                      users_permissions_user: user.id,
+                    },
+                    ...ctx.query,
+                  }
+                );
+                const streakIds = streakData.map((streak) => streak.id);
+                try {
+                  await strapi.db
+                    .query("api::learner-streak.learner-streak")
+                    .updateMany({
+                      where: { id: { $in: streakIds } },
+                      data: {
+                        checked: true, // Example update (replace with your desired changes)
+                      },
+                    });
+                } catch (error) {
+                  ctx.badRequest("Error updating streaks");
                 }
-              );
-              await strapi.entityService.create(
-                "api::learner-gamification.learner-gamification",
-                {
-                  // @ts-ignore
-                  data: {
-                    gamification_tx: getDateFullStreakDetails.id, // data.gamification_tx.connect[0]
-                    users_permissions_user: user.id,
-                  },
-                  ...ctx.query,
-                }
-              );
-            } catch (error) {
-              return ctx.badRequest(`Something went wrong ${error}`);
-            }
-          }
-          // Injaz Gain By Daily Streak
-          const today = new Date().toISOString().split("T")[0];
-          const latestEntryDate = new Date(
-            LearnerGamificationStockDetailsOfInjaz?.updatedAt
-          )
-            .toISOString()
-            .split("T")[0];
-          const injazDailyStreakAmount = getInjazDailyStreakDetails.amount;
-          if (latestEntryDate !== today) {
-            try {
-              await strapi.entityService.update(
-                "api::learner-gamification-stock.learner-gamification-stock",
-                LearnerGamificationStockDetailsOfInjaz.id,
-                {
-                  data: {
-                    gamification_type: getInjazDetails.id,
-                    stock:
-                      LearnerGamificationStockDetailsOfInjaz.stock +
-                      injazDailyStreakAmount,
-                    users_permissions_user: user.id,
-                  },
-                }
-              );
-              await strapi.entityService.create(
-                "api::learner-gamification.learner-gamification",
-                {
-                  // @ts-ignore
-                  data: {
-                    gamification_tx: getInjazDailyStreakDetails.id, // data.gamification_tx.connect[0]
-                    users_permissions_user: user.id,
-                  },
-                  ...ctx.query,
-                }
-              );
-            } catch (error) {
-              return ctx.badRequest(`Something went wrong ${error}`);
+              } catch (error) {
+                return ctx.badRequest(`Something went wrong ${error}`);
+              }
             }
           }
 
@@ -273,43 +313,58 @@ module.exports = createCoreController(
               sort: { updatedAt: "DESC" },
               filters: {
                 users_permissions_user: user.id,
+                checked: false,
               },
             }
           );
-
-          const hasSevenDaysDataInjaz = hasLastSevenDays(streakDataInjaz);
-          if (hasSevenDaysDataInjaz) {
-            const injazFullStreakAmount = getInjazFullStreakDetails.amount;
-            try {
-              await strapi.entityService.update(
-                "api::learner-gamification-stock.learner-gamification-stock",
-                LearnerGamificationStockDetailsOfInjaz.id,
-                {
-                  data: {
-                    gamification_type: getInjazDetails.id,
-                    stock:
-                      LearnerGamificationStockDetailsOfInjaz.stock +
-                      injazFullStreakAmount,
-                    users_permissions_user: user.id,
-                  },
+          if (streakDataInjaz.length === 7) {
+            const hasSevenDaysDataInjaz = hasLastSevenDays(streakDataInjaz);
+            if (hasSevenDaysDataInjaz) {
+              try {
+                await strapi.entityService.update(
+                  "api::learner-gamification-stock.learner-gamification-stock",
+                  LearnerGamificationStockDetailsOfInjaz.id,
+                  {
+                    data: {
+                      gamification_type: getInjazDetails.id,
+                      stock:
+                        LearnerGamificationStockDetailsOfInjaz.stock +
+                        getInjazFullStreakDetails.amount,
+                      users_permissions_user: user.id,
+                    },
+                  }
+                );
+                await strapi.entityService.create(
+                  "api::learner-gamification.learner-gamification",
+                  {
+                    // @ts-ignore
+                    data: {
+                      gamification_tx: getInjazFullStreakDetails.id, // data.gamification_tx.connect[0]
+                      users_permissions_user: user.id,
+                    },
+                    ...ctx.query,
+                  }
+                );
+                const streakInjazIds = streakDataInjaz.map(
+                  (streak) => streak.id
+                );
+                try {
+                  await strapi.db
+                    .query("api::learner-streak.learner-streak")
+                    .updateMany({
+                      where: { id: { $in: streakInjazIds } },
+                      data: {
+                        checked: true, // Example update (replace with your desired changes)
+                      },
+                    });
+                } catch (error) {
+                  ctx.badRequest("Error updating streaks");
                 }
-              );
-              await strapi.entityService.create(
-                "api::learner-gamification.learner-gamification",
-                {
-                  // @ts-ignore
-                  data: {
-                    gamification_tx: getInjazFullStreakDetails.id, // data.gamification_tx.connect[0]
-                    users_permissions_user: user.id,
-                  },
-                  ...ctx.query,
-                }
-              );
-            } catch (error) {
-              return ctx.badRequest(`Something went wrong ${error}`);
+              } catch (error) {
+                return ctx.badRequest(`Something went wrong ${error}`);
+              }
             }
           }
-
           results = await strapi.entityService.findMany(
             "api::learner-gamification-stock.learner-gamification-stock",
             {
@@ -465,7 +520,6 @@ module.exports = createCoreController(
                   item?.gamification_tx?.transactionName ===
                   "Dates Gain By Full Streak"
               );
-
               const streakData = await strapi.entityService.findMany(
                 "api::learner-streak.learner-streak",
                 {
@@ -474,57 +528,73 @@ module.exports = createCoreController(
                   sort: { updatedAt: "DESC" },
                   filters: {
                     users_permissions_user: user.id,
+                    checked: false,
                   },
                 }
               );
-
-              const hasSevelDaysData = hasLastSevenDays(streakData);
-              if (hasSevelDaysData) {
-                const LearnerGamificationStockDetailsOfDate = await strapi.db
-                  .query(
-                    "api::learner-gamification-stock.learner-gamification-stock"
-                  )
-                  .findOne({
-                    where: {
-                      gamification_type: {
-                        id: getDateDetails.id,
-                      },
-                      users_permissions_user: user.id,
-                    },
-                  });
-                if (!LearnerGamificationStockDetailsOfDate) {
-                  return ctx.badRequest("Something went wrong");
-                }
-                try {
-                  await strapi.entityService.update(
-                    "api::learner-gamification-stock.learner-gamification-stock",
-                    LearnerGamificationStockDetailsOfDate.id,
-                    {
-                      data: {
-                        gamification_type: getDateDetails.id,
-                        stock:
-                          LearnerGamificationStockDetailsOfDate.stock +
-                          getDateFullStreakDetails.amount,
+              if (streakData.length === 7) {
+                const hasSevenDaysData = hasLastSevenDays(streakData);
+                if (hasSevenDaysData) {
+                  const LearnerGamificationStockDetailsOfDate = await strapi.db
+                    .query(
+                      "api::learner-gamification-stock.learner-gamification-stock"
+                    )
+                    .findOne({
+                      where: {
+                        gamification_type: {
+                          id: getDateDetails.id,
+                        },
                         users_permissions_user: user.id,
                       },
+                    });
+                  if (!LearnerGamificationStockDetailsOfDate) {
+                    return ctx.badRequest("Something went wrong");
+                  }
+                  try {
+                    await strapi.entityService.update(
+                      "api::learner-gamification-stock.learner-gamification-stock",
+                      LearnerGamificationStockDetailsOfDate.id,
+                      {
+                        data: {
+                          gamification_type: getDateDetails.id,
+                          stock:
+                            LearnerGamificationStockDetailsOfDate.stock +
+                            getDateFullStreakDetails.amount,
+                          users_permissions_user: user.id,
+                        },
+                      }
+                    );
+                    await strapi.entityService.create(
+                      "api::learner-gamification.learner-gamification",
+                      {
+                        // @ts-ignore
+                        data: {
+                          gamification_tx: getDateFullStreakDetails.id, // data.gamification_tx.connect[0]
+                          users_permissions_user: user.id,
+                        },
+                        ...ctx.query,
+                      }
+                    );
+                    const streakIds = streakData.map((streak) => streak.id);
+                    try {
+                      await strapi.db
+                        .query("api::learner-streak.learner-streak")
+                        .updateMany({
+                          where: { id: { $in: streakIds } },
+                          data: {
+                            checked: true, // Example update (replace with your desired changes)
+                          },
+                        });
+                    } catch (error) {
+                      ctx.badRequest("Error updating streaks");
                     }
-                  );
-                  await strapi.entityService.create(
-                    "api::learner-gamification.learner-gamification",
-                    {
-                      // @ts-ignore
-                      data: {
-                        gamification_tx: getDateFullStreakDetails.id, // data.gamification_tx.connect[0]
-                        users_permissions_user: user.id,
-                      },
-                      ...ctx.query,
-                    }
-                  );
-                } catch (error) {
-                  return ctx.badRequest(`Something went wrong ${error}`);
+                  } catch (error) {
+                    return ctx.badRequest(`Something went wrong ${error}`);
+                  }
                 }
               }
             }
+
             if (id === getInjazDetails.id) {
               const getInjazDailyStreakDetails =
                 gamificationTxAmountDetails.find(
@@ -553,16 +623,41 @@ module.exports = createCoreController(
               if (!LearnerGamificationStockDetailsOfInjaz) {
                 return ctx.badRequest("Something went wrong");
               }
-              // Injaz Gain by Daily Streak
-              const today = new Date().toISOString().split("T")[0];
-              const latestEntryDate = new Date(
-                LearnerGamificationStockDetailsOfInjaz?.updatedAt
-              )
+
+              // Injaz Gain By Daily Streak
+              let currentTime = new Date();
+              const today = currentTime.toISOString().split("T")[0];
+              const streakLatestData = await strapi.entityService.findMany(
+                "api::learner-streak.learner-streak",
+                {
+                  limit: 1,
+                  // @ts-ignore
+                  sort: { updatedAt: "DESC" },
+                  filters: {
+                    users_permissions_user: user.id,
+                  },
+                }
+              );
+              if (!streakLatestData) {
+                return ctx.badRequest("Data not found");
+              }
+
+              const latestEntryDate = new Date(streakLatestData[0]?.updatedAt)
                 .toISOString()
                 .split("T")[0];
 
               if (latestEntryDate !== today) {
                 try {
+                  await strapi.entityService.create(
+                    "api::learner-streak.learner-streak",
+                    {
+                      // @ts-ignore
+                      data: {
+                        present: true,
+                        users_permissions_user: user.id,
+                      },
+                    }
+                  );
                   await strapi.entityService.update(
                     "api::learner-gamification-stock.learner-gamification-stock",
                     LearnerGamificationStockDetailsOfInjaz.id,
@@ -591,7 +686,8 @@ module.exports = createCoreController(
                   return ctx.badRequest(`Something went wrong ${error}`);
                 }
               }
-              // Injaz Gain by Full Streak
+
+              // Injaz Gain By Full Streak
               const streakDataInjaz = await strapi.entityService.findMany(
                 "api::learner-streak.learner-streak",
                 {
@@ -600,39 +696,56 @@ module.exports = createCoreController(
                   sort: { updatedAt: "DESC" },
                   filters: {
                     users_permissions_user: user.id,
+                    checked: false,
                   },
                 }
               );
-
-              const hasSevenDaysDataInjaz = hasLastSevenDays(streakDataInjaz);
-              if (hasSevenDaysDataInjaz) {
-                try {
-                  await strapi.entityService.update(
-                    "api::learner-gamification-stock.learner-gamification-stock",
-                    LearnerGamificationStockDetailsOfInjaz.id,
-                    {
-                      data: {
-                        gamification_type: getInjazDetails.id,
-                        stock:
-                          LearnerGamificationStockDetailsOfInjaz.stock +
-                          getInjazFullStreakDetails.amount,
-                        users_permissions_user: user.id,
-                      },
+              if (streakDataInjaz.length === 7) {
+                const hasSevenDaysDataInjaz = hasLastSevenDays(streakDataInjaz);
+                if (hasSevenDaysDataInjaz) {
+                  try {
+                    await strapi.entityService.update(
+                      "api::learner-gamification-stock.learner-gamification-stock",
+                      LearnerGamificationStockDetailsOfInjaz.id,
+                      {
+                        data: {
+                          gamification_type: getInjazDetails.id,
+                          stock:
+                            LearnerGamificationStockDetailsOfInjaz.stock +
+                            getInjazFullStreakDetails.amount,
+                          users_permissions_user: user.id,
+                        },
+                      }
+                    );
+                    await strapi.entityService.create(
+                      "api::learner-gamification.learner-gamification",
+                      {
+                        // @ts-ignore
+                        data: {
+                          gamification_tx: getInjazFullStreakDetails.id, // data.gamification_tx.connect[0]
+                          users_permissions_user: user.id,
+                        },
+                        ...ctx.query,
+                      }
+                    );
+                    const streakInjazIds = streakDataInjaz.map(
+                      (streak) => streak.id
+                    );
+                    try {
+                      await strapi.db
+                        .query("api::learner-streak.learner-streak")
+                        .updateMany({
+                          where: { id: { $in: streakInjazIds } },
+                          data: {
+                            checked: true, // Example update (replace with your desired changes)
+                          },
+                        });
+                    } catch (error) {
+                      ctx.badRequest("Error updating streaks");
                     }
-                  );
-                  await strapi.entityService.create(
-                    "api::learner-gamification.learner-gamification",
-                    {
-                      // @ts-ignore
-                      data: {
-                        gamification_tx: getInjazFullStreakDetails.id, // data.gamification_tx.connect[0]
-                        users_permissions_user: user.id,
-                      },
-                      ...ctx.query,
-                    }
-                  );
-                } catch (error) {
-                  return ctx.badRequest(`Something went wrong ${error}`);
+                  } catch (error) {
+                    return ctx.badRequest(`Something went wrong ${error}`);
+                  }
                 }
               }
             }

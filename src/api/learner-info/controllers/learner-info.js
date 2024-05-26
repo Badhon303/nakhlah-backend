@@ -17,6 +17,15 @@ module.exports = createCoreController(
           return ctx.badRequest("Invalid request body");
         }
 
+        const profileData = await strapi.db
+          .query("api::learner-info.learner-info")
+          .findOne({
+            where: { users_permissions_user: user.id },
+          });
+        if (profileData) {
+          return ctx.badRequest("User profile already exists");
+        }
+
         // Getting Gemification Types
         const gamificationTypesDetails = await strapi.entityService.findMany(
           "api::gamification-type.gamification-type"
@@ -33,15 +42,6 @@ module.exports = createCoreController(
         const getInjazDetails = gamificationTypesDetails.find(
           (item) => item?.typeName === "Injaz"
         );
-
-        const profileData = await strapi.db
-          .query("api::learner-info.learner-info")
-          .findOne({
-            where: { users_permissions_user: user.id },
-          });
-        if (profileData) {
-          return ctx.badRequest("User profile already exists");
-        }
 
         const result = await strapi.entityService.create(
           "api::learner-info.learner-info",
@@ -96,6 +96,17 @@ module.exports = createCoreController(
           {
             // @ts-ignore
             data: {
+              users_permissions_user: user.id,
+            },
+          }
+        );
+
+        await strapi.entityService.create(
+          "api::learner-streak.learner-streak",
+          {
+            // @ts-ignore
+            data: {
+              present: true,
               users_permissions_user: user.id,
             },
           }

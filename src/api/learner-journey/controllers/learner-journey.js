@@ -27,11 +27,6 @@ module.exports = createCoreController(
         if (!gamificationTxAmountDetails) {
           return ctx.badRequest("Invalid request body");
         }
-        // const getInjazDailyStreakDetails = gamificationTxAmountDetails.find(
-        //   (item) =>
-        //     item?.gamification_tx?.transactionName ===
-        //     "Injaz Gain By Completing Lesson"
-        // );
         const getInjazRefillByPractice = gamificationTxAmountDetails.find(
           (item) =>
             item?.gamification_tx?.transactionName ===
