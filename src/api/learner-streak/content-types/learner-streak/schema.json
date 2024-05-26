@@ -21,6 +21,11 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "plugin::users-permissions.user"
+    },
+    "checked": {
+      "type": "boolean",
+      "default": false,
+      "required": true
     }
   }
 }

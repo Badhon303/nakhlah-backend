@@ -341,6 +341,7 @@ module.exports = createCoreController(
                     await strapi.entityService.create(
                       "api::learner-streak.learner-streak",
                       {
+                        // @ts-ignore
                         data: {
                           present: true,
                           updatedAt: item,

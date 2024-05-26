@@ -1745,6 +1745,9 @@ export interface ApiLearnerStreakLearnerStreak extends Schema.CollectionType {
       'oneToOne',
       'plugin::users-permissions.user'
     >;
+    checked: Attribute.Boolean &
+      Attribute.Required &
+      Attribute.DefaultTo<false>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<

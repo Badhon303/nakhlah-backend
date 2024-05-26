@@ -27,14 +27,15 @@ module.exports = createCoreController(
         if (!gamificationTxAmountDetails) {
           return ctx.badRequest("Invalid request body");
         }
-        const getInjazDailyStreakDetails = gamificationTxAmountDetails.find(
-          (item) =>
-            item?.gamification_tx?.transactionName ===
-            "Injaz Gain By Completing Lesson"
-        );
+        // const getInjazDailyStreakDetails = gamificationTxAmountDetails.find(
+        //   (item) =>
+        //     item?.gamification_tx?.transactionName ===
+        //     "Injaz Gain By Completing Lesson"
+        // );
         const getInjazRefillByPractice = gamificationTxAmountDetails.find(
           (item) =>
-            item?.gamification_tx?.transactionName === "Injaz Refil By Practice"
+            item?.gamification_tx?.transactionName ===
+            "Injaz Refill By Practice"
         );
         const getInjazGainByCompletingLesson = gamificationTxAmountDetails.find(
           (item) =>
@@ -53,6 +54,20 @@ module.exports = createCoreController(
           (item) => item?.typeName === "Injaz"
         );
 
+        const LearnerGamificationStockDetailsOfInjaz = await strapi.db
+          .query("api::learner-gamification-stock.learner-gamification-stock")
+          .findOne({
+            where: {
+              gamification_type: {
+                typeName: "Injaz",
+              },
+              users_permissions_user: user.id,
+            },
+          });
+        if (!LearnerGamificationStockDetailsOfInjaz) {
+          return ctx.badRequest("Something went wrong");
+        }
+
         // @ts-ignore
         let { learning_journey_lesson } = ctx.request.body;
 
@@ -63,10 +78,7 @@ module.exports = createCoreController(
               learning_journey_lesson: learning_journey_lesson?.connect[0],
             },
           });
-        if (
-          learningJourneyLessonExists &&
-          !learning_journey_lesson.mysteryBox
-        ) {
+        if (learningJourneyLessonExists) {
           try {
             if (
               typeof ctx.request.body !== "object" ||
@@ -74,7 +86,7 @@ module.exports = createCoreController(
             ) {
               return ctx.badRequest("Invalid request body");
             }
-            const result = await strapi.entityService.create(
+            await strapi.entityService.create(
               "api::lesson-practice.lesson-practice",
               {
                 // @ts-ignore
@@ -82,25 +94,10 @@ module.exports = createCoreController(
                   learning_journey_lesson: learning_journey_lesson?.connect[0],
                   users_permissions_user: user.id,
                 },
-                ...ctx.query,
               }
             );
-            // Injaz Refil By Practice
-            const LearnerGamificationStockDetailsOfInjaz = await strapi.db
-              .query(
-                "api::learner-gamification-stock.learner-gamification-stock"
-              )
-              .findOne({
-                where: {
-                  gamification_type: {
-                    typeName: "Injaz",
-                  },
-                  users_permissions_user: user.id,
-                },
-              });
-            if (!LearnerGamificationStockDetailsOfInjaz) {
-              return ctx.badRequest("Something went wrong");
-            }
+            // Injaz Refill By Practice
+
             try {
               await strapi.entityService.update(
                 "api::learner-gamification-stock.learner-gamification-stock",
@@ -129,46 +126,14 @@ module.exports = createCoreController(
             } catch (error) {
               return ctx.badRequest(`Something went wrong ${error}`);
             }
-            return await sanitize.contentAPI.output(
-              result,
-              strapi.contentType("api::lesson-practice.lesson-practice"),
-              {
-                auth: ctx.state.auth,
-              }
-            );
           } catch (err) {
             return ctx.badRequest(
-              `Learner Progress Create Error: ${err.message}`
+              `Learner practice Create Error: ${err.message}`
             );
           }
-          // return ctx.badRequest("Lesson already completed");
-        }
-        // Create Learner Journey
-        const result = await strapi.entityService.create(
-          "api::learner-journey.learner-journey",
-          {
-            data: {
-              ...ctx.request.body,
-              users_permissions_user: user.id,
-            },
-            ...ctx.query,
-          }
-        );
-        // Injaz Gain by Completing Lesson
-        const LearnerGamificationStockDetailsOfInjaz = await strapi.db
-          .query("api::learner-gamification-stock.learner-gamification-stock")
-          .findOne({
-            where: {
-              gamification_type: {
-                typeName: "Injaz",
-              },
-              users_permissions_user: user.id,
-            },
-          });
-        if (!LearnerGamificationStockDetailsOfInjaz) {
-          return ctx.badRequest("Something went wrong");
-        }
-        if (learning_journey_lesson.mysteryBox) {
+          return ctx.badRequest("Lesson already completed");
+        } else {
+          // Injaz Gain by Completing Lesson
           try {
             await strapi.entityService.update(
               "api::learner-gamification-stock.learner-gamification-stock",
@@ -197,25 +162,18 @@ module.exports = createCoreController(
           } catch (error) {
             return ctx.badRequest(`Something went wrong ${error}`);
           }
-        } else {
-          try {
-            await strapi.entityService.update(
-              "api::learner-gamification-stock.learner-gamification-stock",
-              LearnerGamificationStockDetailsOfInjaz.id,
-              {
-                data: {
-                  gamification_type: getInjazDetails.id,
-                  stock:
-                    LearnerGamificationStockDetailsOfInjaz.stock +
-                    getInjazDailyStreakDetails.amount,
-                  users_permissions_user: user.id,
-                },
-              }
-            );
-          } catch (error) {
-            return ctx.badRequest(`Something went wrong ${error}`);
-          }
         }
+        // Create Learner Journey
+        const result = await strapi.entityService.create(
+          "api::learner-journey.learner-journey",
+          {
+            data: {
+              ...ctx.request.body,
+              users_permissions_user: user.id,
+            },
+            ...ctx.query,
+          }
+        );
 
         return await sanitize.contentAPI.output(
           result,
@@ -241,14 +199,6 @@ module.exports = createCoreController(
             }
           );
         } else {
-          //   const profileData = await strapi.db
-          //     .query("api::learner-info.learner-info")
-          //     .findOne({
-          //       where: { users_permissions_user: ctx.state.user.id },
-          //     });
-          //   if (!profileData) {
-          //     return ctx.notFound("Resource not found");
-          //   }
           results = await strapi.entityService.findMany(
             "api::learner-journey.learner-journey",
             {
@@ -282,14 +232,6 @@ module.exports = createCoreController(
             populate: { users_permissions_user: true },
           }
         );
-        // const profileData = await strapi.db
-        //   .query("api::learner-info.learner-info")
-        //   .findOne({
-        //     where: { users_permissions_user: user.id },
-        //   });
-        // if (!profileData) {
-        //   return ctx.notFound("Resource not found");
-        // }
         if (user.id === result.users_permissions_user.id) {
           const deleteResult = await strapi.entityService.delete(
             "api::learner-journey.learner-journey",
