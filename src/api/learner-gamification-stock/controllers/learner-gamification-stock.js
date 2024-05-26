@@ -365,15 +365,22 @@ module.exports = createCoreController(
               }
             }
           }
+          const query = { ...ctx.query };
+          // Add the user-specific filter
+          // @ts-ignore
+          query.filters.users_permissions_user = user.id;
+          // @ts-ignore
           results = await strapi.entityService.findMany(
             "api::learner-gamification-stock.learner-gamification-stock",
-            {
-              filters: {
-                users_permissions_user: user.id,
-              },
-              ...ctx.query,
-            }
+            // {
+            // filters: {
+            //   users_permissions_user: user.id,
+            //   ...ctx.query,
+            // },
+            // }
+            query
           );
+          console.log("results: ", results);
         }
         return await sanitize.contentAPI.output(
           results,
@@ -435,21 +442,11 @@ module.exports = createCoreController(
             "api::learner-gamification-stock.learner-gamification-stock",
             id,
             {
-              populate: { users_permissions_user: true },
+              populate: ["users_permissions_user", "gamification_type"],
             }
           );
-
           if (user.id === result.users_permissions_user.id) {
-            findOneResults = await strapi.entityService.findMany(
-              "api::learner-gamification-stock.learner-gamification-stock",
-              {
-                filters: {
-                  users_permissions_user: user.id,
-                },
-                ...ctx.query,
-              }
-            );
-            if (id === getPalmDetails.id) {
+            if (result.gamification_type.id === getPalmDetails.id) {
               const LearnerGamificationStockDetailsOfPalm = await strapi.db
                 .query(
                   "api::learner-gamification-stock.learner-gamification-stock"
@@ -514,7 +511,7 @@ module.exports = createCoreController(
                 }
               }
             }
-            if (id === getDateDetails.id) {
+            if (result.gamification_type.id === getDateDetails.id) {
               const getDateFullStreakDetails = gamificationTxAmountDetails.find(
                 (item) =>
                   item?.gamification_tx?.transactionName ===
@@ -595,7 +592,7 @@ module.exports = createCoreController(
               }
             }
 
-            if (id === getInjazDetails.id) {
+            if (result.gamification_type.id === getInjazDetails.id) {
               const getInjazDailyStreakDetails =
                 gamificationTxAmountDetails.find(
                   (item) =>
@@ -749,6 +746,10 @@ module.exports = createCoreController(
                 }
               }
             }
+            findOneResults = await strapi.entityService.findOne(
+              "api::learner-gamification-stock.learner-gamification-stock",
+              id
+            );
           } else {
             ctx.unauthorized("You are not authorized to perform this action.");
           }
