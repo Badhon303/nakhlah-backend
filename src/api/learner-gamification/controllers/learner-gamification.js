@@ -289,83 +289,88 @@ module.exports = createCoreController(
                   sort: { updatedAt: "DESC" },
                   filters: {
                     users_permissions_user: user.id,
+                    checked: false,
                   },
                 }
               );
-              const hasSevelDaysData11 = hasLastSevenDays(streakData11);
-              if (!hasSevelDaysData11) {
-                const LearnerGamificationStockDetailsOfDate11 = await strapi.db
-                  .query(
-                    "api::learner-gamification-stock.learner-gamification-stock"
-                  )
-                  .findOne({
-                    where: {
-                      gamification_type: {
-                        typeName: "Date",
-                      },
-                      users_permissions_user: user.id,
-                    },
-                  });
-                if (!LearnerGamificationStockDetailsOfDate11) {
-                  return ctx.badRequest("Something went wrong");
-                }
-
-                if (LearnerGamificationStockDetailsOfDate11.stock < amount) {
-                  return ctx.badRequest(`Don't have enough dates`);
-                } else {
-                  // Helper function to format date as YYYY-MM-DDT00:00:00.000Z
-                  const formatDate = (date) =>
-                    date.toISOString().split("T")[0] + "T00:00:00.000Z";
-
-                  // Create a set of existing dates from streakData
-                  const existingDates = new Set(
-                    streakData11.map((data) =>
-                      formatDate(new Date(data.updatedAt))
-                    )
-                  );
-
-                  // Generate dates for the last 7 days
-                  const today = new Date();
-                  const dates = [];
-                  for (let i = 0; i < 7; i++) {
-                    const date = new Date(today);
-                    date.setDate(date.getDate() - i);
-                    dates.push(formatDate(date));
-                  }
-
-                  // Find missing dates by filtering out existing dates
-                  const missingDates = dates.filter(
-                    (date) => !existingDates.has(date)
-                  );
-                  missingDates.map(async (item) => {
-                    await strapi.entityService.create(
-                      "api::learner-streak.learner-streak",
-                      {
-                        // @ts-ignore
-                        data: {
-                          present: true,
-                          updatedAt: item,
-                          createdAt: item,
-                        },
-                      }
-                    );
-                  });
-                  try {
-                    await strapi.entityService.update(
-                      "api::learner-gamification-stock.learner-gamification-stock",
-                      LearnerGamificationStockDetailsOfDate11.id,
-                      {
-                        data: {
-                          gamification_type: getDateDetails.id,
-                          stock:
-                            LearnerGamificationStockDetailsOfDate11.stock -
-                            amount,
+              if (streakData11.length === 7) {
+                const hasSevelDaysData11 = hasLastSevenDays(streakData11);
+                if (!hasSevelDaysData11) {
+                  const LearnerGamificationStockDetailsOfDate11 =
+                    await strapi.db
+                      .query(
+                        "api::learner-gamification-stock.learner-gamification-stock"
+                      )
+                      .findOne({
+                        where: {
+                          gamification_type: {
+                            typeName: "Date",
+                          },
                           users_permissions_user: user.id,
                         },
-                      }
+                      });
+                  if (!LearnerGamificationStockDetailsOfDate11) {
+                    return ctx.badRequest("Something went wrong");
+                  }
+
+                  if (LearnerGamificationStockDetailsOfDate11.stock < amount) {
+                    return ctx.badRequest(`Don't have enough dates`);
+                  } else {
+                    // Helper function to format date as YYYY-MM-DDT00:00:00.000Z
+                    const formatDate = (date) =>
+                      date.toISOString().split("T")[0] + "T00:00:00.000Z";
+
+                    // Create a set of existing dates from streakData
+                    const existingDates = new Set(
+                      streakData11.map((data) =>
+                        formatDate(new Date(data.updatedAt))
+                      )
                     );
-                  } catch (error) {
-                    return ctx.badRequest(`Something went wrong ${error}`);
+
+                    // Generate dates for the last 7 days
+                    const today = new Date();
+                    const dates = [];
+                    for (let i = 0; i < 7; i++) {
+                      const date = new Date(today);
+                      date.setDate(date.getDate() - i);
+                      dates.push(formatDate(date));
+                    }
+
+                    // Find missing dates by filtering out existing dates
+                    const missingDates = dates.filter(
+                      (date) => !existingDates.has(date)
+                    );
+                    missingDates.map(async (item) => {
+                      await strapi.entityService.create(
+                        "api::learner-streak.learner-streak",
+                        {
+                          // @ts-ignore
+                          data: {
+                            present: true,
+                            checked: true,
+                            updatedAt: item,
+                            createdAt: item,
+                          },
+                        }
+                      );
+                    });
+                    try {
+                      await strapi.entityService.update(
+                        "api::learner-gamification-stock.learner-gamification-stock",
+                        LearnerGamificationStockDetailsOfDate11.id,
+                        {
+                          data: {
+                            gamification_type: getDateDetails.id,
+                            stock:
+                              LearnerGamificationStockDetailsOfDate11.stock -
+                              amount,
+                            users_permissions_user: user.id,
+                          },
+                        }
+                      );
+                    } catch (error) {
+                      return ctx.badRequest(`Something went wrong ${error}`);
+                    }
                   }
                 }
               }
@@ -503,6 +508,13 @@ module.exports = createCoreController(
     async find(ctx) {
       const user = ctx.state.user;
       let results;
+      const query = { ...ctx.query };
+      if (!query.filters) {
+        // @ts-ignore
+        query.filters = {};
+      }
+      // @ts-ignore
+      query.filters.users_permissions_user = user.id;
       try {
         if (ctx.state.user.role.name === "Admin") {
           results = await strapi.entityService.findMany(
@@ -514,12 +526,7 @@ module.exports = createCoreController(
         } else {
           results = await strapi.entityService.findMany(
             "api::learner-gamification.learner-gamification",
-            {
-              filters: {
-                users_permissions_user: user.id,
-              },
-              ...ctx.query,
-            }
+            query
           );
         }
         return await sanitize.contentAPI.output(
@@ -537,6 +544,13 @@ module.exports = createCoreController(
     async findOne(ctx) {
       const user = ctx.state.user;
       const id = ctx.params.id;
+      const query = { ...ctx.query };
+      if (!query.filters) {
+        // @ts-ignore
+        query.filters = {};
+      }
+      // @ts-ignore
+      query.filters.users_permissions_user = user.id;
       let findOneResults;
       try {
         if (ctx.state.user.role.name === "Admin") {
@@ -559,12 +573,7 @@ module.exports = createCoreController(
           if (user.id === result.users_permissions_user.id) {
             findOneResults = await strapi.entityService.findMany(
               "api::learner-gamification.learner-gamification",
-              {
-                filters: {
-                  users_permissions_user: user.id,
-                },
-                ...ctx.query,
-              }
+              query
             );
           } else {
             ctx.unauthorized("You are not authorized to perform this action.");

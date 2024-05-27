@@ -16,6 +16,7 @@ module.exports = createCoreController(
     //     if (typeof ctx.request.body !== "object" || ctx.request.body === null) {
     //       return ctx.badRequest("Invalid request body");
     //     }
+
     //     const result = await strapi.entityService.create(
     //       "api::learner-progress.learner-progress",
     //       {
@@ -42,6 +43,13 @@ module.exports = createCoreController(
     async find(ctx) {
       const user = ctx.state.user;
       let results;
+      const query = { ...ctx.query };
+      if (!query.filters) {
+        // @ts-ignore
+        query.filters = {};
+      }
+      // @ts-ignore
+      query.filters.users_permissions_user = user.id;
       try {
         if (ctx.state.user.role.name === "Admin") {
           results = await strapi.entityService.findMany(
@@ -53,12 +61,7 @@ module.exports = createCoreController(
         } else {
           results = await strapi.entityService.findMany(
             "api::learner-progress.learner-progress",
-            {
-              filters: {
-                users_permissions_user: user.id,
-              },
-              ...ctx.query,
-            }
+            query
           );
         }
         return await sanitize.contentAPI.output(

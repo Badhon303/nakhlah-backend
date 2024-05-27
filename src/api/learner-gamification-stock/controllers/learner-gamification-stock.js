@@ -366,21 +366,16 @@ module.exports = createCoreController(
             }
           }
           const query = { ...ctx.query };
-          // Add the user-specific filter
+          if (!query.filters) {
+            // @ts-ignore
+            query.filters = {};
+          }
           // @ts-ignore
           query.filters.users_permissions_user = user.id;
-          // @ts-ignore
           results = await strapi.entityService.findMany(
             "api::learner-gamification-stock.learner-gamification-stock",
-            // {
-            // filters: {
-            //   users_permissions_user: user.id,
-            //   ...ctx.query,
-            // },
-            // }
             query
           );
-          console.log("results: ", results);
         }
         return await sanitize.contentAPI.output(
           results,

@@ -109,7 +109,6 @@ module.exports = createCoreController("api::exam.exam", ({ strapi }) => ({
               gamification_tx: getDateGainByExamDetails.id, // data.gamification_tx.connect[0]
               users_permissions_user: user.id,
             },
-            ...ctx.query,
           }
         );
         await strapi.entityService.update(
@@ -132,7 +131,6 @@ module.exports = createCoreController("api::exam.exam", ({ strapi }) => ({
               gamification_tx: getInjazGainByExamDetails.id, // data.gamification_tx.connect[0]
               users_permissions_user: user.id,
             },
-            ...ctx.query,
           }
         );
       } catch (error) {
@@ -148,7 +146,6 @@ module.exports = createCoreController("api::exam.exam", ({ strapi }) => ({
         });
 
       const lessonIds = getLessonsOfLevel.map((lesson) => lesson.id);
-      console.log("lessonIds: ", lessonIds);
 
       try {
         // Query the database for entries with the specified IDs
@@ -204,18 +201,20 @@ module.exports = createCoreController("api::exam.exam", ({ strapi }) => ({
   async find(ctx) {
     const user = ctx.state.user;
     let results;
+    const query = { ...ctx.query };
+    if (!query.filters) {
+      // @ts-ignore
+      query.filters = {};
+    }
+    // @ts-ignore
+    query.filters.users_permissions_user = user.id;
     try {
       if (ctx.state.user.role.name === "Admin") {
         results = await strapi.entityService.findMany("api::exam.exam", {
           ...ctx.query,
         });
       } else {
-        results = await strapi.entityService.findMany("api::exam.exam", {
-          filters: {
-            users_permissions_user: user.id,
-          },
-          ...ctx.query,
-        });
+        results = await strapi.entityService.findMany("api::exam.exam", query);
       }
       return await sanitize.contentAPI.output(
         results,
@@ -232,6 +231,13 @@ module.exports = createCoreController("api::exam.exam", ({ strapi }) => ({
   async findOne(ctx) {
     const user = ctx.state.user;
     const id = ctx.params.id;
+    const query = { ...ctx.query };
+    if (!query.filters) {
+      // @ts-ignore
+      query.filters = {};
+    }
+    // @ts-ignore
+    query.filters.users_permissions_user = user.id;
     let findOneResults;
     try {
       if (ctx.state.user.role.name === "Admin") {
@@ -254,12 +260,7 @@ module.exports = createCoreController("api::exam.exam", ({ strapi }) => ({
         if (user.id === result.users_permissions_user.id) {
           findOneResults = await strapi.entityService.findMany(
             "api::exam.exam",
-            {
-              filters: {
-                users_permissions_user: user.id,
-              },
-              ...ctx.query,
-            }
+            query
           );
         } else {
           ctx.unauthorized("You are not authorized to perform this action.");

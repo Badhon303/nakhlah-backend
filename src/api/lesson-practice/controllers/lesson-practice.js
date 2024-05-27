@@ -13,6 +13,13 @@ module.exports = createCoreController(
     async find(ctx) {
       const user = ctx.state.user;
       let results;
+      const query = { ...ctx.query };
+      if (!query.filters) {
+        // @ts-ignore
+        query.filters = {};
+      }
+      // @ts-ignore
+      query.filters.users_permissions_user = user.id;
       try {
         if (ctx.state.user.role.name === "Admin") {
           results = await strapi.entityService.findMany(
@@ -24,12 +31,7 @@ module.exports = createCoreController(
         } else {
           results = await strapi.entityService.findMany(
             "api::lesson-practice.lesson-practice",
-            {
-              filters: {
-                users_permissions_user: user.id,
-              },
-              ...ctx.query,
-            }
+            query
           );
         }
         return await sanitize.contentAPI.output(

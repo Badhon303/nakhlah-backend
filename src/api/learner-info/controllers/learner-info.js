@@ -54,7 +54,27 @@ module.exports = createCoreController(
           }
         );
 
+        // Get the first lesson Id
+        const getFirstLesson = await strapi.db
+          .query("api::learning-journey-lesson.learning-journey-lesson")
+          .findOne({
+            where: {
+              lessonSequence: 1,
+              learning_journey_level: {
+                taskSequence: 1,
+                learning_journey_unit: {
+                  unitSequence: 1,
+                  learning_journey: {
+                    sequence: 1,
+                  },
+                },
+              },
+            },
+          });
+        console.log("getFirstLesson: ", getFirstLesson);
         // Creating multiple learner-gamification-stock records
+
+        // set first lesson for user
 
         await strapi.entityService.create(
           "api::learner-gamification-stock.learner-gamification-stock",
@@ -91,15 +111,25 @@ module.exports = createCoreController(
           }
         );
 
-        await strapi.entityService.create(
-          "api::learner-progress.learner-progress",
-          {
-            // @ts-ignore
-            data: {
-              users_permissions_user: user.id,
-            },
-          }
-        );
+        const progressData = await strapi.db
+          .query("api::learner-progress.learner-progress")
+          .findOne({
+            where: { users_permissions_user: user.id },
+          });
+        if (progressData) {
+          return ctx.badRequest("Progress ID already exists");
+        } else {
+          await strapi.entityService.create(
+            "api::learner-progress.learner-progress",
+            {
+              // @ts-ignore
+              data: {
+                progressId: getFirstLesson ? getFirstLesson.id : 0,
+                users_permissions_user: user.id,
+              },
+            }
+          );
+        }
 
         await strapi.entityService.create(
           "api::learner-streak.learner-streak",
@@ -126,6 +156,7 @@ module.exports = createCoreController(
 
     async find(ctx) {
       let results;
+      const user = ctx.state.user;
       try {
         if (ctx.state.user.role.name === "Admin") {
           results = await strapi.entityService.findMany(
@@ -135,14 +166,16 @@ module.exports = createCoreController(
             }
           );
         } else {
+          const query = { ...ctx.query };
+          if (!query.filters) {
+            // @ts-ignore
+            query.filters = {};
+          }
+          // @ts-ignore
+          query.filters.users_permissions_user = user.id;
           results = await strapi.entityService.findMany(
             "api::learner-info.learner-info",
-            {
-              filters: {
-                users_permissions_user: ctx.state.user.id,
-              },
-              ...ctx.query,
-            }
+            query
           );
         }
 
