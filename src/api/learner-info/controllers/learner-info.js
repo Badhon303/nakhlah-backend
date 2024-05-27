@@ -71,7 +71,6 @@ module.exports = createCoreController(
               },
             },
           });
-        console.log("getFirstLesson: ", getFirstLesson);
         // Creating multiple learner-gamification-stock records
 
         // set first lesson for user
