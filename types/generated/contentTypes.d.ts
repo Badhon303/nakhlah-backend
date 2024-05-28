@@ -2469,16 +2469,24 @@ export interface ApiRefundPolicyRefundPolicy extends Schema.CollectionType {
     singularName: 'refund-policy';
     pluralName: 'refund-policies';
     displayName: 'Refund_Policy';
+    description: '';
   };
   options: {
     draftAndPublish: false;
   };
   attributes: {
     condition: Attribute.Text &
+      Attribute.Required &
+      Attribute.Unique &
       Attribute.SetMinMaxLength<{
         minLength: 1;
         maxLength: 5000;
       }>;
+    refundDetails: Attribute.Text &
+      Attribute.SetMinMaxLength<{
+        maxLength: 50000;
+      }>;
+    images: Attribute.Media;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -2561,6 +2569,42 @@ export interface ApiRegisteredRegistered extends Schema.CollectionType {
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::registered.registered',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiSocialTrafficSocialTraffic extends Schema.CollectionType {
+  collectionName: 'social_traffics';
+  info: {
+    singularName: 'social-traffic';
+    pluralName: 'social-traffics';
+    displayName: 'Social_Traffic';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    trafficName: Attribute.String &
+      Attribute.Required &
+      Attribute.Unique &
+      Attribute.SetMinMaxLength<{
+        minLength: 1;
+        maxLength: 100;
+      }>;
+    icon: Attribute.Media & Attribute.Required;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::social-traffic.social-traffic',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::social-traffic.social-traffic',
       'oneToOne',
       'admin::user'
     > &
@@ -2739,6 +2783,7 @@ declare module '@strapi/types' {
       'api::question-type.question-type': ApiQuestionTypeQuestionType;
       'api::refund-policy.refund-policy': ApiRefundPolicyRefundPolicy;
       'api::registered.registered': ApiRegisteredRegistered;
+      'api::social-traffic.social-traffic': ApiSocialTrafficSocialTraffic;
       'api::subscriber-plan.subscriber-plan': ApiSubscriberPlanSubscriberPlan;
       'api::subscription.subscription': ApiSubscriptionSubscription;
       'api::term-and-condition.term-and-condition': ApiTermAndConditionTermAndCondition;

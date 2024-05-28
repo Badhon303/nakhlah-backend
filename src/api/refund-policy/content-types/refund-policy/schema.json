@@ -4,7 +4,8 @@
   "info": {
     "singularName": "refund-policy",
     "pluralName": "refund-policies",
-    "displayName": "Refund_Policy"
+    "displayName": "Refund_Policy",
+    "description": ""
   },
   "options": {
     "draftAndPublish": false
@@ -14,7 +15,22 @@
     "condition": {
       "type": "text",
       "maxLength": 5000,
-      "minLength": 1
+      "minLength": 1,
+      "required": true,
+      "unique": true
+    },
+    "refundDetails": {
+      "type": "text",
+      "required": false,
+      "maxLength": 50000
+    },
+    "images": {
+      "type": "media",
+      "multiple": true,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
     }
   }
 }
