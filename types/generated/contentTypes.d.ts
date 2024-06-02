@@ -2305,9 +2305,9 @@ export interface ApiQuestionContentQuestionContent
       'oneToMany',
       'api::question.question'
     >;
-    text: Attribute.Boolean & Attribute.DefaultTo<false>;
-    image: Attribute.Boolean & Attribute.DefaultTo<false>;
-    audio: Attribute.Boolean & Attribute.DefaultTo<false>;
+    questionText: Attribute.Boolean & Attribute.DefaultTo<false>;
+    questionImage: Attribute.Boolean & Attribute.DefaultTo<false>;
+    questionAudio: Attribute.Boolean & Attribute.DefaultTo<false>;
     arabic_tx_type: Attribute.Relation<
       'api::question-content.question-content',
       'oneToOne',
@@ -2318,6 +2318,9 @@ export interface ApiQuestionContentQuestionContent
       'oneToOne',
       'api::language.language'
     >;
+    contentText: Attribute.Boolean & Attribute.DefaultTo<false>;
+    contentAudio: Attribute.Boolean & Attribute.DefaultTo<false>;
+    contentImage: Attribute.Boolean & Attribute.DefaultTo<false>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<

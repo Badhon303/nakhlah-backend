@@ -33,16 +33,16 @@
       "relation": "oneToMany",
       "target": "api::question.question"
     },
-    "text": {
+    "questionText": {
       "type": "boolean",
       "default": false
     },
-    "image": {
+    "questionImage": {
       "type": "boolean",
       "default": false,
       "required": false
     },
-    "audio": {
+    "questionAudio": {
       "type": "boolean",
       "default": false
     },
@@ -55,6 +55,18 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::language.language"
+    },
+    "contentText": {
+      "type": "boolean",
+      "default": false
+    },
+    "contentAudio": {
+      "type": "boolean",
+      "default": false
+    },
+    "contentImage": {
+      "type": "boolean",
+      "default": false
     }
   }
 }
