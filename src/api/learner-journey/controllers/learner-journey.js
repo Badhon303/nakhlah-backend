@@ -325,7 +325,7 @@ module.exports = createCoreController(
                   gamification_type: getInjazDetails.id,
                   stock:
                     LearnerGamificationStockDetailsOfInjaz.stock +
-                    learning_journey_lesson.injaz,
+                    getInjazGainByCompletingLesson.amount,
                   users_permissions_user: user.id,
                 },
               }
