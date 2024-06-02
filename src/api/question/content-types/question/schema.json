@@ -14,8 +14,7 @@
   "attributes": {
     "audio": {
       "type": "string",
-      "maxLength": 100,
-      "minLength": 1
+      "maxLength": 1000
     },
     "question": {
       "type": "string",

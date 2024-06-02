@@ -854,7 +854,7 @@ export interface ApiContentContent extends Schema.CollectionType {
         minLength: 1;
         maxLength: 100;
       }>;
-    image: Attribute.Media;
+    image: Attribute.Media<'images'>;
     question_content_option: Attribute.Relation<
       'api::content.content',
       'manyToOne',
@@ -1707,7 +1707,7 @@ export interface ApiLearnerStartingPointLearnerStartingPoint
         minLength: 1;
         maxLength: 100;
       }>;
-    icon: Attribute.Media & Attribute.Required;
+    icon: Attribute.Media<'images'> & Attribute.Required;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -1787,7 +1787,7 @@ export interface ApiLearningGoalLearningGoal extends Schema.CollectionType {
         },
         string
       >;
-    icon: Attribute.Media & Attribute.Required;
+    icon: Attribute.Media<'images'> & Attribute.Required;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -1864,7 +1864,7 @@ export interface ApiLearningJourneyLearningJourney
         minLength: 2;
         maxLength: 20;
       }>;
-    icon: Attribute.Media;
+    icon: Attribute.Media<'images'>;
     sequence: Attribute.Integer &
       Attribute.Required &
       Attribute.SetMinMax<
@@ -2099,7 +2099,7 @@ export interface ApiLearningPurposeLearningPurpose
         minLength: 1;
         maxLength: 100;
       }>;
-    icon: Attribute.Media & Attribute.Required;
+    icon: Attribute.Media<'images'> & Attribute.Required;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -2245,8 +2245,7 @@ export interface ApiQuestionQuestion extends Schema.CollectionType {
   attributes: {
     audio: Attribute.String &
       Attribute.SetMinMaxLength<{
-        minLength: 1;
-        maxLength: 100;
+        maxLength: 1000;
       }>;
     question: Attribute.String &
       Attribute.Required &
@@ -2255,7 +2254,7 @@ export interface ApiQuestionQuestion extends Schema.CollectionType {
         minLength: 1;
         maxLength: 100;
       }>;
-    image: Attribute.Media;
+    image: Attribute.Media<'images'>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -2486,7 +2485,7 @@ export interface ApiRefundPolicyRefundPolicy extends Schema.CollectionType {
       Attribute.SetMinMaxLength<{
         maxLength: 50000;
       }>;
-    images: Attribute.Media;
+    images: Attribute.Media<'images', true>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -2594,7 +2593,7 @@ export interface ApiSocialTrafficSocialTraffic extends Schema.CollectionType {
         minLength: 1;
         maxLength: 100;
       }>;
-    icon: Attribute.Media & Attribute.Required;
+    icon: Attribute.Media<'images'> & Attribute.Required;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
