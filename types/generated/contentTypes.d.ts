@@ -2627,12 +2627,20 @@ export interface ApiSubscriberPlanSubscriberPlan extends Schema.CollectionType {
   };
   attributes: {
     name: Attribute.String &
+      Attribute.Required &
       Attribute.SetMinMaxLength<{
-        minLength: 1;
         maxLength: 100;
       }>;
-    price: Attribute.Integer;
-    timeDuration: Attribute.DateTime;
+    price: Attribute.Integer &
+      Attribute.Required &
+      Attribute.Unique &
+      Attribute.SetMinMax<
+        {
+          max: 999999;
+        },
+        number
+      > &
+      Attribute.DefaultTo<0>;
     discount_policy: Attribute.Relation<
       'api::subscriber-plan.subscriber-plan',
       'oneToOne',
@@ -2643,6 +2651,21 @@ export interface ApiSubscriberPlanSubscriberPlan extends Schema.CollectionType {
       'oneToOne',
       'api::refund-policy.refund-policy'
     >;
+    durationDescription: Attribute.String &
+      Attribute.Required &
+      Attribute.Unique &
+      Attribute.SetMinMaxLength<{
+        maxLength: 100;
+      }>;
+    monthDuration: Attribute.Integer &
+      Attribute.Required &
+      Attribute.Unique &
+      Attribute.SetMinMax<
+        {
+          max: 100;
+        },
+        number
+      >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
