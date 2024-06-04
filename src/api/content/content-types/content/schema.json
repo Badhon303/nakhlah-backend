@@ -43,12 +43,6 @@
         "images"
       ]
     },
-    "question_content_option": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::question-content-option.question-content-option",
-      "inversedBy": "contents"
-    },
     "content_category_types": {
       "type": "relation",
       "relation": "oneToMany",

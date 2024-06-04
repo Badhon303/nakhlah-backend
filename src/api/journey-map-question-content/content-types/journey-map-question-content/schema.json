@@ -21,6 +21,10 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::question-content.question-content"
+    },
+    "sequence": {
+      "type": "integer",
+      "max": 999999
     }
   }
 }

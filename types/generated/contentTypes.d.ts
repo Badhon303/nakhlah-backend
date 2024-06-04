@@ -855,11 +855,6 @@ export interface ApiContentContent extends Schema.CollectionType {
         maxLength: 100;
       }>;
     image: Attribute.Media<'images'>;
-    question_content_option: Attribute.Relation<
-      'api::content.content',
-      'manyToOne',
-      'api::question-content-option.question-content-option'
-    >;
     content_category_types: Attribute.Relation<
       'api::content.content',
       'oneToMany',
@@ -1381,6 +1376,13 @@ export interface ApiJourneyMapQuestionContentJourneyMapQuestionContent
       'oneToOne',
       'api::question-content.question-content'
     >;
+    sequence: Attribute.Integer &
+      Attribute.SetMinMax<
+        {
+          max: 999999;
+        },
+        number
+      >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
