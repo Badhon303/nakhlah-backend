@@ -12,10 +12,15 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "subscriber_plan": {
+    "users_permissions_user": {
       "type": "relation",
       "relation": "oneToOne",
-      "target": "api::subscriber-plan.subscriber-plan"
+      "target": "plugin::users-permissions.user"
+    },
+    "subscription_plan": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::subscription-plan.subscription-plan"
     }
   }
 }

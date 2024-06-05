@@ -43,6 +43,16 @@ module.exports = createCoreController(
           (item) => item?.typeName === "Injaz"
         );
 
+        // Get "Free" Subscription plans details
+        const freeSubscriptionPlanDetails = await strapi.db
+          .query("api::subscription-plan.subscription-plan")
+          .findOne({
+            where: { planName: "Free" },
+          });
+        if (!freeSubscriptionPlanDetails) {
+          return ctx.badRequest('Ask Admin to set a "Free" subscription plan');
+        }
+
         const result = await strapi.entityService.create(
           "api::learner-info.learner-info",
           {
@@ -140,6 +150,16 @@ module.exports = createCoreController(
             },
           }
         );
+
+        // Set a user subscription plan to "Free" with the user's registration.
+        await strapi.entityService.create("api::subscription.subscription", {
+          // @ts-ignore
+          data: {
+            subscription_plan: freeSubscriptionPlanDetails.id,
+            users_permissions_user: user.id,
+          },
+          ...ctx.query,
+        });
 
         return await sanitize.contentAPI.output(
           result,

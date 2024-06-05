@@ -1,0 +1,26 @@
+{
+  "kind": "collectionType",
+  "collectionName": "subscription_plan_features",
+  "info": {
+    "singularName": "subscription-plan-feature",
+    "pluralName": "subscription-plan-features",
+    "displayName": "Subscription_Plan_Feature"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "featureName": {
+      "type": "string",
+      "required": true,
+      "unique": true,
+      "maxLength": 200
+    },
+    "featureDetails": {
+      "type": "text",
+      "maxLength": 5000,
+      "unique": true
+    }
+  }
+}

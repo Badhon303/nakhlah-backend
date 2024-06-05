@@ -2195,6 +2195,43 @@ export interface ApiLessonPracticeLessonPractice extends Schema.CollectionType {
   };
 }
 
+export interface ApiPaymentPayment extends Schema.CollectionType {
+  collectionName: 'payments';
+  info: {
+    singularName: 'payment';
+    pluralName: 'payments';
+    displayName: 'Payment';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    paymentStatus: Attribute.Boolean &
+      Attribute.Required &
+      Attribute.DefaultTo<false>;
+    subscription: Attribute.Relation<
+      'api::payment.payment',
+      'oneToOne',
+      'api::subscription.subscription'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::payment.payment',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::payment.payment',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiPrivacyPolicyPrivacyPolicy extends Schema.CollectionType {
   collectionName: 'privacy_policies';
   info: {
@@ -2616,75 +2653,6 @@ export interface ApiSocialTrafficSocialTraffic extends Schema.CollectionType {
   };
 }
 
-export interface ApiSubscriberPlanSubscriberPlan extends Schema.CollectionType {
-  collectionName: 'subscriber_plans';
-  info: {
-    singularName: 'subscriber-plan';
-    pluralName: 'subscriber-plans';
-    displayName: 'Subscriber_Plan';
-    description: '';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    name: Attribute.String &
-      Attribute.Required &
-      Attribute.SetMinMaxLength<{
-        maxLength: 100;
-      }>;
-    price: Attribute.Integer &
-      Attribute.Required &
-      Attribute.Unique &
-      Attribute.SetMinMax<
-        {
-          max: 999999;
-        },
-        number
-      > &
-      Attribute.DefaultTo<0>;
-    discount_policy: Attribute.Relation<
-      'api::subscriber-plan.subscriber-plan',
-      'oneToOne',
-      'api::discount-policy.discount-policy'
-    >;
-    refund_policy: Attribute.Relation<
-      'api::subscriber-plan.subscriber-plan',
-      'oneToOne',
-      'api::refund-policy.refund-policy'
-    >;
-    durationDescription: Attribute.String &
-      Attribute.Required &
-      Attribute.Unique &
-      Attribute.SetMinMaxLength<{
-        maxLength: 100;
-      }>;
-    monthDuration: Attribute.Integer &
-      Attribute.Required &
-      Attribute.Unique &
-      Attribute.SetMinMax<
-        {
-          max: 100;
-        },
-        number
-      >;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'api::subscriber-plan.subscriber-plan',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<
-      'api::subscriber-plan.subscriber-plan',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-  };
-}
-
 export interface ApiSubscriptionSubscription extends Schema.CollectionType {
   collectionName: 'subscriptions';
   info: {
@@ -2697,10 +2665,15 @@ export interface ApiSubscriptionSubscription extends Schema.CollectionType {
     draftAndPublish: false;
   };
   attributes: {
-    subscriber_plan: Attribute.Relation<
+    users_permissions_user: Attribute.Relation<
       'api::subscription.subscription',
       'oneToOne',
-      'api::subscriber-plan.subscriber-plan'
+      'plugin::users-permissions.user'
+    >;
+    subscription_plan: Attribute.Relation<
+      'api::subscription.subscription',
+      'oneToOne',
+      'api::subscription-plan.subscription-plan'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
@@ -2712,6 +2685,112 @@ export interface ApiSubscriptionSubscription extends Schema.CollectionType {
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::subscription.subscription',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiSubscriptionPlanSubscriptionPlan
+  extends Schema.CollectionType {
+  collectionName: 'subscription_plans';
+  info: {
+    singularName: 'subscription-plan';
+    pluralName: 'subscription-plans';
+    displayName: 'Subscription_Plan';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    planName: Attribute.String &
+      Attribute.Required &
+      Attribute.Unique &
+      Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }>;
+    durationDescription: Attribute.String &
+      Attribute.Unique &
+      Attribute.SetMinMaxLength<{
+        maxLength: 100;
+      }>;
+    monthDuration: Attribute.Integer &
+      Attribute.Required &
+      Attribute.Unique &
+      Attribute.SetMinMax<
+        {
+          max: 100;
+        },
+        number
+      > &
+      Attribute.DefaultTo<0>;
+    price: Attribute.Integer &
+      Attribute.Required &
+      Attribute.Unique &
+      Attribute.SetMinMax<
+        {
+          max: 999999;
+        },
+        number
+      > &
+      Attribute.DefaultTo<0>;
+    subscription_plan_features: Attribute.Relation<
+      'api::subscription-plan.subscription-plan',
+      'oneToMany',
+      'api::subscription-plan-feature.subscription-plan-feature'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::subscription-plan.subscription-plan',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::subscription-plan.subscription-plan',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiSubscriptionPlanFeatureSubscriptionPlanFeature
+  extends Schema.CollectionType {
+  collectionName: 'subscription_plan_features';
+  info: {
+    singularName: 'subscription-plan-feature';
+    pluralName: 'subscription-plan-features';
+    displayName: 'Subscription_Plan_Feature';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    featureName: Attribute.String &
+      Attribute.Required &
+      Attribute.Unique &
+      Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }>;
+    featureDetails: Attribute.Text &
+      Attribute.Unique &
+      Attribute.SetMinMaxLength<{
+        maxLength: 5000;
+      }>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::subscription-plan-feature.subscription-plan-feature',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::subscription-plan-feature.subscription-plan-feature',
       'oneToOne',
       'admin::user'
     > &
@@ -2802,6 +2881,7 @@ declare module '@strapi/types' {
       'api::learning-purpose.learning-purpose': ApiLearningPurposeLearningPurpose;
       'api::learning-tip.learning-tip': ApiLearningTipLearningTip;
       'api::lesson-practice.lesson-practice': ApiLessonPracticeLessonPractice;
+      'api::payment.payment': ApiPaymentPayment;
       'api::privacy-policy.privacy-policy': ApiPrivacyPolicyPrivacyPolicy;
       'api::question.question': ApiQuestionQuestion;
       'api::question-content.question-content': ApiQuestionContentQuestionContent;
@@ -2811,8 +2891,9 @@ declare module '@strapi/types' {
       'api::refund-policy.refund-policy': ApiRefundPolicyRefundPolicy;
       'api::registered.registered': ApiRegisteredRegistered;
       'api::social-traffic.social-traffic': ApiSocialTrafficSocialTraffic;
-      'api::subscriber-plan.subscriber-plan': ApiSubscriberPlanSubscriberPlan;
       'api::subscription.subscription': ApiSubscriptionSubscription;
+      'api::subscription-plan.subscription-plan': ApiSubscriptionPlanSubscriptionPlan;
+      'api::subscription-plan-feature.subscription-plan-feature': ApiSubscriptionPlanFeatureSubscriptionPlanFeature;
       'api::term-and-condition.term-and-condition': ApiTermAndConditionTermAndCondition;
     }
   }
