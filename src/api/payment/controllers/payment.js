@@ -7,10 +7,88 @@
 const { createCoreController } = require("@strapi/strapi").factories;
 const { sanitize } = require("@strapi/utils");
 
-module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
-  async initiatePayment(ctx) {},
+const Stripe = require("stripe");
 
-  async paymentStatus(ctx) {},
+const stripeSecret = process.env.STRIPE_SECRET_KEY;
+
+if (!stripeSecret) {
+  throw new Error("STRIPE_SECRET_KEY environment variable not set");
+}
+
+// @ts-ignore
+const stripe = new Stripe(stripeSecret, {
+  apiVersion: "2022-11-15",
+});
+
+module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
+  async initiatePayment(ctx) {
+    // @ts-ignore
+    const { amount, subscription_plan } = ctx.request.body;
+    console.log("called: ", { amount, subscription_plan });
+
+    if (amount && subscription_plan) {
+      const subscriptionPlan = await strapi.db
+        .query("api::subscription-plan.subscription-plan")
+        .findOne({
+          where: { id: subscription_plan },
+        });
+      if (!subscriptionPlan) {
+        return ctx.badRequest("Ask Admin to set a subscription plan");
+      }
+
+      const line_items = [];
+      // products.forEach((product) => {
+      line_items.push({
+        price_data: {
+          currency: "USD",
+          subscription_data: {
+            name: subscriptionPlan.planName,
+          },
+          unit_amount: subscriptionPlan.price.toNumber() * 100,
+        },
+      });
+      // });
+    }
+
+    // const order = await prismadb.order.create({
+    //   data: {
+    //     storeId: params.storeId,
+    //     isPaid: false,
+    //     orderItems: {
+    //       create: productIds.map((productId: string) => ({
+    //         product: {
+    //           connect: {
+    //             id: productId
+    //           }
+    //         }
+    //       }))
+    //     }
+    //   }
+    // });
+
+    // const session = await stripe.checkout.sessions.create({
+    //   line_items,
+    //   mode: 'payment',
+    //   billing_address_collection: 'required',
+    //   phone_number_collection: {
+    //     enabled: true,
+    //   },
+    //   success_url: `${process.env.FRONTEND_STORE_URL}/cart?success=1`,
+    //   cancel_url: `${process.env.FRONTEND_STORE_URL}/cart?canceled=1`,
+    //   metadata: {
+    //     orderId: order.id
+    //   },
+    // });
+
+    // return NextResponse.json({ url: session.url }, {
+    //   headers: corsHeaders
+    // });
+    console.log("called initiate");
+  },
+
+  async paymentStatus(ctx) {
+    console.log("Payment status");
+  },
 
   async find(ctx) {
     const user = ctx.state.user;

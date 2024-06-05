@@ -258,6 +258,7 @@ module.exports = createCoreController(
           .findOne({
             where: {
               learning_journey_lesson: learning_journey_lesson?.connect[0],
+              users_permissions_user: user.id,
             },
           });
         if (learningJourneyLessonExists) {
