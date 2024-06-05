@@ -22,6 +22,7 @@ const stripe = new Stripe(stripeSecret, {
 
 module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
   async initiatePayment(ctx) {
+    const user = ctx.state.user;
     // @ts-ignore
     const { amount, subscription_plan } = ctx.request.body;
     console.log("called: ", { amount, subscription_plan });
@@ -47,24 +48,53 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
           unit_amount: subscriptionPlan.price.toNumber() * 100,
         },
       });
-      // });
+      // try {
+      //   const userSubscriptionData = await strapi.db
+      //     .query("api::subscription.subscription")
+      //     .findOne({
+      //       where: { users_permissions_user: user.id },
+      //     });
+      //   if (!userSubscriptionData) {
+      //     return ctx.badRequest("Something went wrong");
+      //   }
+      //   // Get "Free" Subscription plans details
+      //   const freeSubscriptionPlanDetails = await strapi.db
+      //     .query("api::subscription-plan.subscription-plan")
+      //     .findOne({
+      //       where: { planName: "Free" },
+      //     });
+      //   if (!freeSubscriptionPlanDetails) {
+      //     return ctx.badRequest(
+      //       'Ask Admin to set a "Free" subscription plan'
+      //     );
+      //   }
+      //Payment Create
+      //   await strapi.entityService.create("api::payment.payment", {
+      //     // @ts-ignore
+      //     data: {
+      //       status: false,
+      //       subscription: userSubscriptionData.id,
+      //     },
+      //     ...ctx.query,
+      //   });
+      //   //update subscription plan
+      //   await strapi.entityService.update(
+      //     "api::subscription.subscription",
+      //     userSubscriptionData.id,
+      //     {
+      //       data: {
+      //         subscription_plan: subscriptionPlanId
+      //           ? subscriptionPlanId
+      //           : freeSubscriptionPlanDetails.id,
+      //         users_permissions_user: user.id,
+      //       },
+      //       ...ctx.query,
+      //     }
+      //   );
+      // } catch (err) {
+      //   return ctx.badRequest(`Payment create Error: ${err.message}`);
+      // }
     }
-
-    // const order = await prismadb.order.create({
-    //   data: {
-    //     storeId: params.storeId,
-    //     isPaid: false,
-    //     orderItems: {
-    //       create: productIds.map((productId: string) => ({
-    //         product: {
-    //           connect: {
-    //             id: productId
-    //           }
-    //         }
-    //       }))
-    //     }
-    //   }
-    // });
 
     // const session = await stripe.checkout.sessions.create({
     //   line_items,
