@@ -25,10 +25,9 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
   async initiatePayment(ctx) {
     const user = ctx.state.user;
     // @ts-ignore
-    const { amount, subscription_plan } = ctx.request.body;
-    console.log("called: ", { amount, subscription_plan });
+    const { subscription_plan } = ctx.request.body;
 
-    if (amount && subscription_plan) {
+    if (subscription_plan) {
       const subscriptionPlan = await strapi.db
         .query("api::subscription-plan.subscription-plan")
         .findOne({
@@ -48,6 +47,9 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
           });
         if (!userSubscriptionData) {
           return ctx.badRequest("Something went wrong");
+        }
+        if (userSubscriptionData.id === subscription_plan) {
+          return ctx.badRequest("Already a subscribed user of this plan");
         }
         const payment = await strapi.entityService.create(
           "api::payment.payment",
