@@ -7,7 +7,7 @@ module.exports = {
     },
     {
       method: "POST",
-      path: "/payments/status/:id",
+      path: "/payments/status",
       handler: "payment.paymentStatus",
     },
   ],

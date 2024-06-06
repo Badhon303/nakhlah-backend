@@ -2215,6 +2215,14 @@ export interface ApiPaymentPayment extends Schema.CollectionType {
       'oneToOne',
       'api::subscription.subscription'
     >;
+    address: Attribute.Text &
+      Attribute.SetMinMaxLength<{
+        maxLength: 50000;
+      }>;
+    phone: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        maxLength: 100;
+      }>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<

@@ -6,6 +6,7 @@
 
 const { createCoreController } = require("@strapi/strapi").factories;
 const { sanitize } = require("@strapi/utils");
+const unparsed = require("koa-body/unparsed.js");
 
 const Stripe = require("stripe");
 
@@ -48,75 +49,108 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
           unit_amount: subscriptionPlan.price.toNumber() * 100,
         },
       });
-      // try {
-      //   const userSubscriptionData = await strapi.db
-      //     .query("api::subscription.subscription")
-      //     .findOne({
-      //       where: { users_permissions_user: user.id },
-      //     });
-      //   if (!userSubscriptionData) {
-      //     return ctx.badRequest("Something went wrong");
-      //   }
-      //   // Get "Free" Subscription plans details
-      //   const freeSubscriptionPlanDetails = await strapi.db
-      //     .query("api::subscription-plan.subscription-plan")
-      //     .findOne({
-      //       where: { planName: "Free" },
-      //     });
-      //   if (!freeSubscriptionPlanDetails) {
-      //     return ctx.badRequest(
-      //       'Ask Admin to set a "Free" subscription plan'
-      //     );
-      //   }
-      //Payment Create
-      //   await strapi.entityService.create("api::payment.payment", {
-      //     // @ts-ignore
-      //     data: {
-      //       status: false,
-      //       subscription: userSubscriptionData.id,
-      //     },
-      //     ...ctx.query,
-      //   });
-      //   //update subscription plan
-      //   await strapi.entityService.update(
-      //     "api::subscription.subscription",
-      //     userSubscriptionData.id,
-      //     {
-      //       data: {
-      //         subscription_plan: subscriptionPlanId
-      //           ? subscriptionPlanId
-      //           : freeSubscriptionPlanDetails.id,
-      //         users_permissions_user: user.id,
-      //       },
-      //       ...ctx.query,
-      //     }
-      //   );
-      // } catch (err) {
-      //   return ctx.badRequest(`Payment create Error: ${err.message}`);
-      // }
+      try {
+        const userSubscriptionData = await strapi.db
+          .query("api::subscription.subscription")
+          .findOne({
+            where: { users_permissions_user: user.id },
+          });
+        if (!userSubscriptionData) {
+          return ctx.badRequest("Something went wrong");
+        }
+        const payment = await strapi.entityService.create(
+          "api::payment.payment",
+          {
+            // @ts-ignore
+            data: {
+              paymentStatus: false,
+              subscription: userSubscriptionData.id,
+            },
+            ...ctx.query,
+          }
+        );
+        const session = await stripe.checkout.sessions.create({
+          line_items,
+          mode: "payment",
+          billing_address_collection: "required",
+          phone_number_collection: {
+            enabled: true,
+          },
+          success_url: `${process.env.FRONTEND_STORE_URL}/cart?success=1`,
+          cancel_url: `${process.env.FRONTEND_STORE_URL}/cart?canceled=1`,
+          metadata: {
+            paymentId: payment.id,
+            subscriptionId: userSubscriptionData.id,
+            subscriptionPlanId: subscriptionPlan.id,
+          },
+        });
+        ctx.send({
+          success: true,
+          message: "Payment Success",
+          url: session.url,
+        });
+      } catch (err) {
+        return ctx.badRequest(`Payment create Error: ${err.message}`);
+      }
     }
-
-    // const session = await stripe.checkout.sessions.create({
-    //   line_items,
-    //   mode: 'payment',
-    //   billing_address_collection: 'required',
-    //   phone_number_collection: {
-    //     enabled: true,
-    //   },
-    //   success_url: `${process.env.FRONTEND_STORE_URL}/cart?success=1`,
-    //   cancel_url: `${process.env.FRONTEND_STORE_URL}/cart?canceled=1`,
-    //   metadata: {
-    //     orderId: order.id
-    //   },
-    // });
-
-    // return NextResponse.json({ url: session.url }, {
-    //   headers: corsHeaders
-    // });
-    console.log("called initiate");
   },
 
   async paymentStatus(ctx) {
+    const body = ctx.request.body[unparsed]; // Use raw body captured by middleware
+    const signature = ctx.request.headers["stripe-signature"];
+
+    let event;
+
+    try {
+      event = stripe.webhooks.constructEvent(
+        body,
+        signature,
+        process.env.STRIPE_WEBHOOK_SECRET
+      );
+    } catch (err) {
+      return ctx.badRequest(`Webhook: ${err.message}`);
+    }
+
+    const session = event.data.object;
+    const address = session?.customer_details?.address;
+
+    const addressComponents = [
+      address?.line1,
+      address?.line2,
+      address?.city,
+      address?.state,
+      address?.postal_code,
+      address?.country,
+    ];
+
+    const addressString = addressComponents
+      .filter((c) => c !== null)
+      .join(", ");
+
+    if (event.type === "checkout.session.completed") {
+      // update payment status
+      await strapi.db.query("api::payment.payment").update({
+        where: { id: session?.metadata?.paymentId },
+        data: {
+          paymentStatus: true,
+          address: addressString,
+          phone: session?.customer_details?.phone || "",
+        },
+      });
+      await strapi.entityService.update(
+        "api::subscription.subscription",
+        session?.metadata?.subscriptionId?.id,
+        {
+          data: {
+            subscription_plan: session?.metadata?.subscriptionPlanId,
+          },
+        }
+      );
+    }
+
+    ctx.send({
+      success: true,
+    });
     console.log("Payment status");
   },
 
