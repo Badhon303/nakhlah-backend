@@ -130,7 +130,7 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
         ctx.send({
           success: true,
           message: "Payment Success",
-          // url: session.url,
+          url: session.url,
         });
       } catch (err) {
         return ctx.badRequest(`Payment create Error: ${err.message}`);
