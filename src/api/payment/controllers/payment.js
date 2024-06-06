@@ -21,11 +21,23 @@ const stripe = new Stripe(stripeSecret, {
   apiVersion: "2022-11-15",
 });
 
+function checkEnd(months, lastUpdatedTime) {
+  const currentDate = new Date();
+  const subscriptionEndDate = new Date(lastUpdatedTime);
+
+  // Add the specified number of months to the lastUpdatedDate
+  subscriptionEndDate.setMonth(subscriptionEndDate.getMonth() + months);
+
+  // Check if the new date is greater than the current date
+  return currentDate > subscriptionEndDate;
+}
+
 module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
   async initiatePayment(ctx) {
     const user = ctx.state.user;
     // @ts-ignore
     const { subscription_plan } = ctx.request.body;
+    let userSubscriptionData;
 
     if (subscription_plan) {
       const subscriptionPlan = await strapi.db
@@ -40,13 +52,40 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
         return ctx.badRequest("You need not to buy a Free subscription plan");
       }
       try {
-        const userSubscriptionData = await strapi.db
+        userSubscriptionData = await strapi.db
           .query("api::subscription.subscription")
           .findOne({
             where: { users_permissions_user: user.id },
+            populate: { subscription_plan: true },
           });
         if (!userSubscriptionData) {
           return ctx.badRequest("Something went wrong");
+        }
+        const months = userSubscriptionData?.subscription_plan?.timeDuration;
+        const lastUpdatedTime = userSubscriptionData?.updatedAt;
+        const isExpired = checkEnd(months, lastUpdatedTime);
+        if (isExpired) {
+          // Get "Free" Subscription plans details
+          const freeSubscriptionPlanDetails = await strapi.db
+            .query("api::subscription-plan.subscription-plan")
+            .findOne({
+              where: { planName: "Free" },
+            });
+          if (!freeSubscriptionPlanDetails) {
+            return ctx.badRequest(
+              'Ask Admin to set a "Free" subscription plan'
+            );
+          }
+          userSubscriptionData = await strapi.entityService.update(
+            "api::subscription.subscription",
+            userSubscriptionData.id,
+            {
+              data: {
+                subscription_plan: freeSubscriptionPlanDetails.id,
+                users_permissions_user: user.id,
+              },
+            }
+          );
         }
         if (userSubscriptionData.subscription_plan.id === subscription_plan) {
           return ctx.badRequest("Already a subscribed user of this plan");
@@ -91,7 +130,7 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
         ctx.send({
           success: true,
           message: "Payment Success",
-          url: session.url,
+          // url: session.url,
         });
       } catch (err) {
         return ctx.badRequest(`Payment create Error: ${err.message}`);
