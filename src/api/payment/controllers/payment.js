@@ -48,7 +48,7 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
         if (!userSubscriptionData) {
           return ctx.badRequest("Something went wrong");
         }
-        if (userSubscriptionData.id === subscription_plan) {
+        if (userSubscriptionData.subscription_plan.id === subscription_plan) {
           return ctx.badRequest("Already a subscribed user of this plan");
         }
         const payment = await strapi.entityService.create(
