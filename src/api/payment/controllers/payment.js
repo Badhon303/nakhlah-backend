@@ -72,9 +72,18 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
           }
         );
         const session = await stripe.checkout.sessions.create({
-          // line_items,
-          amount: subscriptionPlan.price * 100,
-          subscriptionPlan: subscriptionPlan.planName,
+          line_items: [
+            {
+              price_data: {
+                currency: "usd",
+                product_data: {
+                  name: subscriptionPlan.planName,
+                },
+                unit_amount: subscriptionPlan.price * 100,
+              },
+              quantity: 1,
+            },
+          ],
           mode: "payment",
           billing_address_collection: "required",
           phone_number_collection: {
