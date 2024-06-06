@@ -37,6 +37,9 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
       if (!subscriptionPlan) {
         return ctx.badRequest("Ask Admin to set a subscription plan");
       }
+      if (subscriptionPlan.planName === "Free") {
+        return ctx.badRequest("You need not to buy a Free subscription plan");
+      }
       try {
         const userSubscriptionData = await strapi.db
           .query("api::subscription.subscription")
