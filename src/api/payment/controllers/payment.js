@@ -40,17 +40,17 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
 
       console.log("subscriptionPlan.price: ", subscriptionPlan);
 
-      const line_items = [];
-      // products.forEach((product) => {
-      line_items.push({
-        price_data: {
-          currency: "USD",
-          subscription_data: {
-            name: subscriptionPlan.planName,
-          },
-          unit_amount: subscriptionPlan.price * 100,
-        },
-      });
+      // const line_items = [];
+      // // products.forEach((product) => {
+      // line_items.push({
+      //   price_data: {
+      //     currency: "USD",
+      //     subscription_data: {
+      //       name: subscriptionPlan.planName,
+      //     },
+      //     unit_amount: subscriptionPlan.price * 100,
+      //   },
+      // });
       try {
         const userSubscriptionData = await strapi.db
           .query("api::subscription.subscription")
@@ -72,7 +72,9 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
           }
         );
         const session = await stripe.checkout.sessions.create({
-          line_items,
+          // line_items,
+          amount: subscriptionPlan.price * 100,
+          subscriptionPlan: subscriptionPlan.planName,
           mode: "payment",
           billing_address_collection: "required",
           phone_number_collection: {
