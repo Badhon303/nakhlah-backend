@@ -38,6 +38,8 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
         return ctx.badRequest("Ask Admin to set a subscription plan");
       }
 
+      console.log("subscriptionPlan.price: ", subscriptionPlan);
+
       const line_items = [];
       // products.forEach((product) => {
       line_items.push({
@@ -46,7 +48,7 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
           subscription_data: {
             name: subscriptionPlan.planName,
           },
-          unit_amount: subscriptionPlan.price.toNumber() * 100,
+          unit_amount: subscriptionPlan.price * 100,
         },
       });
       try {
@@ -76,8 +78,8 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
           phone_number_collection: {
             enabled: true,
           },
-          success_url: `${process.env.FRONTEND_STORE_URL}/cart?success=1`,
-          cancel_url: `${process.env.FRONTEND_STORE_URL}/cart?canceled=1`,
+          success_url: `${process.env.FRONTEND_URL}/cart?success=1`,
+          cancel_url: `${process.env.FRONTEND_URL}/cart?canceled=1`,
           metadata: {
             paymentId: payment.id,
             subscriptionId: userSubscriptionData.id,
