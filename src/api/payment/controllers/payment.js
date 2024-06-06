@@ -37,20 +37,6 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
       if (!subscriptionPlan) {
         return ctx.badRequest("Ask Admin to set a subscription plan");
       }
-
-      console.log("subscriptionPlan.price: ", subscriptionPlan);
-
-      // const line_items = [];
-      // // products.forEach((product) => {
-      // line_items.push({
-      //   price_data: {
-      //     currency: "USD",
-      //     subscription_data: {
-      //       name: subscriptionPlan.planName,
-      //     },
-      //     unit_amount: subscriptionPlan.price * 100,
-      //   },
-      // });
       try {
         const userSubscriptionData = await strapi.db
           .query("api::subscription.subscription")
@@ -111,7 +97,7 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
   async paymentStatus(ctx) {
     const body = ctx.request.body[unparsed]; // Use raw body captured by middleware
     const signature = ctx.request.headers["stripe-signature"];
-
+    console.log("called");
     let event;
 
     try {
@@ -141,6 +127,7 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
       .join(", ");
 
     if (event.type === "checkout.session.completed") {
+      console.log("session: ", session);
       // update payment status
       await strapi.db.query("api::payment.payment").update({
         where: { id: session?.metadata?.paymentId },
@@ -152,7 +139,7 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
       });
       await strapi.entityService.update(
         "api::subscription.subscription",
-        session?.metadata?.subscriptionId?.id,
+        session?.metadata?.subscriptionId,
         {
           data: {
             subscription_plan: session?.metadata?.subscriptionPlanId,
