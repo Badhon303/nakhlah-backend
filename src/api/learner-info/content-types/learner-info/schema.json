@@ -46,6 +46,11 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::learning-purpose.learning-purpose"
+    },
+    "social_traffic": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::social-traffic.social-traffic"
     }
   }
 }

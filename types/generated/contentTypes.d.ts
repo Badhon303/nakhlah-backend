@@ -1579,6 +1579,11 @@ export interface ApiLearnerInfoLearnerInfo extends Schema.CollectionType {
       'oneToOne',
       'api::learning-purpose.learning-purpose'
     >;
+    social_traffic: Attribute.Relation<
+      'api::learner-info.learner-info',
+      'oneToOne',
+      'api::social-traffic.social-traffic'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<

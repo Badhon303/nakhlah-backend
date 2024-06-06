@@ -183,10 +183,9 @@ module.exports = createCoreController(
       if (!progressData) {
         return ctx.badRequest("Data not found");
       }
-
       const currentLesson = await strapi.entityService.findOne(
         "api::learning-journey-lesson.learning-journey-lesson",
-        62,
+        progressData.progressId,
         {
           populate: {
             learning_journey_level: {
@@ -201,7 +200,6 @@ module.exports = createCoreController(
           },
         }
       );
-
       try {
         if (typeof ctx.request.body !== "object" || ctx.request.body === null) {
           return ctx.badRequest("Invalid request body");
@@ -360,16 +358,24 @@ module.exports = createCoreController(
 
         getNextLesson(currentLesson).then(async (nextLesson) => {
           if (nextLesson) {
-            await strapi.entityService.create(
-              "api::learner-progress.learner-progress",
-              {
-                // @ts-ignore
+            // await strapi.entityService.create(
+            //   "api::learner-progress.learner-progress",
+            //   {
+            //     // @ts-ignore
+            //     data: {
+            //       progressId: nextLesson.id,
+            //       users_permissions_user: user.id,
+            //     },
+            //   }
+            // );
+            await strapi.db
+              .query("api::learner-progress.learner-progress")
+              .update({
+                where: { users_permissions_user: { id: user.id } },
                 data: {
                   progressId: nextLesson.id,
-                  users_permissions_user: user.id,
                 },
-              }
-            );
+              });
           } else {
             console.log("No next lesson found.");
           }
