@@ -37,6 +37,9 @@ function hasLastSevenDays(streakData) {
 module.exports = createCoreController(
   "api::learner-gamification-stock.learner-gamification-stock",
   ({ strapi }) => ({
+    async findInjaz(ctx) {
+      console.log("injaz");
+    },
     async find(ctx) {
       const user = ctx.state.user;
       let results;

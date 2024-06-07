@@ -37,7 +37,7 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
     const user = ctx.state.user;
     // @ts-ignore
     const { subscription_plan } = ctx.request.body;
-    let userSubscriptionData;
+    // let userSubscriptionData;
 
     if (subscription_plan) {
       const subscriptionPlan = await strapi.db
@@ -52,7 +52,7 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
         return ctx.badRequest("You need not to buy a Free subscription plan");
       }
       try {
-        userSubscriptionData = await strapi.db
+        const userSubscriptionData = await strapi.db
           .query("api::subscription.subscription")
           .findOne({
             where: { users_permissions_user: user.id },
@@ -61,35 +61,23 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
         if (!userSubscriptionData) {
           return ctx.badRequest("Something went wrong");
         }
-        const months = userSubscriptionData?.subscription_plan?.timeDuration;
-        const lastUpdatedTime = userSubscriptionData?.updatedAt;
-        const isExpired = checkEnd(months, lastUpdatedTime);
-        if (isExpired) {
-          // Get "Free" Subscription plans details
-          const freeSubscriptionPlanDetails = await strapi.db
-            .query("api::subscription-plan.subscription-plan")
-            .findOne({
-              where: { planName: "Free" },
-            });
-          if (!freeSubscriptionPlanDetails) {
-            return ctx.badRequest(
-              'Ask Admin to set a "Free" subscription plan'
-            );
-          }
-          userSubscriptionData = await strapi.entityService.update(
-            "api::subscription.subscription",
-            userSubscriptionData.id,
-            {
-              data: {
-                subscription_plan: freeSubscriptionPlanDetails.id,
-                users_permissions_user: user.id,
-              },
+        // 1. if userSubscriptionData free user can subscribe --> Done
+        // 2. if user already has subscription check if he wants to subscribe the same plan ---> Done
+        // 3. if a different plan user can subscribe --> done
+        // 4. if same plan but expired user can subscribe --> done
+        // 6. else return Already a subscribed user of this plan --> done
+        if (userSubscriptionData?.subscription_plan?.planName !== "Free") {
+          if (userSubscriptionData.subscription_plan.id === subscription_plan) {
+            const months =
+              userSubscriptionData?.subscription_plan?.timeDuration;
+            const lastUpdatedTime = userSubscriptionData?.updatedAt;
+            const isExpired = checkEnd(months, lastUpdatedTime);
+            if (!isExpired) {
+              return ctx.badRequest("Already a subscribed user of this plan");
             }
-          );
+          }
         }
-        if (userSubscriptionData.subscription_plan.id === subscription_plan) {
-          return ctx.badRequest("Already a subscribed user of this plan");
-        }
+        //subscribe part
         const payment = await strapi.entityService.create(
           "api::payment.payment",
           {
