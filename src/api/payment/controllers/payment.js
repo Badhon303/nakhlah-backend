@@ -86,7 +86,6 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
               paymentStatus: false,
               subscription: userSubscriptionData.id,
             },
-            ...ctx.query,
           }
         );
         const session = await stripe.checkout.sessions.create({
@@ -117,7 +116,6 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
         });
         ctx.send({
           success: true,
-          message: "Payment Success",
           url: session.url,
         });
       } catch (err) {
@@ -183,7 +181,6 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
     ctx.send({
       success: true,
     });
-    console.log("Payment status");
   },
 
   async find(ctx) {

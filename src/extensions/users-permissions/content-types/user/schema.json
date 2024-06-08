@@ -64,6 +64,12 @@
       "target": "plugin::users-permissions.role",
       "inversedBy": "users",
       "configurable": false
+    },
+    "learner_info": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::learner-info.learner-info",
+      "inversedBy": "users_permissions_user"
     }
   }
 }
