@@ -16,7 +16,7 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "plugin::users-permissions.user",
-      "inversedBy": "learner_info"
+      "mappedBy": "learner_info"
     },
     "learning_goal": {
       "type": "relation",

@@ -158,9 +158,12 @@ module.exports = createCoreController("api::exam.exam", ({ strapi }) => ({
                   $in: lessonIds,
                 },
               },
+              users_permissions_user: user.id,
             },
           }
         );
+        console.log("lessonIds.length: ", lessonIds.length);
+        console.log("existingLessons.length: ", existingLessons.length);
         if (
           lessonIds.length >= 2 &&
           lessonIds.length === existingLessons.length
