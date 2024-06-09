@@ -194,8 +194,6 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
   },
 
   async paymentStatus(ctx) {
-    const user = ctx.state.user;
-    console.log("user id: ", user);
     const body = ctx.request.body[unparsed]; // Use raw body captured by middleware
     const signature = ctx.request.headers["stripe-signature"];
     let event;
@@ -231,6 +229,7 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
         "session?.metadata?.purchaseType: ",
         session?.metadata?.purchaseType
       );
+      console.log("session?.metadata?.userId: ", session?.metadata?.userId);
       try {
         if (session?.metadata?.purchaseType === "Buy_Subscription") {
           // update payment status
@@ -269,7 +268,7 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
                 gamification_type: {
                   typeName: "Date",
                 },
-                users_permissions_user: session?.customer_details?.userId,
+                users_permissions_user: session?.metadata?.userId,
               },
             });
           console.log(
@@ -307,7 +306,7 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
                 stock:
                   LearnerGamificationStockDetailsOfDate.stock +
                   session?.metadata?.dateAmount,
-                users_permissions_user: session?.customer_details?.userId,
+                users_permissions_user: session?.metadata?.userId,
               },
             }
           );
