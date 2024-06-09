@@ -139,8 +139,11 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
             },
           }
         );
-        if (!gamificationTxDetails) {
-          return ctx.badRequest("Invalid request body");
+        if (
+          !gamificationTxDetails ||
+          !gamificationTxDetails.gamification_tx_amount.price
+        ) {
+          return ctx.badRequest("Invalid request");
         }
         //subscribe part
         const payment = await strapi.entityService.create(
@@ -225,11 +228,6 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
       .join(", ");
 
     if (event.type === "checkout.session.completed") {
-      console.log(
-        "session?.metadata?.purchaseType: ",
-        session?.metadata?.purchaseType
-      );
-      console.log("session?.metadata?.userId: ", session?.metadata?.userId);
       try {
         if (session?.metadata?.purchaseType === "Buy_Subscription") {
           // update payment status
@@ -260,7 +258,6 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
               phone: session?.customer_details?.phone || "",
             },
           });
-          console.log("pay: ", pay);
           const LearnerGamificationStockDetailsOfDate = await strapi.db
             .query("api::learner-gamification-stock.learner-gamification-stock")
             .findOne({
@@ -271,10 +268,6 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
                 users_permissions_user: session?.metadata?.userId,
               },
             });
-          console.log(
-            "LearnerGamificationStockDetailsOfDate: ",
-            LearnerGamificationStockDetailsOfDate
-          );
           if (!LearnerGamificationStockDetailsOfDate) {
             ctx.send({
               success: false,
@@ -284,7 +277,6 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
           const gamificationTypesDetails = await strapi.entityService.findMany(
             "api::gamification-type.gamification-type"
           );
-          console.log("gamificationTypesDetails: ", gamificationTypesDetails);
           if (!gamificationTypesDetails) {
             ctx.send({
               success: false,
@@ -292,10 +284,6 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
           }
           const getDateDetails = gamificationTypesDetails.find(
             (item) => item?.typeName === "Date"
-          );
-          console.log(
-            "session?.metadata?.dateAmount: ",
-            session?.metadata?.dateAmount
           );
           await strapi.entityService.update(
             "api::learner-gamification-stock.learner-gamification-stock",
