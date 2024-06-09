@@ -23,11 +23,6 @@
       "relation": "oneToOne",
       "target": "api::learning-goal.learning-goal"
     },
-    "language": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::language.language"
-    },
     "learning_journey": {
       "type": "relation",
       "relation": "oneToOne",
@@ -51,6 +46,11 @@
     "termsAndConditions": {
       "type": "boolean",
       "default": false
+    },
+    "country": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::country.country"
     }
   }
 }

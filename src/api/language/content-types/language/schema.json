@@ -4,24 +4,20 @@
   "info": {
     "singularName": "language",
     "pluralName": "languages",
-    "displayName": "Language"
+    "displayName": "Language",
+    "description": ""
   },
   "options": {
     "draftAndPublish": false
   },
   "pluginOptions": {},
   "attributes": {
-    "name": {
+    "language": {
       "type": "string",
       "maxLength": 100,
       "required": true,
       "minLength": 1,
       "unique": true
-    },
-    "country": {
-      "type": "string",
-      "maxLength": 100,
-      "minLength": 1
     }
   }
 }

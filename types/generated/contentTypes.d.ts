@@ -1093,6 +1093,47 @@ export interface ApiContentDetailContentDetail extends Schema.CollectionType {
   };
 }
 
+export interface ApiCountryCountry extends Schema.CollectionType {
+  collectionName: 'countries';
+  info: {
+    singularName: 'country';
+    pluralName: 'countries';
+    displayName: 'Country';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    country: Attribute.String &
+      Attribute.Required &
+      Attribute.Unique &
+      Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }>;
+    icon: Attribute.Media<'images'>;
+    language: Attribute.Relation<
+      'api::country.country',
+      'oneToOne',
+      'api::language.language'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::country.country',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::country.country',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiDiscountPolicyDiscountPolicy extends Schema.CollectionType {
   collectionName: 'discount_policies';
   info: {
@@ -1419,19 +1460,15 @@ export interface ApiLanguageLanguage extends Schema.CollectionType {
     singularName: 'language';
     pluralName: 'languages';
     displayName: 'Language';
+    description: '';
   };
   options: {
     draftAndPublish: false;
   };
   attributes: {
-    name: Attribute.String &
+    language: Attribute.String &
       Attribute.Required &
       Attribute.Unique &
-      Attribute.SetMinMaxLength<{
-        minLength: 1;
-        maxLength: 100;
-      }>;
-    country: Attribute.String &
       Attribute.SetMinMaxLength<{
         minLength: 1;
         maxLength: 100;
@@ -1567,11 +1604,6 @@ export interface ApiLearnerInfoLearnerInfo extends Schema.CollectionType {
       'oneToOne',
       'api::learning-goal.learning-goal'
     >;
-    language: Attribute.Relation<
-      'api::learner-info.learner-info',
-      'oneToOne',
-      'api::language.language'
-    >;
     learning_journey: Attribute.Relation<
       'api::learner-info.learner-info',
       'oneToOne',
@@ -1593,6 +1625,11 @@ export interface ApiLearnerInfoLearnerInfo extends Schema.CollectionType {
       'api::social-traffic.social-traffic'
     >;
     termsAndConditions: Attribute.Boolean & Attribute.DefaultTo<false>;
+    country: Attribute.Relation<
+      'api::learner-info.learner-info',
+      'oneToOne',
+      'api::country.country'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -2886,6 +2923,7 @@ declare module '@strapi/types' {
       'api::content-category.content-category': ApiContentCategoryContentCategory;
       'api::content-category-type.content-category-type': ApiContentCategoryTypeContentCategoryType;
       'api::content-detail.content-detail': ApiContentDetailContentDetail;
+      'api::country.country': ApiCountryCountry;
       'api::discount-policy.discount-policy': ApiDiscountPolicyDiscountPolicy;
       'api::exam.exam': ApiExamExam;
       'api::gamification-tx.gamification-tx': ApiGamificationTxGamificationTx;
