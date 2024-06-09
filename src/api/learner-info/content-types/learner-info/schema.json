@@ -28,11 +28,6 @@
       "relation": "oneToOne",
       "target": "api::language.language"
     },
-    "privacy_policy": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::privacy-policy.privacy-policy"
-    },
     "learning_journey": {
       "type": "relation",
       "relation": "oneToOne",
@@ -52,6 +47,10 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::social-traffic.social-traffic"
+    },
+    "termsAndConditions": {
+      "type": "boolean",
+      "default": false
     }
   }
 }

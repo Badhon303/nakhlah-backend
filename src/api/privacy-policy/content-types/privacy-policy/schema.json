@@ -4,22 +4,17 @@
   "info": {
     "singularName": "privacy-policy",
     "pluralName": "privacy-policies",
-    "displayName": "Privacy_Policy"
+    "displayName": "Privacy_Policy",
+    "description": ""
   },
   "options": {
     "draftAndPublish": false
   },
   "pluginOptions": {},
   "attributes": {
-    "name": {
-      "type": "string",
-      "maxLength": 100,
-      "minLength": 1
-    },
     "details": {
-      "type": "text",
-      "maxLength": 5000,
-      "minLength": 1
+      "type": "blocks",
+      "required": true
     }
   }
 }

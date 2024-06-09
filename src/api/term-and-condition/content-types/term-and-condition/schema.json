@@ -4,17 +4,17 @@
   "info": {
     "singularName": "term-and-condition",
     "pluralName": "term-and-conditions",
-    "displayName": "Term_And_Condition"
+    "displayName": "Term_And_Condition",
+    "description": ""
   },
   "options": {
     "draftAndPublish": false
   },
   "pluginOptions": {},
   "attributes": {
-    "privacy_policy": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::privacy-policy.privacy-policy"
+    "description": {
+      "type": "blocks",
+      "required": true
     }
   }
 }

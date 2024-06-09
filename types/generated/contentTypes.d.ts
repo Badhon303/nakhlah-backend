@@ -1572,11 +1572,6 @@ export interface ApiLearnerInfoLearnerInfo extends Schema.CollectionType {
       'oneToOne',
       'api::language.language'
     >;
-    privacy_policy: Attribute.Relation<
-      'api::learner-info.learner-info',
-      'oneToOne',
-      'api::privacy-policy.privacy-policy'
-    >;
     learning_journey: Attribute.Relation<
       'api::learner-info.learner-info',
       'oneToOne',
@@ -1597,6 +1592,7 @@ export interface ApiLearnerInfoLearnerInfo extends Schema.CollectionType {
       'oneToOne',
       'api::social-traffic.social-traffic'
     >;
+    termsAndConditions: Attribute.Boolean & Attribute.DefaultTo<false>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -2269,21 +2265,13 @@ export interface ApiPrivacyPolicyPrivacyPolicy extends Schema.CollectionType {
     singularName: 'privacy-policy';
     pluralName: 'privacy-policies';
     displayName: 'Privacy_Policy';
+    description: '';
   };
   options: {
     draftAndPublish: false;
   };
   attributes: {
-    name: Attribute.String &
-      Attribute.SetMinMaxLength<{
-        minLength: 1;
-        maxLength: 100;
-      }>;
-    details: Attribute.Text &
-      Attribute.SetMinMaxLength<{
-        minLength: 1;
-        maxLength: 5000;
-      }>;
+    details: Attribute.Blocks & Attribute.Required;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -2841,16 +2829,13 @@ export interface ApiTermAndConditionTermAndCondition
     singularName: 'term-and-condition';
     pluralName: 'term-and-conditions';
     displayName: 'Term_And_Condition';
+    description: '';
   };
   options: {
     draftAndPublish: false;
   };
   attributes: {
-    privacy_policy: Attribute.Relation<
-      'api::term-and-condition.term-and-condition',
-      'oneToOne',
-      'api::privacy-policy.privacy-policy'
-    >;
+    description: Attribute.Blocks & Attribute.Required;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
