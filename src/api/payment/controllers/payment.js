@@ -177,6 +177,7 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
           metadata: {
             paymentId: payment.id,
             purchaseType: data.purchase,
+            userId: user.id,
             dateAmount: gamificationTxDetails?.gamification_tx_amount?.amount,
           },
         });
@@ -268,7 +269,7 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
                 gamification_type: {
                   typeName: "Date",
                 },
-                users_permissions_user: user.id,
+                users_permissions_user: session?.customer_details?.userId,
               },
             });
           console.log(
@@ -306,7 +307,7 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
                 stock:
                   LearnerGamificationStockDetailsOfDate.stock +
                   session?.metadata?.dateAmount,
-                users_permissions_user: user.id,
+                users_permissions_user: session?.customer_details?.userId,
               },
             }
           );
