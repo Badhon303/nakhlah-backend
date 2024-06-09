@@ -194,6 +194,7 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
 
   async paymentStatus(ctx) {
     const user = ctx.state.user;
+    console.log("user id: ", user);
     const body = ctx.request.body[unparsed]; // Use raw body captured by middleware
     const signature = ctx.request.headers["stripe-signature"];
     let event;
