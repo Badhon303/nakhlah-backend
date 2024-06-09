@@ -50,7 +50,7 @@ module.exports = createCoreController(
                 fields: ["username", "email"],
                 populate: {
                   learner_info: {
-                    fields: [],
+                    // fields: [],
                     populate: {
                       country: {
                         fields: ["country"],
