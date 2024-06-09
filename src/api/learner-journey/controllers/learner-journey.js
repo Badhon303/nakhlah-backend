@@ -261,12 +261,12 @@ module.exports = createCoreController(
           });
         if (learningJourneyLessonExists) {
           try {
-            if (
-              typeof ctx.request.body !== "object" ||
-              ctx.request.body === null
-            ) {
-              return ctx.badRequest("Invalid request body");
-            }
+            // if (
+            //   typeof ctx.request.body !== "object" ||
+            //   ctx.request.body === null
+            // ) {
+            //   return ctx.badRequest("Invalid request body");
+            // }
             await strapi.entityService.create(
               "api::lesson-practice.lesson-practice",
               {
@@ -358,16 +358,6 @@ module.exports = createCoreController(
 
         getNextLesson(currentLesson).then(async (nextLesson) => {
           if (nextLesson) {
-            // await strapi.entityService.create(
-            //   "api::learner-progress.learner-progress",
-            //   {
-            //     // @ts-ignore
-            //     data: {
-            //       progressId: nextLesson.id,
-            //       users_permissions_user: user.id,
-            //     },
-            //   }
-            // );
             await strapi.db
               .query("api::learner-progress.learner-progress")
               .update({

@@ -32,7 +32,8 @@
     "question": {
       "type": "relation",
       "relation": "oneToOne",
-      "target": "api::question.question"
+      "target": "api::question.question",
+      "inversedBy": "question_detail"
     }
   }
 }

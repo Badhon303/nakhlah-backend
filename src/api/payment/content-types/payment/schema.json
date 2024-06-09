@@ -29,6 +29,11 @@
     "phone": {
       "type": "string",
       "maxLength": 100
+    },
+    "gamification_tx": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::gamification-tx.gamification-tx"
     }
   }
 }

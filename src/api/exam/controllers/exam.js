@@ -52,6 +52,7 @@ module.exports = createCoreController("api::exam.exam", ({ strapi }) => ({
         .findOne({
           where: {
             learning_journey_level: learning_journey_level?.connect[0],
+            users_permissions_user: user.id,
           },
         });
       if (learningJourneyLevelExists) {
@@ -162,8 +163,8 @@ module.exports = createCoreController("api::exam.exam", ({ strapi }) => ({
             },
           }
         );
-        console.log("lessonIds.length: ", lessonIds.length);
-        console.log("existingLessons.length: ", existingLessons.length);
+        console.log("lessonIds.length: ", lessonIds);
+        console.log("existingLessons.length: ", existingLessons);
         if (
           lessonIds.length >= 2 &&
           lessonIds.length === existingLessons.length

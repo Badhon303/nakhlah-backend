@@ -1269,6 +1269,14 @@ export interface ApiGamificationTxAmountGamificationTxAmount
         number
       > &
       Attribute.DefaultTo<0>;
+    price: Attribute.Integer &
+      Attribute.SetMinMax<
+        {
+          max: 999999;
+        },
+        number
+      > &
+      Attribute.DefaultTo<0>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -2233,6 +2241,11 @@ export interface ApiPaymentPayment extends Schema.CollectionType {
       Attribute.SetMinMaxLength<{
         maxLength: 100;
       }>;
+    gamification_tx: Attribute.Relation<
+      'api::payment.payment',
+      'oneToOne',
+      'api::gamification-tx.gamification-tx'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -2312,6 +2325,11 @@ export interface ApiQuestionQuestion extends Schema.CollectionType {
         maxLength: 100;
       }>;
     image: Attribute.Media<'images'>;
+    question_detail: Attribute.Relation<
+      'api::question.question',
+      'oneToOne',
+      'api::question-detail.question-detail'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
