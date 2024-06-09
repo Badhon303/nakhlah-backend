@@ -48,16 +48,16 @@ module.exports = createCoreController(
             populate: {
               users_permissions_user: {
                 fields: ["username", "email"],
-                //   populate: {
-                //     learner_info: {
-                //       fields: [],
-                //       populate: {
-                //         country: {
-                //           fields: ["country"],
-                //         },
-                //       },
-                //     },
-                //   },
+                populate: {
+                  learner_info: {
+                    fields: [],
+                    populate: {
+                      country: {
+                        fields: ["country"],
+                      },
+                    },
+                  },
+                },
               },
             },
             filters: {
