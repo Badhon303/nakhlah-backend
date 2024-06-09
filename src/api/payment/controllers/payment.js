@@ -305,7 +305,7 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
                 gamification_type: getDateDetails.id,
                 stock:
                   LearnerGamificationStockDetailsOfDate.stock +
-                  session?.metadata?.dateAmount,
+                  Number(session?.metadata?.dateAmount),
                 users_permissions_user: session?.metadata?.userId,
               },
             }
