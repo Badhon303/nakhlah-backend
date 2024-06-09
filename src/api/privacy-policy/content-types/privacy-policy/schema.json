@@ -13,8 +13,9 @@
   "pluginOptions": {},
   "attributes": {
     "details": {
-      "type": "blocks",
-      "required": true
+      "type": "text",
+      "required": true,
+      "maxLength": 999999999
     }
   }
 }

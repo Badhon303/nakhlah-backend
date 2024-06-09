@@ -12,9 +12,10 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "description": {
-      "type": "blocks",
-      "required": true
+    "details": {
+      "type": "text",
+      "required": true,
+      "maxLength": 999999999
     }
   }
 }

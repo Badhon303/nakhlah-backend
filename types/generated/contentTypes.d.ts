@@ -2271,7 +2271,11 @@ export interface ApiPrivacyPolicyPrivacyPolicy extends Schema.CollectionType {
     draftAndPublish: false;
   };
   attributes: {
-    details: Attribute.Blocks & Attribute.Required;
+    details: Attribute.Text &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 999999999;
+      }>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -2835,7 +2839,11 @@ export interface ApiTermAndConditionTermAndCondition
     draftAndPublish: false;
   };
   attributes: {
-    description: Attribute.Blocks & Attribute.Required;
+    details: Attribute.Text &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 999999999;
+      }>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
