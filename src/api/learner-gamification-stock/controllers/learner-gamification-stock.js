@@ -161,6 +161,15 @@ module.exports = createCoreController(
             },
           });
 
+        const learnerInfos = await strapi.db
+          .query("api::learner-info.learner-info")
+          .findOne({
+            where: {
+              users_permissions_user: user.id,
+            },
+            populate: { country: true },
+          });
+
         const response = {
           stock: userInjazStock.stock,
           users_permissions_user: {
@@ -168,6 +177,7 @@ module.exports = createCoreController(
             email: userInjazStock.users_permissions_user.email,
           },
           position: position,
+          country: learnerInfos?.country?.country,
         };
         ctx.send({ data: response });
       } catch (err) {
