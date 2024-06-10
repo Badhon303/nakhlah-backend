@@ -34,6 +34,86 @@ function hasLastSevenDays(streakData) {
   return true;
 }
 
+// function mergeCountryInfo(results, learnerInfos) {
+//   const userCountryMap = learnerInfos.reduce((acc, learnerInfo) => {
+//     acc[learnerInfo.users_permissions_user.id] = learnerInfo.country;
+//     return acc;
+//   }, {});
+
+//   return results.map((result) => {
+//     const country = userCountryMap[result.users_permissions_user.id];
+//     const {
+//       users_permissions_user,
+//       country: resultCountry,
+//       createdAt,
+//       updatedAt,
+//       ...restResult
+//     } = result;
+//     const { id: userId, ...restUser } = users_permissions_user;
+//     const {
+//       id: countryId,
+//       createdAt: countryCreatedAt,
+//       updatedAt: countryUpdatedAt,
+//       ...restCountry
+//     } = country || {};
+
+//     return {
+//       ...restResult,
+//       users_permissions_user: restUser,
+//       country: country ? restCountry : null,
+//     };
+//   });
+// }
+
+function mergeCountryInfo(results, learnerInfos) {
+  const userCountryMap = learnerInfos.reduce((acc, learnerInfo) => {
+    acc[learnerInfo.users_permissions_user.id] = learnerInfo.country;
+    return acc;
+  }, {});
+
+  return results.map((result) => {
+    const country = userCountryMap[result.users_permissions_user.id];
+    const {
+      users_permissions_user,
+      country: resultCountry,
+      createdAt,
+      updatedAt,
+      id,
+      ...restResult
+    } = result;
+    const { id: userId, ...restUser } = users_permissions_user;
+    const {
+      id: countryId,
+      createdAt: countryCreatedAt,
+      updatedAt: countryUpdatedAt,
+      ...restCountry
+    } = country || {};
+
+    return {
+      ...restResult,
+      users_permissions_user: restUser,
+      country: country ? restCountry : null,
+    };
+  });
+}
+
+async function fetchLearnerInfos(userIds) {
+  const learnerInfos = await strapi.entityService.findMany(
+    "api::learner-info.learner-info",
+    {
+      filters: {
+        users_permissions_user: {
+          id: {
+            $in: userIds,
+          },
+        },
+      },
+      populate: ["country", "users_permissions_user"],
+    }
+  );
+  return learnerInfos;
+}
+
 module.exports = createCoreController(
   "api::learner-gamification-stock.learner-gamification-stock",
   ({ strapi }) => ({
@@ -64,19 +144,10 @@ module.exports = createCoreController(
         const userIds = results.map((item) => item.users_permissions_user.id);
         const userExists = userIds.includes(user.id);
 
-        // const countries = await strapi.entityService.findMany(
-        //   "api::learner-info.learner-info",
-        //   {
-        //     filters: {
-        //       users_permissions_user: {
-        //         id: {
-        //           $in: userIds,
-        //         },
-        //       },
-        //       fields: ["country"],
-        //     },
-        //   }
-        // );
+        const data = await fetchLearnerInfos(userIds).then((learnerInfos) => {
+          const mergedResults = mergeCountryInfo(results, learnerInfos);
+          return mergedResults;
+        });
 
         let userInjazStock = null;
         if (!userExists) {
@@ -96,7 +167,7 @@ module.exports = createCoreController(
         }
 
         return {
-          results,
+          data,
           userInjazStock: userExists ? null : userInjazStock,
         };
       } catch (err) {
