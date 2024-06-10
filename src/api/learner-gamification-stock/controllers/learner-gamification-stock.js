@@ -169,7 +169,7 @@ module.exports = createCoreController(
             },
             populate: { country: true },
           });
-
+        console.log("check");
         const response = {
           stock: userInjazStock.stock,
           users_permissions_user: {
