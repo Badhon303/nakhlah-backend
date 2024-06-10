@@ -312,7 +312,7 @@ module.exports = createCoreController(
               `Learner practice Create Error: ${err.message}`
             );
           }
-          return ctx.badRequest("Lesson already completed");
+          return ctx.send({ message: "Lesson already completed" });
         } else {
           // Injaz Gain by Completing Lesson
           try {

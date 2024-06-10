@@ -48,16 +48,6 @@ module.exports = createCoreController(
             populate: {
               users_permissions_user: {
                 fields: ["username", "email"],
-                // populate: {
-                //   learner_info: {
-                //     fields: [],
-                //     populate: {
-                //       country: {
-                //         fields: ["country"],
-                //       },
-                //     },
-                //   },
-                // },
               },
             },
             filters: {
@@ -71,13 +61,25 @@ module.exports = createCoreController(
           }
         );
 
-        // Check if the user is in the results
-        const userInResults = results.some(
-          (result) => result.users_permissions_user.id === user.id
-        );
+        const userIds = results.map((item) => item.users_permissions_user.id);
+        const userExists = userIds.includes(user.id);
+
+        // const countries = await strapi.entityService.findMany(
+        //   "api::learner-info.learner-info",
+        //   {
+        //     filters: {
+        //       users_permissions_user: {
+        //         id: {
+        //           $in: userIds,
+        //         },
+        //       },
+        //       fields: ["country"],
+        //     },
+        //   }
+        // );
 
         let userInjazStock = null;
-        if (!userInResults) {
+        if (!userExists) {
           // Fetch the user's stock data separately
           userInjazStock = await strapi.db
             .query("api::learner-gamification-stock.learner-gamification-stock")
@@ -95,7 +97,7 @@ module.exports = createCoreController(
 
         return {
           results,
-          userInjazStock: userInResults ? null : userInjazStock,
+          userInjazStock: userExists ? null : userInjazStock,
         };
       } catch (err) {
         return ctx.badRequest(`Get injaz Error: ${err.message}`);
