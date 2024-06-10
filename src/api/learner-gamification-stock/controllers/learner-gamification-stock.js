@@ -117,6 +117,63 @@ async function fetchLearnerInfos(userIds) {
 module.exports = createCoreController(
   "api::learner-gamification-stock.learner-gamification-stock",
   ({ strapi }) => ({
+    async userPositionByInjaz(ctx) {
+      const user = ctx.state.user;
+      try {
+        const userInjaz = await strapi.entityService.findMany(
+          "api::learner-gamification-stock.learner-gamification-stock",
+          {
+            populate: {
+              users_permissions_user: {
+                fields: ["id"],
+              },
+            },
+            filters: {
+              gamification_type: {
+                typeName: {
+                  $eq: "Injaz",
+                },
+              },
+            },
+            sort: { stock: "desc" },
+          }
+        );
+        const position =
+          userInjaz.findIndex(
+            (item) => item.users_permissions_user.id === user.id
+          ) + 1;
+
+        const userInjazStock = await strapi.db
+          .query("api::learner-gamification-stock.learner-gamification-stock")
+          .findOne({
+            where: {
+              users_permissions_user: user.id,
+              gamification_type: {
+                typeName: {
+                  $eq: "Injaz",
+                },
+              },
+            },
+            populate: {
+              users_permissions_user: {
+                fields: ["username", "email"],
+              },
+            },
+          });
+
+        const response = {
+          stock: userInjazStock.stock,
+          users_permissions_user: {
+            username: userInjazStock.users_permissions_user.username,
+            email: userInjazStock.users_permissions_user.email,
+          },
+          position: position,
+        };
+        ctx.send({ data: response });
+      } catch (err) {
+        return ctx.badRequest(`Get injaz Position Error: ${err.message}`);
+      }
+    },
     async findInjaz(ctx) {
       const user = ctx.state.user;
       try {
@@ -149,26 +206,9 @@ module.exports = createCoreController(
           return mergedResults;
         });
 
-        let userInjazStock = null;
-        if (!userExists) {
-          // Fetch the user's stock data separately
-          userInjazStock = await strapi.db
-            .query("api::learner-gamification-stock.learner-gamification-stock")
-            .findOne({
-              where: {
-                users_permissions_user: user.id,
-                gamification_type: {
-                  typeName: {
-                    $eq: "Injaz",
-                  },
-                },
-              },
-            });
-        }
-
         return {
           data,
-          userInjazStock: userExists ? null : userInjazStock,
+          userInjazStock: userExists ? null : "poor learner",
         };
       } catch (err) {
         return ctx.badRequest(`Get injaz Error: ${err.message}`);
