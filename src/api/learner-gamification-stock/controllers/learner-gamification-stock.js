@@ -146,7 +146,15 @@ module.exports = createCoreController(
             where: {
               users_permissions_user: user.id,
             },
-            populate: { country: true },
+            populate: {
+              country: {
+                populate: {
+                  icon: {
+                    populate: "*",
+                  },
+                },
+              },
+            },
           });
         const response = {
           stock: userInjazStock.stock,
