@@ -109,11 +109,19 @@ async function fetchLearnerInfos(userIds) {
         },
       },
       populate: ["country", "users_permissions_user"],
+      // populate: {
+      //   country: {
+      //     fields: "*",
+      //   },
+      //   users_permissions_user: {
+      //     fields: ["username", "email"],
+      //   },
+      // },
     }
   );
+  console.log("learnerInfos: ", learnerInfos);
   return learnerInfos;
 }
-
 module.exports = createCoreController(
   "api::learner-gamification-stock.learner-gamification-stock",
   ({ strapi }) => ({
@@ -176,7 +184,7 @@ module.exports = createCoreController(
             email: userInjazStock.users_permissions_user.email,
           },
           position: position,
-          country: learnerInfos?.country?.country,
+          country: learnerInfos.country?.country,
         };
         ctx.send({ data: response });
       } catch (err) {

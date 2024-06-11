@@ -40,7 +40,16 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
     // 2. Buy Dates
     // @ts-ignore
     const { data } = ctx.request.body;
-    // let userSubscriptionData;
+
+    const userSubscriptionData = await strapi.db
+      .query("api::subscription.subscription")
+      .findOne({
+        where: { users_permissions_user: user.id },
+        populate: { subscription_plan: true },
+      });
+    if (!userSubscriptionData) {
+      return ctx.badRequest("Something went wrong");
+    }
 
     if (data.purchase === "Buy_Subscription" && data.subscription_plan) {
       const subscriptionPlan = await strapi.db
@@ -55,15 +64,6 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
         return ctx.badRequest("You need not to buy a Free subscription plan");
       }
       try {
-        const userSubscriptionData = await strapi.db
-          .query("api::subscription.subscription")
-          .findOne({
-            where: { users_permissions_user: user.id },
-            populate: { subscription_plan: true },
-          });
-        if (!userSubscriptionData) {
-          return ctx.badRequest("Something went wrong");
-        }
         // 1. if userSubscriptionData free user can subscribe --> Done
         // 2. if user already has subscription check if he wants to subscribe the same plan ---> Done
         // 3. if a different plan user can subscribe --> done
@@ -152,7 +152,7 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
             // @ts-ignore
             data: {
               paymentStatus: false,
-              gamification_tx: data.gamification_tx,
+              subscription: userSubscriptionData.id,
             },
           }
         );
@@ -330,7 +330,9 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
             },
           },
           populate: {
-            subscription: { populate: { subscription_plan: true } },
+            subscription: {
+              populate: ["subscription_plan", "gamification_tx"],
+            },
           },
         });
       }
@@ -374,7 +376,13 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
             },
           },
           populate: {
-            subscription: { populate: { subscription_plan: true } },
+            subscription: {
+              populate: {
+                subscription: {
+                  populate: ["subscription_plan", "gamification_tx"],
+                },
+              },
+            },
           },
         });
 

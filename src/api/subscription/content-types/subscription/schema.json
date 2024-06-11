@@ -21,6 +21,11 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::subscription-plan.subscription-plan"
+    },
+    "gamification_tx": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::gamification-tx.gamification-tx"
     }
   }
 }

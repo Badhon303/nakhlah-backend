@@ -37,7 +37,7 @@ module.exports = createCoreController(
             .query("api::subscription.subscription")
             .findOne({
               where: { users_permissions_user: user.id },
-              populate: { subscription_plan: true },
+              populate: ["subscription_plan", "gamification_tx"],
             });
           if (!results) {
             return ctx.badRequest("Your Subscription Data not found");

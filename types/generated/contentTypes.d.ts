@@ -2269,11 +2269,6 @@ export interface ApiPaymentPayment extends Schema.CollectionType {
       Attribute.SetMinMaxLength<{
         maxLength: 100;
       }>;
-    gamification_tx: Attribute.Relation<
-      'api::payment.payment',
-      'oneToOne',
-      'api::gamification-tx.gamification-tx'
-    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -2734,6 +2729,11 @@ export interface ApiSubscriptionSubscription extends Schema.CollectionType {
       'api::subscription.subscription',
       'oneToOne',
       'api::subscription-plan.subscription-plan'
+    >;
+    gamification_tx: Attribute.Relation<
+      'api::subscription.subscription',
+      'oneToOne',
+      'api::gamification-tx.gamification-tx'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
