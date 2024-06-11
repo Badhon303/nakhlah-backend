@@ -181,6 +181,7 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
             paymentId: payment.id,
             purchaseType: data.purchase,
             userId: user.id,
+            gamificationTxId: data.gamification_tx,
             dateAmount: gamificationTxDetails?.gamification_tx_amount?.amount,
           },
         });
@@ -250,7 +251,7 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
           );
         } else if (session?.metadata?.purchaseType === "Buy_Dates") {
           // update payment status
-          const pay = await strapi.db.query("api::payment.payment").update({
+          await strapi.db.query("api::payment.payment").update({
             where: { id: session?.metadata?.paymentId },
             data: {
               paymentStatus: true,
@@ -258,6 +259,15 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
               phone: session?.customer_details?.phone || "",
             },
           });
+          await strapi.entityService.update(
+            "api::subscription.subscription",
+            session?.metadata?.subscriptionId,
+            {
+              data: {
+                gamification_tx: session?.metadata?.gamificationTxId,
+              },
+            }
+          );
           const LearnerGamificationStockDetailsOfDate = await strapi.db
             .query("api::learner-gamification-stock.learner-gamification-stock")
             .findOne({
