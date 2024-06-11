@@ -260,6 +260,7 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
               phone: session?.customer_details?.phone || "",
             },
           });
+          console.log("check");
           const LearnerGamificationStockDetailsOfDate = await strapi.db
             .query("api::learner-gamification-stock.learner-gamification-stock")
             .findOne({
