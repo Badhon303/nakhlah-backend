@@ -24,13 +24,6 @@
       "max": 99999999,
       "min": 0,
       "default": 0
-    },
-    "price": {
-      "type": "integer",
-      "required": false,
-      "max": 999999,
-      "default": 0,
-      "unique": false
     }
   }
 }

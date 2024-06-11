@@ -1305,14 +1305,6 @@ export interface ApiGamificationTxAmountGamificationTxAmount
         number
       > &
       Attribute.DefaultTo<0>;
-    price: Attribute.Integer &
-      Attribute.SetMinMax<
-        {
-          max: 999999;
-        },
-        number
-      > &
-      Attribute.DefaultTo<0>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
