@@ -334,6 +334,7 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
           },
           populate: {
             subscription: { populate: { subscription_plan: true } },
+            gamification_tx: true,
           },
         });
       }
