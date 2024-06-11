@@ -149,9 +149,7 @@ module.exports = createCoreController(
             populate: {
               country: {
                 populate: {
-                  icon: {
-                    populate: "*",
-                  },
+                  icon: true,
                 },
               },
             },
@@ -163,7 +161,7 @@ module.exports = createCoreController(
             email: userInjazStock.users_permissions_user.email,
           },
           position: position,
-          country: learnerInfos?.country?.country,
+          country: learnerInfos?.country || null,
         };
         ctx.send({ data: response });
       } catch (err) {
