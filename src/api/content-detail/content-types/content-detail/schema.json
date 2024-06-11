@@ -29,7 +29,7 @@
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::content.content",
-      "mappedBy": "content_details"
+      "inversedBy": "content_details"
     }
   }
 }
