@@ -1129,6 +1129,105 @@ export interface ApiCountryCountry extends Schema.CollectionType {
   };
 }
 
+export interface ApiDatePlanDatePlan extends Schema.CollectionType {
+  collectionName: 'date_plans';
+  info: {
+    singularName: 'date-plan';
+    pluralName: 'date-plans';
+    displayName: 'Date_Plan';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    planName: Attribute.String &
+      Attribute.Required &
+      Attribute.Unique &
+      Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }>;
+    planDescription: Attribute.Text &
+      Attribute.SetMinMaxLength<{
+        maxLength: 5000;
+      }>;
+    date_plan_detail: Attribute.Relation<
+      'api::date-plan.date-plan',
+      'oneToOne',
+      'api::date-plan-detail.date-plan-detail'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::date-plan.date-plan',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::date-plan.date-plan',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiDatePlanDetailDatePlanDetail extends Schema.CollectionType {
+  collectionName: 'date_plan_details';
+  info: {
+    singularName: 'date-plan-detail';
+    pluralName: 'date-plan-details';
+    displayName: 'Date_Plan_Detail';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    dateAmount: Attribute.Integer &
+      Attribute.Required &
+      Attribute.Unique &
+      Attribute.SetMinMax<
+        {
+          min: 0;
+          max: 99999999;
+        },
+        number
+      > &
+      Attribute.DefaultTo<0>;
+    datePrice: Attribute.Integer &
+      Attribute.Required &
+      Attribute.Unique &
+      Attribute.SetMinMax<
+        {
+          min: 0;
+          max: 99999999;
+        },
+        number
+      > &
+      Attribute.DefaultTo<0>;
+    date_plan: Attribute.Relation<
+      'api::date-plan-detail.date-plan-detail',
+      'oneToOne',
+      'api::date-plan.date-plan'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::date-plan-detail.date-plan-detail',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::date-plan-detail.date-plan-detail',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiDiscountPolicyDiscountPolicy extends Schema.CollectionType {
   collectionName: 'discount_policies';
   info: {
@@ -2269,10 +2368,10 @@ export interface ApiPaymentPayment extends Schema.CollectionType {
       Attribute.SetMinMaxLength<{
         maxLength: 100;
       }>;
-    gamification_tx: Attribute.Relation<
+    date_plan: Attribute.Relation<
       'api::payment.payment',
       'oneToOne',
-      'api::gamification-tx.gamification-tx'
+      'api::date-plan.date-plan'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
@@ -2919,6 +3018,8 @@ declare module '@strapi/types' {
       'api::content-category-type.content-category-type': ApiContentCategoryTypeContentCategoryType;
       'api::content-detail.content-detail': ApiContentDetailContentDetail;
       'api::country.country': ApiCountryCountry;
+      'api::date-plan.date-plan': ApiDatePlanDatePlan;
+      'api::date-plan-detail.date-plan-detail': ApiDatePlanDetailDatePlanDetail;
       'api::discount-policy.discount-policy': ApiDiscountPolicyDiscountPolicy;
       'api::exam.exam': ApiExamExam;
       'api::gamification-tx.gamification-tx': ApiGamificationTxGamificationTx;

@@ -1,0 +1,31 @@
+{
+  "kind": "collectionType",
+  "collectionName": "date_plans",
+  "info": {
+    "singularName": "date-plan",
+    "pluralName": "date-plans",
+    "displayName": "Date_Plan"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "planName": {
+      "type": "string",
+      "required": true,
+      "maxLength": 200,
+      "unique": true
+    },
+    "planDescription": {
+      "type": "text",
+      "maxLength": 5000
+    },
+    "date_plan_detail": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::date-plan-detail.date-plan-detail",
+      "inversedBy": "date_plan"
+    }
+  }
+}

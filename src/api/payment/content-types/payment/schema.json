@@ -30,10 +30,10 @@
       "type": "string",
       "maxLength": 100
     },
-    "gamification_tx": {
+    "date_plan": {
       "type": "relation",
       "relation": "oneToOne",
-      "target": "api::gamification-tx.gamification-tx"
+      "target": "api::date-plan.date-plan"
     }
   }
 }

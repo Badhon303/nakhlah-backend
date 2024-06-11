@@ -126,22 +126,19 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
       } catch (err) {
         return ctx.badRequest(`Payment create Error: ${err.message}`);
       }
-    } else if (data.purchase === "Buy_Dates" && data.gamification_tx) {
+    } else if (data.purchase === "Buy_Dates" && data.date_plan) {
       try {
         //Gent Date package name and price
-        const gamificationTxDetails = await strapi.entityService.findOne(
-          "api::gamification-tx.gamification-tx",
-          data.gamification_tx,
+        const getDatePlan = await strapi.entityService.findOne(
+          "api::date-plan.date-plan",
+          data.date_plan,
           {
             populate: {
-              gamification_tx_amount: true,
+              date_plan_detail: true,
             },
           }
         );
-        if (
-          !gamificationTxDetails ||
-          !gamificationTxDetails.gamification_tx_amount.price
-        ) {
+        if (!getDatePlan || !getDatePlan.date_plan_detail.datePrice) {
           return ctx.badRequest("Invalid request");
         }
         //subscribe part
@@ -152,7 +149,7 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
             data: {
               paymentStatus: false,
               subscription: userSubscriptionData.id,
-              gamification_tx: data.gamification_tx,
+              date_plan: data.date_plan,
             },
           }
         );
@@ -162,10 +159,9 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
               price_data: {
                 currency: "usd",
                 product_data: {
-                  name: gamificationTxDetails?.transactionName,
+                  name: getDatePlan?.planName,
                 },
-                unit_amount:
-                  gamificationTxDetails?.gamification_tx_amount?.price * 100,
+                unit_amount: getDatePlan?.date_plan_detail?.datePrice * 100,
               },
               quantity: 1,
             },
@@ -181,8 +177,8 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
             paymentId: payment.id,
             purchaseType: data.purchase,
             userId: user.id,
-            gamificationTxId: data.gamification_tx,
-            dateAmount: gamificationTxDetails?.gamification_tx_amount?.amount,
+            datePlanId: data.date_plan,
+            dateAmount: getDatePlan?.date_plan_detail?.dateAmount,
           },
         });
         ctx.send({
@@ -255,12 +251,11 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
             where: { id: session?.metadata?.paymentId },
             data: {
               paymentStatus: true,
-              gamification_tx: session?.metadata?.gamificationTxId,
+              date_plan: session?.metadata?.datePlanId,
               address: addressString,
               phone: session?.customer_details?.phone || "",
             },
           });
-          console.log("check");
           const LearnerGamificationStockDetailsOfDate = await strapi.db
             .query("api::learner-gamification-stock.learner-gamification-stock")
             .findOne({
@@ -334,7 +329,7 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
           },
           populate: {
             subscription: { populate: { subscription_plan: true } },
-            gamification_tx: true,
+            date_plan: true,
           },
         });
       }
@@ -379,6 +374,7 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
           },
           populate: {
             subscription: { populate: { subscription_plan: true } },
+            date_plan: true,
           },
         });
 

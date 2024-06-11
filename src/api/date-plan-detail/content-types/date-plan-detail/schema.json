@@ -1,0 +1,38 @@
+{
+  "kind": "collectionType",
+  "collectionName": "date_plan_details",
+  "info": {
+    "singularName": "date-plan-detail",
+    "pluralName": "date-plan-details",
+    "displayName": "Date_Plan_Detail",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "dateAmount": {
+      "type": "integer",
+      "required": true,
+      "unique": true,
+      "max": 99999999,
+      "default": 0,
+      "min": 0
+    },
+    "datePrice": {
+      "type": "integer",
+      "required": true,
+      "unique": true,
+      "max": 99999999,
+      "min": 0,
+      "default": 0
+    },
+    "date_plan": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::date-plan.date-plan",
+      "mappedBy": "date_plan_detail"
+    }
+  }
+}
