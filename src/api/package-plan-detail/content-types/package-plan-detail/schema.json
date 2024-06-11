@@ -1,0 +1,36 @@
+{
+  "kind": "collectionType",
+  "collectionName": "package_plan_details",
+  "info": {
+    "singularName": "package-plan-detail",
+    "pluralName": "package-plan-details",
+    "displayName": "Package_Plan_Detail"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "planAmount": {
+      "type": "integer",
+      "required": true,
+      "unique": false,
+      "max": 99999999,
+      "min": 0,
+      "default": 0
+    },
+    "planPrice": {
+      "type": "integer",
+      "required": true,
+      "default": 0,
+      "max": 99999999,
+      "min": 0
+    },
+    "package_plan": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::package-plan.package-plan",
+      "mappedBy": "package_plan_detail"
+    }
+  }
+}

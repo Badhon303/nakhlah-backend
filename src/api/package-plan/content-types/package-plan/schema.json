@@ -1,0 +1,36 @@
+{
+  "kind": "collectionType",
+  "collectionName": "package_plans",
+  "info": {
+    "singularName": "package-plan",
+    "pluralName": "package-plans",
+    "displayName": "Package_Plan"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "planName": {
+      "type": "string",
+      "required": true,
+      "unique": true,
+      "maxLength": 100
+    },
+    "planDescription": {
+      "type": "text",
+      "maxLength": 5000
+    },
+    "package_plan_detail": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::package-plan-detail.package-plan-detail",
+      "inversedBy": "package_plan"
+    },
+    "gamification_type": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::gamification-type.gamification-type"
+    }
+  }
+}

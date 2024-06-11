@@ -126,19 +126,19 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
       } catch (err) {
         return ctx.badRequest(`Payment create Error: ${err.message}`);
       }
-    } else if (data.purchase === "Buy_Dates" && data.date_plan) {
+    } else if (data.purchase === "Buy_Dates" && data.package_plan) {
       try {
         //Gent Date package name and price
-        const getDatePlan = await strapi.entityService.findOne(
-          "api::date-plan.date-plan",
-          data.date_plan,
+        const getPackagePlan = await strapi.entityService.findOne(
+          "api::package-plan.package-plan",
+          data.package_plan,
           {
             populate: {
-              date_plan_detail: true,
+              package_plan_detail: true,
             },
           }
         );
-        if (!getDatePlan || !getDatePlan.date_plan_detail.datePrice) {
+        if (!getPackagePlan || !getPackagePlan.package_plan_detail.planPrice) {
           return ctx.badRequest("Invalid request");
         }
         //subscribe part
@@ -149,7 +149,7 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
             data: {
               paymentStatus: false,
               subscription: userSubscriptionData.id,
-              date_plan: data.date_plan,
+              package_plan: data.package_plan,
             },
           }
         );
@@ -159,9 +159,10 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
               price_data: {
                 currency: "usd",
                 product_data: {
-                  name: getDatePlan?.planName,
+                  name: getPackagePlan?.planName,
                 },
-                unit_amount: getDatePlan?.date_plan_detail?.datePrice * 100,
+                unit_amount:
+                  getPackagePlan?.package_plan_detail?.planPrice * 100,
               },
               quantity: 1,
             },
@@ -177,8 +178,8 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
             paymentId: payment.id,
             purchaseType: data.purchase,
             userId: user.id,
-            datePlanId: data.date_plan,
-            dateAmount: getDatePlan?.date_plan_detail?.dateAmount,
+            packagePlanId: data.package_plan,
+            planAmount: getPackagePlan?.package_plan_detail?.planAmount,
           },
         });
         ctx.send({
@@ -251,47 +252,46 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
             where: { id: session?.metadata?.paymentId },
             data: {
               paymentStatus: true,
-              date_plan: session?.metadata?.datePlanId,
+              package_plan: session?.metadata?.packagePlanId,
               address: addressString,
               phone: session?.customer_details?.phone || "",
             },
           });
-          const LearnerGamificationStockDetailsOfDate = await strapi.db
+          const getPackagePlan = await strapi.entityService.findOne(
+            "api::package-plan.package-plan",
+            session?.metadata?.packagePlanId,
+            {
+              populate: {
+                gamification_type: true,
+              },
+            }
+          );
+
+          const LearnerGamificationStockDetails = await strapi.db
             .query("api::learner-gamification-stock.learner-gamification-stock")
             .findOne({
               where: {
                 gamification_type: {
-                  typeName: "Date",
+                  typeName: getPackagePlan.gamification_type.typeName,
                 },
                 users_permissions_user: session?.metadata?.userId,
               },
             });
-          if (!LearnerGamificationStockDetailsOfDate) {
+          if (!LearnerGamificationStockDetails) {
             ctx.send({
               success: false,
             });
           }
-          // Getting Gemification Types
-          const gamificationTypesDetails = await strapi.entityService.findMany(
-            "api::gamification-type.gamification-type"
-          );
-          if (!gamificationTypesDetails) {
-            ctx.send({
-              success: false,
-            });
-          }
-          const getDateDetails = gamificationTypesDetails.find(
-            (item) => item?.typeName === "Date"
-          );
+
           await strapi.entityService.update(
             "api::learner-gamification-stock.learner-gamification-stock",
-            LearnerGamificationStockDetailsOfDate.id,
+            LearnerGamificationStockDetails.id,
             {
               data: {
-                gamification_type: getDateDetails.id,
+                gamification_type: getPackagePlan.gamification_type.id,
                 stock:
-                  LearnerGamificationStockDetailsOfDate.stock +
-                  Number(session?.metadata?.dateAmount),
+                  LearnerGamificationStockDetails.stock +
+                  Number(session?.metadata?.planAmount),
                 users_permissions_user: session?.metadata?.userId,
               },
             }
@@ -329,7 +329,7 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
           },
           populate: {
             subscription: { populate: { subscription_plan: true } },
-            date_plan: true,
+            package_plan: true,
           },
         });
       }
@@ -374,7 +374,7 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
           },
           populate: {
             subscription: { populate: { subscription_plan: true } },
-            date_plan: true,
+            package_plan: true,
           },
         });
 

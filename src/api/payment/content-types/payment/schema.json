@@ -30,10 +30,10 @@
       "type": "string",
       "maxLength": 100
     },
-    "date_plan": {
+    "package_plan": {
       "type": "relation",
       "relation": "oneToOne",
-      "target": "api::date-plan.date-plan"
+      "target": "api::package-plan.package-plan"
     }
   }
 }
