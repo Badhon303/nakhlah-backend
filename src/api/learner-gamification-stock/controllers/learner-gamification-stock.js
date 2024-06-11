@@ -34,37 +34,6 @@ function hasLastSevenDays(streakData) {
   return true;
 }
 
-// function mergeCountryInfo(results, learnerInfos) {
-//   const userCountryMap = learnerInfos.reduce((acc, learnerInfo) => {
-//     acc[learnerInfo.users_permissions_user.id] = learnerInfo.country;
-//     return acc;
-//   }, {});
-
-//   return results.map((result) => {
-//     const country = userCountryMap[result.users_permissions_user.id];
-//     const {
-//       users_permissions_user,
-//       country: resultCountry,
-//       createdAt,
-//       updatedAt,
-//       ...restResult
-//     } = result;
-//     const { id: userId, ...restUser } = users_permissions_user;
-//     const {
-//       id: countryId,
-//       createdAt: countryCreatedAt,
-//       updatedAt: countryUpdatedAt,
-//       ...restCountry
-//     } = country || {};
-
-//     return {
-//       ...restResult,
-//       users_permissions_user: restUser,
-//       country: country ? restCountry : null,
-//     };
-//   });
-// }
-
 function mergeCountryInfo(results, learnerInfos) {
   const userCountryMap = learnerInfos.reduce((acc, learnerInfo) => {
     acc[learnerInfo.users_permissions_user.id] = learnerInfo.country;
@@ -108,7 +77,17 @@ async function fetchLearnerInfos(userIds) {
           },
         },
       },
-      populate: ["country", "users_permissions_user"],
+      // populate: ["country", "users_permissions_user"],
+      populate: {
+        country: {
+          populate: {
+            icon: {
+              populate: "*",
+            },
+          },
+        },
+        users_permissions_user: true,
+      },
     }
   );
   return learnerInfos;
