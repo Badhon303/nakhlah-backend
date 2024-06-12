@@ -2,7 +2,7 @@ module.exports = [
   "strapi::errors",
   "strapi::security",
   "strapi::cors",
-  "strapi::poweredBy",
+  // "strapi::poweredBy",
   "strapi::logger",
   "strapi::query",
   // "strapi::body",
@@ -16,7 +16,13 @@ module.exports = [
   },
   "strapi::session",
   "strapi::favicon",
-  "strapi::public",
+  // "strapi::public",
+  {
+    name: "strapi::public",
+    config: {
+      defaultIndex: false,
+    },
+  },
   // ...
   // {
   //   name: "strapi::body",
