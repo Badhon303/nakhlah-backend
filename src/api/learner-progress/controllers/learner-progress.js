@@ -50,11 +50,25 @@ module.exports = createCoreController(
       }
       // @ts-ignore
       query.filters.users_permissions_user = user.id;
+      // Fetch the total count of entries
+      const count = await strapi.entityService.count(
+        "api::learner-progress.learner-progress"
+      );
+      if (!query.pagination) {
+        // @ts-ignore
+        query.pagination = {};
+      }
+      // @ts-ignore
+      const { page = 1, pageSize = count } = query.pagination;
+      const start = (page - 1) * pageSize;
+      const limit = parseInt(pageSize, 10);
       try {
         if (ctx.state.user.role.name === "Admin") {
           results = await strapi.entityService.findMany(
             "api::learner-progress.learner-progress",
             {
+              start,
+              limit,
               ...ctx.query,
             }
           );
@@ -64,13 +78,24 @@ module.exports = createCoreController(
             query
           );
         }
-        return await sanitize.contentAPI.output(
+        const sanitizedResults = await sanitize.contentAPI.output(
           results,
           strapi.contentType("api::learner-progress.learner-progress"),
           {
             auth: ctx.state.auth,
           }
         );
+        return ctx.send({
+          data: sanitizedResults,
+          meta: {
+            pagination: {
+              page: parseInt(page, 10),
+              pageSize: limit > count ? count : limit,
+              pageCount: Math.ceil(count / limit),
+              total: count,
+            },
+          },
+        });
       } catch (err) {
         return ctx.badRequest(`Learner Progress Error: ${err.message}`);
       }

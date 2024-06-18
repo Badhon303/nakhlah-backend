@@ -314,10 +314,23 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
 
   async find(ctx) {
     const user = ctx.state.user;
+    // Fetch the total count of entries
+    const count = await strapi.entityService.count("api::payment.payment");
+    const query = { ...ctx.query };
+    if (!query.pagination) {
+      // @ts-ignore
+      query.pagination = {};
+    }
+    // @ts-ignore
+    const { page = 1, pageSize = count } = query.pagination;
+    const start = (page - 1) * pageSize;
+    const limit = parseInt(pageSize, 10);
     let results;
     try {
       if (ctx.state.user.role.name === "Admin") {
         results = await strapi.entityService.findMany("api::payment.payment", {
+          start,
+          limit,
           ...ctx.query,
         });
       } else {
@@ -333,13 +346,24 @@ module.exports = createCoreController("api::payment.payment", ({ strapi }) => ({
           },
         });
       }
-      return await sanitize.contentAPI.output(
+      const sanitizedResults = await sanitize.contentAPI.output(
         results,
         strapi.contentType("api::payment.payment"),
         {
           auth: ctx.state.auth,
         }
       );
+      return ctx.send({
+        data: sanitizedResults,
+        meta: {
+          pagination: {
+            page: parseInt(page, 10),
+            pageSize: limit > count ? count : limit,
+            pageCount: Math.ceil(count / limit),
+            total: count,
+          },
+        },
+      });
     } catch (err) {
       return ctx.badRequest(`Payment Find Error: ${err.message}`);
     }
