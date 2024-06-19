@@ -73,12 +73,10 @@ module.exports = createCoreController(
   "api::learner-gamification.learner-gamification",
   ({ strapi }) => ({
     async txAmount(ctx) {
-      // @ts-ignore
-      const { data } = ctx.request.body;
       const gamificationTxDetails = await strapi.db
         .query("api::gamification-tx.gamification-tx")
         .findOne({
-          where: { transactionName: data.gamification_tx },
+          where: { transactionName: ctx.query.gamification_tx },
           populate: { gamification_tx_amount: true },
         });
 
