@@ -2,7 +2,7 @@ module.exports = {
   routes: [
     {
       method: "POST",
-      path: "/learner-gamifications/get-Tx-Amount",
+      path: "/learner-gamifications/tx-amount",
       handler: "learner-gamification.txAmount",
     },
   ],
