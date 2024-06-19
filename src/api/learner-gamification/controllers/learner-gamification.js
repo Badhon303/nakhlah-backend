@@ -94,389 +94,373 @@ module.exports = createCoreController(
         const getDateDetails = gamificationTypesDetails.find(
           (item) => item?.typeName === "Date"
         );
-        const getInjazDetails = gamificationTypesDetails.find(
-          (item) => item?.typeName === "Injaz"
-        );
+        // const getInjazDetails = gamificationTypesDetails.find(
+        //   (item) => item?.typeName === "Injaz"
+        // );
 
-        if (
-          data.gamification_tx.connect.length !== 0 &&
-          data.gamification_tx.connect.length < 2
-        ) {
-          const gamificationTxDetails = await strapi.entityService.findOne(
-            "api::gamification-tx.gamification-tx",
-            data.gamification_tx.connect[0],
-            {
-              populate: {
-                gamification_tx_amount: true,
-              },
+        const gamificationTxDetails = await strapi.db
+          .query("api::gamification-tx.gamification-tx")
+          .findOne({
+            where: { transactionName: data.gamification_tx },
+            populate: { gamification_tx_amount: true },
+          });
+
+        if (!gamificationTxDetails) {
+          return ctx.badRequest("Invalid request body");
+        }
+        const amount = gamificationTxDetails?.gamification_tx_amount?.amount;
+        const gamificationTransactionName =
+          gamificationTxDetails?.transactionName; // Palm Gain Per Hour(1), Palm Loss By Wrong Answer(2), Palm Refill By Dates Loss(5)
+
+        switch (gamificationTransactionName) {
+          case "Palm Loss By Wrong Answer":
+            const LearnerGamificationStockDetailsOfPalm2 = await strapi.db
+              .query(
+                "api::learner-gamification-stock.learner-gamification-stock"
+              )
+              .findOne({
+                where: {
+                  gamification_type: {
+                    typeName: "Palm",
+                  },
+                  users_permissions_user: user.id,
+                },
+              });
+            if (!LearnerGamificationStockDetailsOfPalm2) {
+              return ctx.badRequest("Something went wrong");
             }
-          );
-          if (!gamificationTxDetails) {
-            return ctx.badRequest("Invalid request body");
-          }
-          const amount = gamificationTxDetails?.gamification_tx_amount?.amount;
-          const gamificationTransactionName =
-            gamificationTxDetails?.transactionName; // Palm Gain Per Hour(1), Palm Loss By Wrong Answer(2), Palm Refill By Dates Loss(5)
-
-          switch (gamificationTransactionName) {
-            case "Palm Loss By Wrong Answer":
-              const LearnerGamificationStockDetailsOfPalm2 = await strapi.db
-                .query(
-                  "api::learner-gamification-stock.learner-gamification-stock"
-                )
-                .findOne({
-                  where: {
-                    gamification_type: {
-                      typeName: "Palm",
-                    },
+            try {
+              await strapi.entityService.update(
+                "api::learner-gamification-stock.learner-gamification-stock",
+                LearnerGamificationStockDetailsOfPalm2.id,
+                {
+                  data: {
+                    gamification_type: getPalmDetails.id,
+                    stock:
+                      LearnerGamificationStockDetailsOfPalm2.stock - amount < 0
+                        ? 0
+                        : LearnerGamificationStockDetailsOfPalm2.stock - amount,
                     users_permissions_user: user.id,
                   },
-                });
-              if (!LearnerGamificationStockDetailsOfPalm2) {
-                return ctx.badRequest("Something went wrong");
-              }
-              try {
-                await strapi.entityService.update(
-                  "api::learner-gamification-stock.learner-gamification-stock",
-                  LearnerGamificationStockDetailsOfPalm2.id,
-                  {
-                    data: {
-                      gamification_type: getPalmDetails.id,
-                      stock:
-                        LearnerGamificationStockDetailsOfPalm2.stock - amount <
-                        0
-                          ? 0
-                          : LearnerGamificationStockDetailsOfPalm2.stock -
-                            amount,
-                      users_permissions_user: user.id,
-                    },
-                  }
-                );
-              } catch (error) {
-                return ctx.badRequest(`Something went wrong ${error}`);
-              }
-              break;
-            case "Palm Refill By Dates Loss":
-              const LearnerGamificationStockDetails5 =
-                await strapi.entityService.findMany(
-                  "api::learner-gamification-stock.learner-gamification-stock",
-                  {
-                    filters: { users_permissions_user: user.id },
-                    populate: { gamification_type: true },
-                  }
-                );
-              if (!LearnerGamificationStockDetails5) {
-                return ctx.badRequest("Something went wrong");
-              }
-              const dateItem = LearnerGamificationStockDetails5.find(
-                (item) => item.gamification_type.typeName === "Date"
-              );
-              const palmItem = LearnerGamificationStockDetails5.find(
-                (item) => item.gamification_type.typeName === "Palm"
-              );
-              if (!dateItem.stock || dateItem.stock < amount) {
-                return ctx.badRequest(
-                  `Don't have enough dates to purchase palm`
-                );
-              }
-              if (palmItem.stock === 5) {
-                return ctx.badRequest("You already have 5 palm trees");
-              } else {
-                try {
-                  await strapi.entityService.update(
-                    "api::learner-gamification-stock.learner-gamification-stock",
-                    palmItem.id,
-                    {
-                      data: {
-                        gamification_type: getPalmDetails.id,
-                        stock: 5,
-                        users_permissions_user: user.id,
-                      },
-                    }
-                  );
-                  await strapi.entityService.update(
-                    "api::learner-gamification-stock.learner-gamification-stock",
-                    dateItem.id,
-                    {
-                      data: {
-                        gamification_type: getDateDetails.id,
-                        stock: dateItem.stock - amount,
-                        users_permissions_user: user.id,
-                      },
-                    }
-                  );
-                } catch (error) {
-                  return ctx.badRequest("Something went wrong");
                 }
-              }
-              break;
-            case "Palm Gain By Advertisement":
-              const LearnerGamificationStockDetailsOfPalm6 = await strapi.db
-                .query(
-                  "api::learner-gamification-stock.learner-gamification-stock"
-                )
-                .findOne({
-                  where: {
-                    gamification_type: {
-                      typeName: "Palm",
-                    },
-                    users_permissions_user: user.id,
-                  },
-                });
-              if (!LearnerGamificationStockDetailsOfPalm6) {
-                return ctx.badRequest("Something went wrong");
-              }
+              );
+            } catch (error) {
+              return ctx.badRequest(`Something went wrong ${error}`);
+            }
+            break;
+          case "Palm Refill By Dates Loss":
+            const LearnerGamificationStockDetails5 =
+              await strapi.entityService.findMany(
+                "api::learner-gamification-stock.learner-gamification-stock",
+                {
+                  filters: { users_permissions_user: user.id },
+                  populate: { gamification_type: true },
+                }
+              );
+            if (!LearnerGamificationStockDetails5) {
+              return ctx.badRequest("Something went wrong");
+            }
+            const dateItem = LearnerGamificationStockDetails5.find(
+              (item) => item.gamification_type.typeName === "Date"
+            );
+            const palmItem = LearnerGamificationStockDetails5.find(
+              (item) => item.gamification_type.typeName === "Palm"
+            );
+            if (!dateItem.stock || dateItem.stock < amount) {
+              return ctx.badRequest(`Don't have enough dates to purchase palm`);
+            }
+            if (palmItem.stock === 5) {
+              return ctx.badRequest("You already have 5 palm trees");
+            } else {
               try {
                 await strapi.entityService.update(
                   "api::learner-gamification-stock.learner-gamification-stock",
-                  LearnerGamificationStockDetailsOfPalm6.id,
+                  palmItem.id,
                   {
                     data: {
                       gamification_type: getPalmDetails.id,
-                      stock:
-                        LearnerGamificationStockDetailsOfPalm6.stock + amount >
-                        5
-                          ? 5
-                          : LearnerGamificationStockDetailsOfPalm6.stock +
-                            amount,
+                      stock: 5,
                       users_permissions_user: user.id,
                     },
                   }
                 );
-              } catch (error) {
-                return ctx.badRequest(`Something went wrong ${error}`);
-              }
-              break;
-            case "Dates Gain By Public Sharing":
-              const LearnerGamificationStockDetailsOfDate9 = await strapi.db
-                .query(
-                  "api::learner-gamification-stock.learner-gamification-stock"
-                )
-                .findOne({
-                  where: {
-                    gamification_type: {
-                      typeName: "Date",
-                    },
-                    users_permissions_user: user.id,
-                  },
-                });
-              if (!LearnerGamificationStockDetailsOfDate9) {
-                return ctx.badRequest("Something went wrong");
-              }
-              try {
                 await strapi.entityService.update(
                   "api::learner-gamification-stock.learner-gamification-stock",
-                  LearnerGamificationStockDetailsOfDate9.id,
+                  dateItem.id,
                   {
                     data: {
                       gamification_type: getDateDetails.id,
-                      stock:
-                        LearnerGamificationStockDetailsOfDate9.stock + amount,
+                      stock: dateItem.stock - amount,
                       users_permissions_user: user.id,
                     },
                   }
                 );
               } catch (error) {
-                return ctx.badRequest(`Something went wrong ${error}`);
+                return ctx.badRequest("Something went wrong");
               }
-              break;
-            case "Dates Loss By Streak Restore":
-              const streakData11 = await strapi.entityService.findMany(
-                "api::learner-streak.learner-streak",
+            }
+            break;
+          case "Palm Gain By Advertisement":
+            const LearnerGamificationStockDetailsOfPalm6 = await strapi.db
+              .query(
+                "api::learner-gamification-stock.learner-gamification-stock"
+              )
+              .findOne({
+                where: {
+                  gamification_type: {
+                    typeName: "Palm",
+                  },
+                  users_permissions_user: user.id,
+                },
+              });
+            if (!LearnerGamificationStockDetailsOfPalm6) {
+              return ctx.badRequest("Something went wrong");
+            }
+            try {
+              await strapi.entityService.update(
+                "api::learner-gamification-stock.learner-gamification-stock",
+                LearnerGamificationStockDetailsOfPalm6.id,
                 {
-                  limit: 7,
-                  // @ts-ignore
-                  sort: { updatedAt: "DESC" },
-                  filters: {
+                  data: {
+                    gamification_type: getPalmDetails.id,
+                    stock:
+                      LearnerGamificationStockDetailsOfPalm6.stock + amount > 5
+                        ? 5
+                        : LearnerGamificationStockDetailsOfPalm6.stock + amount,
                     users_permissions_user: user.id,
-                    checked: false,
                   },
                 }
               );
-              if (streakData11.length === 7) {
-                const hasSevelDaysData11 = hasLastSevenDays(streakData11);
-                if (!hasSevelDaysData11) {
-                  const LearnerGamificationStockDetailsOfDate11 =
-                    await strapi.db
-                      .query(
-                        "api::learner-gamification-stock.learner-gamification-stock"
-                      )
-                      .findOne({
-                        where: {
-                          gamification_type: {
-                            typeName: "Date",
-                          },
-                          users_permissions_user: user.id,
-                        },
-                      });
-                  if (!LearnerGamificationStockDetailsOfDate11) {
-                    return ctx.badRequest("Something went wrong");
+            } catch (error) {
+              return ctx.badRequest(`Something went wrong ${error}`);
+            }
+            break;
+          case "Dates Gain By Public Sharing":
+            const LearnerGamificationStockDetailsOfDate9 = await strapi.db
+              .query(
+                "api::learner-gamification-stock.learner-gamification-stock"
+              )
+              .findOne({
+                where: {
+                  gamification_type: {
+                    typeName: "Date",
+                  },
+                  users_permissions_user: user.id,
+                },
+              });
+            if (!LearnerGamificationStockDetailsOfDate9) {
+              return ctx.badRequest("Something went wrong");
+            }
+            try {
+              await strapi.entityService.update(
+                "api::learner-gamification-stock.learner-gamification-stock",
+                LearnerGamificationStockDetailsOfDate9.id,
+                {
+                  data: {
+                    gamification_type: getDateDetails.id,
+                    stock:
+                      LearnerGamificationStockDetailsOfDate9.stock + amount,
+                    users_permissions_user: user.id,
+                  },
+                }
+              );
+            } catch (error) {
+              return ctx.badRequest(`Something went wrong ${error}`);
+            }
+            break;
+          case "Dates Loss By Streak Restore":
+            const streakData11 = await strapi.entityService.findMany(
+              "api::learner-streak.learner-streak",
+              {
+                limit: 7,
+                // @ts-ignore
+                sort: { updatedAt: "DESC" },
+                filters: {
+                  users_permissions_user: user.id,
+                  checked: false,
+                },
+              }
+            );
+            if (streakData11.length === 7) {
+              const hasSevelDaysData11 = hasLastSevenDays(streakData11);
+              if (!hasSevelDaysData11) {
+                const LearnerGamificationStockDetailsOfDate11 = await strapi.db
+                  .query(
+                    "api::learner-gamification-stock.learner-gamification-stock"
+                  )
+                  .findOne({
+                    where: {
+                      gamification_type: {
+                        typeName: "Date",
+                      },
+                      users_permissions_user: user.id,
+                    },
+                  });
+                if (!LearnerGamificationStockDetailsOfDate11) {
+                  return ctx.badRequest("Something went wrong");
+                }
+
+                if (LearnerGamificationStockDetailsOfDate11.stock < amount) {
+                  return ctx.badRequest(`Don't have enough dates`);
+                } else {
+                  // Helper function to format date as YYYY-MM-DDT00:00:00.000Z
+                  const formatDate = (date) =>
+                    date.toISOString().split("T")[0] + "T00:00:00.000Z";
+
+                  // Create a set of existing dates from streakData
+                  const existingDates = new Set(
+                    streakData11.map((data) =>
+                      formatDate(new Date(data.updatedAt))
+                    )
+                  );
+
+                  // Generate dates for the last 7 days
+                  const today = new Date();
+                  const dates = [];
+                  for (let i = 0; i < 7; i++) {
+                    const date = new Date(today);
+                    date.setDate(date.getDate() - i);
+                    dates.push(formatDate(date));
                   }
 
-                  if (LearnerGamificationStockDetailsOfDate11.stock < amount) {
-                    return ctx.badRequest(`Don't have enough dates`);
-                  } else {
-                    // Helper function to format date as YYYY-MM-DDT00:00:00.000Z
-                    const formatDate = (date) =>
-                      date.toISOString().split("T")[0] + "T00:00:00.000Z";
-
-                    // Create a set of existing dates from streakData
-                    const existingDates = new Set(
-                      streakData11.map((data) =>
-                        formatDate(new Date(data.updatedAt))
-                      )
+                  // Find missing dates by filtering out existing dates
+                  const missingDates = dates.filter(
+                    (date) => !existingDates.has(date)
+                  );
+                  missingDates.map(async (item) => {
+                    await strapi.entityService.create(
+                      "api::learner-streak.learner-streak",
+                      {
+                        // @ts-ignore
+                        data: {
+                          present: true,
+                          checked: true,
+                          updatedAt: item,
+                          createdAt: item,
+                        },
+                      }
                     );
-
-                    // Generate dates for the last 7 days
-                    const today = new Date();
-                    const dates = [];
-                    for (let i = 0; i < 7; i++) {
-                      const date = new Date(today);
-                      date.setDate(date.getDate() - i);
-                      dates.push(formatDate(date));
-                    }
-
-                    // Find missing dates by filtering out existing dates
-                    const missingDates = dates.filter(
-                      (date) => !existingDates.has(date)
+                  });
+                  try {
+                    await strapi.entityService.update(
+                      "api::learner-gamification-stock.learner-gamification-stock",
+                      LearnerGamificationStockDetailsOfDate11.id,
+                      {
+                        data: {
+                          gamification_type: getDateDetails.id,
+                          stock:
+                            LearnerGamificationStockDetailsOfDate11.stock -
+                            amount,
+                          users_permissions_user: user.id,
+                        },
+                      }
                     );
-                    missingDates.map(async (item) => {
-                      await strapi.entityService.create(
-                        "api::learner-streak.learner-streak",
-                        {
-                          // @ts-ignore
-                          data: {
-                            present: true,
-                            checked: true,
-                            updatedAt: item,
-                            createdAt: item,
-                          },
-                        }
-                      );
-                    });
-                    try {
-                      await strapi.entityService.update(
-                        "api::learner-gamification-stock.learner-gamification-stock",
-                        LearnerGamificationStockDetailsOfDate11.id,
-                        {
-                          data: {
-                            gamification_type: getDateDetails.id,
-                            stock:
-                              LearnerGamificationStockDetailsOfDate11.stock -
-                              amount,
-                            users_permissions_user: user.id,
-                          },
-                        }
-                      );
-                    } catch (error) {
-                      return ctx.badRequest(`Something went wrong ${error}`);
-                    }
+                  } catch (error) {
+                    return ctx.badRequest(`Something went wrong ${error}`);
                   }
                 }
               }
-              break;
-            // case "Dates Gain Package 1":
-            //   const LearnerGamificationStockDetailsOfDate16 = await strapi.db
-            //     .query(
-            //       "api::learner-gamification-stock.learner-gamification-stock"
-            //     )
-            //     .findOne({
-            //       where: {
-            //         gamification_type: {
-            //           typeName: "Date",
-            //         },
-            //         users_permissions_user: user.id,
-            //       },
-            //     });
-            //   if (!LearnerGamificationStockDetailsOfDate16) {
-            //     return ctx.badRequest("Something went wrong");
-            //   }
-            //   try {
-            //     await strapi.entityService.update(
-            //       "api::learner-gamification-stock.learner-gamification-stock",
-            //       LearnerGamificationStockDetailsOfDate16.id,
-            //       {
-            //         data: {
-            //           gamification_type: getDateDetails.id,
-            //           stock:
-            //             LearnerGamificationStockDetailsOfDate16.stock + amount,
-            //           users_permissions_user: user.id,
-            //         },
-            //       }
-            //     );
-            //   } catch (error) {
-            //     return ctx.badRequest(`Something went wrong ${error}`);
-            //   }
-            //   break;
-            // case "Dates Gain Package 2":
-            //   const LearnerGamificationStockDetailsOfDate17 = await strapi.db
-            //     .query(
-            //       "api::learner-gamification-stock.learner-gamification-stock"
-            //     )
-            //     .findOne({
-            //       where: {
-            //         gamification_type: {
-            //           id: 5,
-            //         },
-            //         users_permissions_user: user.id,
-            //       },
-            //     });
-            //   if (!LearnerGamificationStockDetailsOfDate17) {
-            //     return ctx.badRequest("Something went wrong");
-            //   }
-            //   try {
-            //     await strapi.entityService.update(
-            //       "api::learner-gamification-stock.learner-gamification-stock",
-            //       LearnerGamificationStockDetailsOfDate17.id,
-            //       {
-            //         data: {
-            //           gamification_type: 5,
-            //           stock:
-            //             LearnerGamificationStockDetailsOfDate17.stock + amount,
-            //           users_permissions_user: user.id,
-            //         },
-            //       }
-            //     );
-            //   } catch (error) {
-            //     return ctx.badRequest(`Something went wrong ${error}`);
-            //   }
-            //   break;
-            // case "Dates Gain Package 3":
-            //   const LearnerGamificationStockDetailsOfDate18 = await strapi.db
-            //     .query(
-            //       "api::learner-gamification-stock.learner-gamification-stock"
-            //     )
-            //     .findOne({
-            //       where: {
-            //         gamification_type: {
-            //           typeName: "Date",
-            //         },
-            //         users_permissions_user: user.id,
-            //       },
-            //     });
-            //   if (!LearnerGamificationStockDetailsOfDate18) {
-            //     return ctx.badRequest("Something went wrong");
-            //   }
-            //   try {
-            //     await strapi.entityService.update(
-            //       "api::learner-gamification-stock.learner-gamification-stock",
-            //       LearnerGamificationStockDetailsOfDate18.id,
-            //       {
-            //         data: {
-            //           gamification_type: getDateDetails.id,
-            //           stock:
-            //             LearnerGamificationStockDetailsOfDate18.stock + amount,
-            //           users_permissions_user: user.id,
-            //         },
-            //       }
-            //     );
-            //   } catch (error) {
-            //     return ctx.badRequest(`Something went wrong ${error}`);
-            //   }
-            //   break;
-          }
-        } else {
-          return ctx.badRequest("Invalid request body");
+            }
+            break;
+          // case "Dates Gain Package 1":
+          //   const LearnerGamificationStockDetailsOfDate16 = await strapi.db
+          //     .query(
+          //       "api::learner-gamification-stock.learner-gamification-stock"
+          //     )
+          //     .findOne({
+          //       where: {
+          //         gamification_type: {
+          //           typeName: "Date",
+          //         },
+          //         users_permissions_user: user.id,
+          //       },
+          //     });
+          //   if (!LearnerGamificationStockDetailsOfDate16) {
+          //     return ctx.badRequest("Something went wrong");
+          //   }
+          //   try {
+          //     await strapi.entityService.update(
+          //       "api::learner-gamification-stock.learner-gamification-stock",
+          //       LearnerGamificationStockDetailsOfDate16.id,
+          //       {
+          //         data: {
+          //           gamification_type: getDateDetails.id,
+          //           stock:
+          //             LearnerGamificationStockDetailsOfDate16.stock + amount,
+          //           users_permissions_user: user.id,
+          //         },
+          //       }
+          //     );
+          //   } catch (error) {
+          //     return ctx.badRequest(`Something went wrong ${error}`);
+          //   }
+          //   break;
+          // case "Dates Gain Package 2":
+          //   const LearnerGamificationStockDetailsOfDate17 = await strapi.db
+          //     .query(
+          //       "api::learner-gamification-stock.learner-gamification-stock"
+          //     )
+          //     .findOne({
+          //       where: {
+          //         gamification_type: {
+          //           id: 5,
+          //         },
+          //         users_permissions_user: user.id,
+          //       },
+          //     });
+          //   if (!LearnerGamificationStockDetailsOfDate17) {
+          //     return ctx.badRequest("Something went wrong");
+          //   }
+          //   try {
+          //     await strapi.entityService.update(
+          //       "api::learner-gamification-stock.learner-gamification-stock",
+          //       LearnerGamificationStockDetailsOfDate17.id,
+          //       {
+          //         data: {
+          //           gamification_type: 5,
+          //           stock:
+          //             LearnerGamificationStockDetailsOfDate17.stock + amount,
+          //           users_permissions_user: user.id,
+          //         },
+          //       }
+          //     );
+          //   } catch (error) {
+          //     return ctx.badRequest(`Something went wrong ${error}`);
+          //   }
+          //   break;
+          // case "Dates Gain Package 3":
+          //   const LearnerGamificationStockDetailsOfDate18 = await strapi.db
+          //     .query(
+          //       "api::learner-gamification-stock.learner-gamification-stock"
+          //     )
+          //     .findOne({
+          //       where: {
+          //         gamification_type: {
+          //           typeName: "Date",
+          //         },
+          //         users_permissions_user: user.id,
+          //       },
+          //     });
+          //   if (!LearnerGamificationStockDetailsOfDate18) {
+          //     return ctx.badRequest("Something went wrong");
+          //   }
+          //   try {
+          //     await strapi.entityService.update(
+          //       "api::learner-gamification-stock.learner-gamification-stock",
+          //       LearnerGamificationStockDetailsOfDate18.id,
+          //       {
+          //         data: {
+          //           gamification_type: getDateDetails.id,
+          //           stock:
+          //             LearnerGamificationStockDetailsOfDate18.stock + amount,
+          //           users_permissions_user: user.id,
+          //         },
+          //       }
+          //     );
+          //   } catch (error) {
+          //     return ctx.badRequest(`Something went wrong ${error}`);
+          //   }
+          //   break;
         }
 
         const result = await strapi.entityService.create(
@@ -484,7 +468,7 @@ module.exports = createCoreController(
           {
             // @ts-ignore
             data: {
-              gamification_tx: data?.gamification_tx?.connect[0], // data.gamification_tx.connect[0]
+              gamification_tx: gamificationTxDetails.id, // data.gamification_tx.connect[0]
               users_permissions_user: user.id,
             },
             ...ctx.query,
