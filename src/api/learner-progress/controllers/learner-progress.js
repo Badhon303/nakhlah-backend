@@ -70,6 +70,7 @@ module.exports = createCoreController(
               start,
               limit,
               ...ctx.query,
+              // populate: { users_permissions_user: true },
             }
           );
         } else {

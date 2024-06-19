@@ -1701,8 +1701,7 @@ export interface ApiLearnerProgressLearnerProgress
       'api::learner-progress.learner-progress',
       'oneToOne',
       'plugin::users-permissions.user'
-    > &
-      Attribute.Private;
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
