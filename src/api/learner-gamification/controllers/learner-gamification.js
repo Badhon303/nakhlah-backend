@@ -72,6 +72,21 @@ function hasLastSevenDays(streakData) {
 module.exports = createCoreController(
   "api::learner-gamification.learner-gamification",
   ({ strapi }) => ({
+    async txAmount(ctx) {
+      // @ts-ignore
+      const { data } = ctx.request.body;
+      const gamificationTxDetails = await strapi.db
+        .query("api::gamification-tx.gamification-tx")
+        .findOne({
+          where: { transactionName: data.gamification_tx },
+          populate: { gamification_tx_amount: true },
+        });
+
+      if (!gamificationTxDetails) {
+        return ctx.badRequest("Invalid request body");
+      }
+      ctx.send({ data: gamificationTxDetails?.gamification_tx_amount?.amount });
+    },
     async create(ctx) {
       const user = ctx.state.user;
       // @ts-ignore
