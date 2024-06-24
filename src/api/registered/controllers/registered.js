@@ -220,6 +220,44 @@ module.exports = createCoreController(
       }
     },
 
+    // async update(ctx) {
+    //   try {
+    //     const user = ctx.state.user;
+    //     const registeredData = await strapi.db
+    //       .query("api::registered.registered")
+    //       .findOne({
+    //         where: { users_permissions_user: user.id },
+    //       });
+    //     if (!registeredData) {
+    //       return ctx.badRequest("Data not found");
+    //     }
+
+    //     if (typeof ctx.request.body !== "object" || ctx.request.body === null) {
+    //       return ctx.badRequest("Invalid request body");
+    //     }
+
+    //     const result = await strapi.entityService.update(
+    //       "api::registered.registered",
+    //       registeredData.id,
+    //       {
+    //         data: {
+    //           ...ctx.request.body,
+    //           users_permissions_user: user.id,
+    //         },
+    //         ...ctx.query,
+    //       }
+    //     );
+    //     return await sanitize.contentAPI.output(
+    //       result,
+    //       strapi.contentType("api::registered.registered"),
+    //       {
+    //         auth: ctx.state.auth,
+    //       }
+    //     );
+    //   } catch (err) {
+    //     return ctx.badRequest(`User Profile Update Error: ${err.message}`);
+    //   }
+    // },
     async update(ctx) {
       try {
         const user = ctx.state.user;
@@ -232,21 +270,43 @@ module.exports = createCoreController(
           return ctx.badRequest("Data not found");
         }
 
-        if (typeof ctx.request.body !== "object" || ctx.request.body === null) {
+        let parsedData = {};
+        let files = {};
+
+        // Check if the request is multipart
+        if (ctx.is("multipart")) {
+          // Parse the multipart data
+          const multipartData = parseMultipartData(ctx);
+          parsedData = multipartData.data;
+          files = multipartData.files;
+        } else {
+          // @ts-ignore
+          parsedData = await JSON.parse(ctx.request.body.data);
+        }
+
+        if (typeof parsedData !== "object" || parsedData === null) {
           return ctx.badRequest("Invalid request body");
+        }
+
+        const updateParams = {
+          data: {
+            ...parsedData,
+            users_permissions_user: user.id,
+          },
+          ...ctx.query,
+        };
+
+        if (Object.keys(files).length > 0) {
+          // @ts-ignore
+          updateParams.files = files;
         }
 
         const result = await strapi.entityService.update(
           "api::registered.registered",
           registeredData.id,
-          {
-            data: {
-              ...ctx.request.body,
-              users_permissions_user: user.id,
-            },
-            ...ctx.query,
-          }
+          updateParams
         );
+
         return await sanitize.contentAPI.output(
           result,
           strapi.contentType("api::registered.registered"),
