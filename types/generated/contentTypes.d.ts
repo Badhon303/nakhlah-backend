@@ -2753,6 +2753,7 @@ export interface ApiRegisteredRegistered extends Schema.CollectionType {
       'oneToOne',
       'plugin::users-permissions.user'
     >;
+    profilePicture: Attribute.Media<'images'>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<

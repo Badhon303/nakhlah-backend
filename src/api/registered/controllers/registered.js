@@ -5,44 +5,133 @@
  */
 
 const { createCoreController } = require("@strapi/strapi").factories;
-const { sanitize } = require("@strapi/utils");
+const { parseMultipartData, sanitize } = require("@strapi/utils");
 
 module.exports = createCoreController(
   "api::registered.registered",
   ({ strapi }) => ({
+    // async create(ctx) {
+    //   const user = ctx.state.user;
+    //   // @ts-ignore
+    //   const { data } = ctx.request.body;
+    //   const parsedData = await JSON.parse(data);
+    //   try {
+    //     if (typeof ctx.request.body !== "object" || ctx.request.body === null) {
+    //       return ctx.badRequest("Invalid request body");
+    //     }
+    //     const registeredData = await strapi.db
+    //       .query("api::registered.registered")
+    //       .findOne({
+    //         where: { users_permissions_user: user.id },
+    //       });
+    //     if (registeredData) {
+    //       return ctx.badRequest("User Info already exists");
+    //     }
+    //     const profileData = await strapi.db
+    //       .query("api::learner-info.learner-info")
+    //       .findOne({
+    //         where: { users_permissions_user: user.id },
+    //       });
+    //     if (!profileData) {
+    //       return ctx.badRequest("Create Your Profile First");
+    //     }
+    //     const result = await strapi.entityService.create(
+    //       "api::registered.registered",
+    //       {
+    //         // @ts-ignore
+    //         data: {
+    //           ...parsedData,
+    //           users_permissions_user: user.id,
+    //         },
+    //         ...ctx.query,
+    //       }
+    //     );
+    //     try {
+    //       await strapi.entityService.update(
+    //         "api::learner-info.learner-info",
+    //         profileData.id,
+    //         {
+    //           data: {
+    //             registered: result.id,
+    //           },
+    //           ...ctx.query,
+    //         }
+    //       );
+    //     } catch (error) {
+    //       return ctx.badRequest(`Something went wrong`);
+    //     }
+
+    //     return await sanitize.contentAPI.output(
+    //       result,
+    //       strapi.contentType("api::registered.registered"),
+    //       {
+    //         auth: ctx.state.auth,
+    //       }
+    //     );
+    //   } catch (err) {
+    //     return ctx.badRequest(`Registration create Error: ${err.message}`);
+    //   }
+    // },
+
     async create(ctx) {
       const user = ctx.state.user;
+      let parsedData = {};
+      let files = {};
+
+      // Check if the request is multipart
+      if (ctx.is("multipart")) {
+        // Parse the multipart data
+        const multipartData = parseMultipartData(ctx);
+        parsedData = multipartData.data;
+        files = multipartData.files;
+      } else {
+        // @ts-ignore
+        parsedData = await JSON.parse(ctx.request.body.data);
+      }
+
       try {
-        if (typeof ctx.request.body !== "object" || ctx.request.body === null) {
+        if (typeof parsedData !== "object" || parsedData === null) {
           return ctx.badRequest("Invalid request body");
         }
+
         const registeredData = await strapi.db
           .query("api::registered.registered")
           .findOne({
             where: { users_permissions_user: user.id },
           });
+
         if (registeredData) {
           return ctx.badRequest("User Info already exists");
         }
+
         const profileData = await strapi.db
           .query("api::learner-info.learner-info")
           .findOne({
             where: { users_permissions_user: user.id },
           });
+
         if (!profileData) {
           return ctx.badRequest("Create Your Profile First");
         }
+
+        const createParams = {
+          data: {
+            ...parsedData,
+            users_permissions_user: user.id,
+          },
+          ...ctx.query,
+        };
+
+        if (Object.keys(files).length > 0) {
+          // @ts-ignore
+          createParams.files = files;
+        }
+
         const result = await strapi.entityService.create(
           "api::registered.registered",
-          {
-            // @ts-ignore
-            data: {
-              ...ctx.request.body,
-              users_permissions_user: user.id,
-            },
-            ...ctx.query,
-          }
+          createParams
         );
+
         try {
           await strapi.entityService.update(
             "api::learner-info.learner-info",
