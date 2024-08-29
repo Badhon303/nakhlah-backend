@@ -2447,6 +2447,7 @@ export interface ApiQuestionQuestion extends Schema.CollectionType {
       'oneToOne',
       'api::question-detail.question-detail'
     >;
+    toolTip: Attribute.JSON;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
