@@ -48,6 +48,7 @@ async function fetchLessons(levelId) {
 async function getNextLesson(currentLesson) {
   try {
     const learningJourneys = await fetchLearningJourneys();
+    console.log("learningJourneys: ", learningJourneys);
     const currentLearningJourney = learningJourneys.find(
       (journey) =>
         journey.id ===
@@ -59,6 +60,7 @@ async function getNextLesson(currentLesson) {
       throw new Error("Current learning journey not found.");
 
     const units = await fetchLearningJourneyUnits(currentLearningJourney.id);
+    console.log("units: ", units);
     const currentUnit = units.find(
       (unit) =>
         unit.id ===
@@ -68,6 +70,7 @@ async function getNextLesson(currentLesson) {
     if (!currentUnit) throw new Error("Current unit not found.");
 
     const levels = await fetchLearningJourneyLevels(currentUnit.id);
+    console.log("levels: ", levels);
     const currentLevel = levels.find(
       (level) => level.id === currentLesson.learning_journey_level.id
     );
@@ -75,7 +78,7 @@ async function getNextLesson(currentLesson) {
     if (!currentLevel) throw new Error("Current level not found.");
 
     const lessons = await fetchLessons(currentLevel.id);
-
+    console.log("lessons: ", lessons);
     // Sort lessons by lessonSequence to handle gaps in sequence
     const sortedLessons = lessons.sort(
       (a, b) => a.lessonSequence - b.lessonSequence
@@ -91,6 +94,7 @@ async function getNextLesson(currentLesson) {
     ) {
       return sortedLessons[currentLessonIndex + 1];
     }
+    console.log("here");
 
     // If no more lessons in the current level, move to the next level
     const currentLevelIndex = levels.findIndex(
@@ -160,7 +164,7 @@ async function getNextLesson(currentLesson) {
       }
     }
 
-    throw new Error("No next lesson found.");
+    throw new Error("No next lesson found 🤔.");
   } catch (error) {
     console.error(error);
     return null;
