@@ -35,12 +35,6 @@ module.exports = createCoreController(
             lessonSequence: 1,
             learning_journey_level: result.id,
           };
-          let examData = {
-            examDetails: "Mystery Box exam",
-            numberOfQuestions: 1,
-            correctAnswer: 1,
-            learning_journey_level: result.id,
-          };
           try {
             await strapi.entityService.create(
               "api::learning-journey-lesson.learning-journey-lesson",
@@ -51,14 +45,6 @@ module.exports = createCoreController(
             );
           } catch (error) {
             return ctx.badRequest(`Mystery Box Lesson Create Error`);
-          }
-          try {
-            await strapi.entityService.create("api::exam.exam", {
-              // @ts-ignore
-              data: examData,
-            });
-          } catch (error) {
-            return ctx.badRequest(`Mystery Box Exam Create Error`);
           }
         }
         return await sanitize.contentAPI.output(
