@@ -164,7 +164,7 @@ module.exports = createCoreController("api::exam.exam", ({ strapi }) => ({
           }
         );
         if (
-          lessonIds.length >= 2 &&
+          lessonIds.length >= 1 &&
           lessonIds.length === existingLessons.length
         ) {
           try {
