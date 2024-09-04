@@ -47,6 +47,10 @@
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::content-category-type.content-category-type"
+    },
+    "pronunciation": {
+      "type": "string",
+      "maxLength": 500
     }
   }
 }

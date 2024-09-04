@@ -860,6 +860,10 @@ export interface ApiContentContent extends Schema.CollectionType {
       'oneToMany',
       'api::content-category-type.content-category-type'
     >;
+    pronunciation: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        maxLength: 500;
+      }>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -1071,6 +1075,10 @@ export interface ApiContentDetailContentDetail extends Schema.CollectionType {
       'manyToOne',
       'api::content.content'
     >;
+    pronunciation: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        maxLength: 500;
+      }>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
